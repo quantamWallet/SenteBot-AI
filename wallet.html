@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SenteBot-AI Wallet</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+:root{
+  --bg:#050A18;--card:#0E1629;--card2:#14243E;--green:#00E676;--cyan:#00D1FF;--red:#EF4444;
+  --text:#F8FAFC;--muted:#94A3B8;--border:rgba(0,209,255,.15);--shadow:0 18px 45px rgba(0,0,0,.45);
+  --glow-cyan:0 0 25px rgba(0,209,255,.25);--glow-green:0 0 25px rgba(0,230,118,.25);
+}
+body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),transparent 60%),linear-gradient(180deg,#050A18,#070B14);color:var(--text);min-height:100vh;padding-bottom:120px;}
+.container{max-width:540px;margin:auto;padding:18px;}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.back-btn{width:46px;height:46px;border-radius:15px;background:rgba(0,209,255,.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;}
+.page-title{text-align:center;flex:1;}
+.page-title h2{font-size:22px;font-weight:800;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+/* BALANCE CARD */
+.balance-card{background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));border-radius:28px;padding:28px;border:1px solid var(--border);box-shadow:var(--glow-cyan);margin-bottom:20px;position:relative;overflow:hidden;backdrop-filter:blur(16px);}
+.balance-card::before{content:"";position:absolute;inset:0;border-radius:28px;padding:1px;background:linear-gradient(130deg,var(--cyan),transparent 40%,var(--green));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.6;}
+.balance-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.balance-value{font-size:38px;font-weight:800;margin:12px 0;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.balance-stats{display:flex;gap:16px;margin-top:18px;}
+.stat-box{flex:1;background:rgba(0,0,0,.25);padding:12px;border-radius:14px;border:1px solid var(--border);}
+.stat-box small{color:var(--muted);font-size:11px;}
+.stat-box strong{font-size:15px;font-weight:800;}
+
+/* ACTION BUTTONS */
+.wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;}
+.action-btn{height:56px;border:none;border-radius:18px;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:.3s;}
+.deposit{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;box-shadow:var(--glow-cyan);}
+.withdraw{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--red);}
+.action-btn:active{transform:scale(.97);}
+
+/* TRANSACTION FILTER */
+.filter-tabs{display:flex;gap:10px;margin-bottom:16px;overflow-x:auto;}
+.filter-tab{padding:10px 18px;border-radius:30px;background:rgba(255,255,255,.04);border:1px solid var(--border);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.filter-tab.active{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;border:none;}
+
+/* TRANSACTION LIST */
+.tx-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px;backdrop-filter:blur(14px);transition:.3s;}
+.tx-card:hover{border-color:var(--cyan);}
+.tx-icon{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.tx-deposit{background:rgba(0,230,118,.15);color:var(--green);}
+.tx-withdraw{background:rgba(239,68,68,.15);color:var(--red);}
+.tx-machine{background:rgba(0,209,255,.15);color:var(--cyan);}
+.tx-info{flex:1;}
+.tx-title{font-size:15px;font-weight:800;margin-bottom:4px;}
+.tx-time{font-size:12px;color:var(--muted);}
+.tx-amount{font-size:16px;font-weight:800;}
+.tx-amount.positive{color:var(--green);}
+.tx-amount.negative{color:var(--red);}
+
+.empty{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty i{font-size:60px;color:var(--cyan);margin-bottom:16px;}
+
+.bottom-nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:540px;height:74px;background:rgba(8,16,32,.95);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 45px rgba(0,0,0,.45);z-index:999;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;}
+.nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;}
+.nav-item.active{color:var(--cyan);font-weight:700;}
+.nav-item.active .nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);box-shadow:0 0 18px rgba(0,209,255,.35);}
+
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;padding:14px 24px;border-radius:14px;font-weight:800;font-size:14px;display:none;z-index:10000;box-shadow:0 10px 30px rgba(0,209,255,.35);}
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<div class="container">
+    <div class="header">
+        <div class="back-btn" onclick="window.location='dashboard.html'"><i class="fa-solid fa-arrow-left"></i></div>
+        <div class="page-title"><h2>Wallet</h2></div>
+        <div style="width:46px;"></div>
+    </div>
+
+    <div class="balance-card">
+        <div class="balance-label">Total Balance</div>
+        <div class="balance-value" id="walletBalance">UGX 0</div>
+        <div class="balance-stats">
+            <div class="stat-box">
+                <small>Today's Profit</small>
+                <strong id="todayProfit">UGX 0</strong>
+            </div>
+            <div class="stat-box">
+                <small>Referral Earnings</small>
+                <strong id="referralEarnings">UGX 0</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="wallet-actions">
+        <button class="action-btn deposit" onclick="window.location='deposit.html'"><i class="fa-solid fa-arrow-down"></i> Deposit</button>
+        <button class="action-btn withdraw" onclick="window.location='withdraw.html'"><i class="fa-solid fa-arrow-up"></i> Withdraw</button>
+    </div>
+
+    <div class="filter-tabs">
+        <div class="filter-tab active" data-filter="All">All</div>
+        <div class="filter-tab" data-filter="Deposit">Deposits</div>
+        <div class="filter-tab" data-filter="Withdraw">Withdrawals</div>
+        <div class="filter-tab" data-filter="Profit">Profits</div>
+    </div>
+
+    <div id="transactionList"></div>
+</div>
+
+<div class="bottom-nav">
+    <div class="nav-item" onclick="window.location='dashboard.html'"><div class="nav-icon"><i class="fa-solid fa-house"></i></div><span>Home</span></div>
+    <div class="nav-item" onclick="window.location='team.html'"><div class="nav-icon"><i class="fa-solid fa-users"></i></div><span>Team</span></div>
+    <div class="nav-item" onclick="window.location='machines.html'"><div class="nav-icon"><i class="fa-solid fa-microchip"></i></div><span>Machines</span></div>
+    <div class="nav-item active"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></div>
+    <div class="nav-item" onclick="window.location='profile.html'"><div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
+  authDomain: "sentebot-7428b.firebaseapp.com",
+  databaseURL: "https://sentebot-7428b-default-rtdb.firebaseio.com",
+  projectId: "sentebot-7428b",
+  storageBucket: "sentebot-7428b.firebasestorage.app",
+  messagingSenderId: "24568208668",
+  appId: "1:24568208668:web:e01e4001149dfa93eeaed9"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+let currentUser = null;
+let allTransactions = [];
+let currentFilter = "All";
+
+/* BLOCK ZOOM */
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 300) event.preventDefault();
+  lastTouchEnd = now;
+}, { passive: false });
+
+/* TOAST */
+function showToast(message){
+    const toast=document.getElementById("toast");
+    toast.textContent=message;
+    toast.style.display="block";
+    setTimeout(()=>{toast.style.display="none";},3000);
+}
+
+/* AUTH */
+onAuthStateChanged(auth,(user)=>{
+    if(!user){window.location.href="index.html";return;}
+    currentUser = user;
+    loadWallet();
+});
+
+/* LOAD WALLET DATA REALTIME */
+function loadWallet(){
+    const userRef = ref(db,"users/" + currentUser.uid);
+    onValue(userRef,(snapshot)=>{
+        if(!snapshot.exists()) return;
+        const data = snapshot.val();
+
+        document.getElementById("walletBalance").textContent = "UGX " + Number(data.balance || 0).toLocaleString();
+        document.getElementById("todayProfit").textContent = "UGX " + Number(data.todayProfit || 0).toLocaleString();
+        document.getElementById("referralEarnings").textContent = "UGX " + Number(data.referralEarnings || 0).toLocaleString();
+
+        const activities = data.activities ? Object.values(data.activities).reverse() : [];
+        allTransactions = activities;
+        renderTransactions();
+    });
+}
+
+/* RENDER TRANSACTIONS */
+function renderTransactions(){
+    const container = document.getElementById("transactionList");
+    let txs = allTransactions;
+
+    if(currentFilter !== "All"){
+        txs = allTransactions.filter(tx => {
+            if(currentFilter === "Deposit") return tx.amount && tx.amount.includes("+") && tx.title.toLowerCase().includes("deposit");
+            if(currentFilter === "Withdraw") return tx.amount && tx.amount.includes("-");
+            if(currentFilter === "Profit") return tx.title.toLowerCase().includes("profit") || tx.title.toLowerCase().includes("bonus") || tx.title.toLowerCase().includes("promo");
+            return true;
+        });
+    }
+
+    if(txs.length === 0){
+        container.innerHTML = `<div class="empty"><i class="fa-solid fa-receipt"></i><h3>No Transactions Yet</h3><p>Your deposit, withdrawal and profit history will appear here.</p></div>`;
+        return;
+    }
+
+    container.innerHTML = "";
+    txs.forEach(tx => {
+        let iconClass = "tx-machine";
+        let icon = "fa-solid fa-microchip";
+        let amountClass = "positive";
+
+        if(tx.amount && tx.amount.includes("-")){
+            iconClass = "tx-withdraw";
+            icon = "fa-solid fa-arrow-up";
+            amountClass = "negative";
+        } else if(tx.title.toLowerCase().includes("deposit")){
+            iconClass = "tx-deposit";
+            icon = "fa-solid fa-arrow-down";
+        }
+
+        container.innerHTML += `
+        <div class="tx-card">
+            <div class="tx-icon ${iconClass}"><i class="${icon}"></i></div>
+            <div class="tx-info">
+                <div class="tx-title">${tx.title || "Transaction"}</div>
+                <div class="tx-time">${tx.time || ""}</div>
+            </div>
+            <div class="tx-amount ${amountClass}">${tx.amount || ""}</div>
+        </div>`;
+    });
+}
+
+/* FILTER TABS */
+document.querySelectorAll(".filter-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+        document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        currentFilter = tab.dataset.filter;
+        renderTransactions();
+    });
+});
+</script>
+</body>
+  </html>
