@@ -3,15 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-
 <title>SenteBot Profile</title>
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;}
 :root{--bg:#070B14;--bg2:#101827;--card:#111827;--card2:#182235;--green:#22C55E;--green2:#16A34A;--text:#F8FAFC;--muted:#94A3B8;--border:rgba(255,255,255,.08);--shadow:0 18px 45px rgba(0,0,0,.45);}
-
 body{background:radial-gradient(circle at top,#14302a 0%,transparent 35%),linear-gradient(180deg,#08101E,#070B14);color:var(--text);min-height:100vh;padding-bottom:120px;}
 .container{max-width:520px;margin:auto;padding:18px;}
 
@@ -23,7 +20,7 @@ body{background:radial-gradient(circle at top,#14302a 0%,transparent 35%),linear
 .badge{display:inline-block;padding:5px 14px;border-radius:30px;border:2px solid #f6b400;background:#fff8e5;color:#9a6400;font-weight:700;font-size:12px;margin-bottom:8px;}
 .phone{font-size:20px;font-weight:800;color:#08131f;margin-bottom:5px;}
 .referral{display:flex;align-items:center;gap:10px;font-weight:700;color:#555;font-size:13px;}
-.referral span{color:#d38d00;}
+.referral span{color:#d38d00;letter-spacing:1px;}
 .copy-btn{width:32px;height:32px;border:none;border-radius:10px;background:#fff7db;color:#d38d00;font-size:15px;cursor:pointer;}
 
 /* STATS */
@@ -73,63 +70,28 @@ body{background:radial-gradient(circle at top,#14302a 0%,transparent 35%),linear
 #logoutBtn{background:#EF4444;color:#fff;border:none;padding:14px 20px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.3s;width:100%;margin-top:10px;}
 #logoutBtn:hover{background:#DC2626;transform:translateY(-2px);}
 
-/* BOTTOM NAV - SAME AS MACHINES PAGE */
-.bottom-nav{
-position:fixed;
-left:50%;
-bottom:18px;
-transform:translateX(-50%);
-width:calc(100% - 26px);
-max-width:520px;
-height:74px;
-background:rgba(13,20,34,.96);
-backdrop-filter:blur(20px);
-border:1px solid var(--border);
-border-radius:24px;
-display:flex;
-justify-content:space-around;
-align-items:center;
-box-shadow:0 15px 45px rgba(0,0,0,.45);
-z-index:999;
-}
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:520px;height:74px;background:rgba(13,20,34,.96);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 45px rgba(0,0,0,.45);z-index:999;}
+.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;transition:.25s;}
+.nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;}
+.nav-item.active{color:#22C55E;font-weight:700;}
+.nav-item.active .nav-icon{background:rgba(34,197,94,.18);color:#22C55E;box-shadow:0 0 18px rgba(34,197,94,.35);}
+.nav-item:active{transform:scale(.94);}
 
-.nav-item{
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-gap:5px;
-flex:1;
-font-size:11px;
-color:var(--muted);
-cursor:pointer;
-transition:.25s;
-}
-
-.nav-icon{
-width:42px;
-height:42px;
-display:flex;
-align-items:center;
-justify-content:center;
-border-radius:14px;
-font-size:22px;
-}
-
-.nav-item.active{
-color:#22C55E;
-font-weight:700;
-}
-
-.nav-item.active .nav-icon{
-background:rgba(34,197,94,.18);
-color:#22C55E;
-box-shadow:0 0 18px rgba(34,197,94,.35);
-}
-
-.nav-item:active{
-transform:scale(.94);
-}
+/* NOTIFY + MODAL */
+.notify{position:fixed;top:25px;left:50%;transform:translateX(-50%) translateY(-80px);background:#111827;color:#fff;padding:15px 22px;border-radius:14px;display:flex;align-items:center;gap:12px;z-index:99999;opacity:0;transition:.35s;box-shadow:0 15px 40px rgba(0,0,0,.35);}
+.notify.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.notify.success i{color:#22C55E;}
+.notify.error i{color:#EF4444;}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;justify-content:center;align-items:center;opacity:0;visibility:hidden;transition:.3s;z-index:9999;}
+.modal.active{opacity:1;visibility:visible;}
+.modal-box{width:90%;max-width:360px;background:#0f172a;border-radius:22px;padding:25px;}
+.modal-box h2{margin-bottom:18px;color:#fff;font-size:18px;font-weight:800;}
+.modal-box input{width:100%;padding:14px;margin-bottom:15px;border:none;border-radius:12px;background:#1e293b;color:#fff;}
+.modal-buttons{display:flex;gap:12px;margin-top:10px;}
+.modal-buttons button{flex:1;padding:13px;border:none;border-radius:12px;font-weight:700;cursor:pointer;}
+.modal-buttons button:first-child{background:#374151;color:#fff;}
+.modal-buttons button:last-child{background:#22C55E;color:#fff;}
 </style>
 </head>
 <body>
@@ -139,8 +101,7 @@ transform:scale(.94);
     <div class="nav-item" onclick="window.location='team.html'"><div class="nav-icon"><i class="fa-solid fa-users"></i></div><span>Team</span></div>
     <div class="nav-item" onclick="window.location='machines.html'"><div class="nav-icon"><i class="fa-solid fa-microchip"></i></div><span>Machines</span></div>
     <div class="nav-item" onclick="window.location='wallet.html'"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></div>
-    <div class="nav-item active">
-      <div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
+    <div class="nav-item active"><div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
 </div>
 
 <div class="container">
@@ -164,7 +125,7 @@ transform:scale(.94);
 
 <div class="menu-card" id="transactionsBtn"><div class="menu-left"><div class="menu-icon pink"><i class="fa-solid fa-receipt"></i></div><div><div class="menu-title">All Transactions</div><div class="menu-sub">View complete deposit & withdrawal history</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-right"></i></div></div>
 <div class="menu-card" id="changePasswordBtn"><div class="menu-left"><div class="menu-icon purple"><i class="fa-solid fa-lock"></i></div><div><div class="menu-title">Change Password</div><div class="menu-sub">Update account security credentials</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-down"></i></div></div>
-<div class="menu-card" id="giftCodeBtn"><div class="menu-left"><div class="menu-icon blue"><i class="fa-solid fa-gift"></i></div><div><div class="menu-title">Gift Code</div><div class="menu-sub">Redeem promotional cash reward vouchers</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-down"></i></div></div>
+<div class="menu-card" id="giftCodeBtn"><div class="menu-left"><div class="menu-icon blue"><i class="fa-solid fa-gift"></i></div><div><div class="menu-title">Gift Code</div><div class="menu-sub">Redeem promotional cash reward vouchers</div></div><div class="arrow"><i class="fa-solid fa-chevron-down"></i></div></div>
 <div class="menu-card"><div class="menu-left"><div class="menu-icon green"><i class="fa-solid fa-building"></i></div><div><div class="menu-title">About Us</div><div class="menu-sub">Learn more about SenteBot technology</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-down"></i></div></div>
 <div class="menu-card" id="supportBtn"><div class="menu-left"><div class="menu-icon orange"><i class="fa-solid fa-headset"></i></div><div><div class="menu-title">Customer Support</div><div class="menu-sub">Get 24/7 live assistance</div></div></div><div class="arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div></div>
 
@@ -176,27 +137,15 @@ transform:scale(.94);
 <div class="social-card"><i class="fa-brands fa-telegram community"></i><p>COMMUNITY</p></div>
 </div>
 </div>
-<!-- Firebase SDK -->
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,onAuthStateChanged,updatePassword,EmailAuthProvider,reauthenticateWithCredential,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {getDatabase,ref,onValue} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-const firebaseConfig={
-apiKey:"AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
-authDomain:"sentebot-7428b.firebaseapp.com",
-databaseURL:"https://sentebot-7428b-default-rtdb.europe-west1.firebasedatabase.app",
-projectId:"sentebot-7428b",
-storageBucket:"sentebot-7428b.firebasestorage.app",
-messagingSenderId:"24568208668",
-appId:"1:24568208668:web:e01e4001149dfa93eeaed9"
-};
+const firebaseConfig={apiKey:"AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",authDomain:"sentebot-7428b.firebaseapp.com",databaseURL:"https://sentebot-7428b-default-rtdb.europe-west1.firebasedatabase.app",projectId:"sentebot-7428b",storageBucket:"sentebot-7428b.firebasestorage.app",messagingSenderId:"24568208668",appId:"1:24568208668:web:e01e4001149dfa93eeaed9"};
+const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getDatabase(app);
 
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getDatabase(app);
-
-/* ---------- Notification ---------- */
 function notify(message,type="success"){
 const box=document.createElement("div");
 box.className="notify "+type;
@@ -208,16 +157,14 @@ setTimeout(()=>{box.classList.remove("show");setTimeout(()=>{box.remove();},400)
 
 /* ---------- Load Profile ---------- */
 onAuthStateChanged(auth,user=>{
-if(!user){window.location.replace("index.html");
-return;}
+if(!user){window.location.replace("index.html");return;}
 onValue(ref(db,"users/"+user.uid),snapshot=>{
 if(!snapshot.exists()) return;
 const data=snapshot.val();
 document.getElementById("phone").textContent=data.phone||"-";
 document.getElementById("walletBalance").textContent=Number(data.balance||0).toLocaleString();
-document.getElementById("totalEarnings").textContent =
-Number(data.referralEarnings || 0).toLocaleString();
-document.getElementById("refCode").textContent=data.referralCode||user.uid.substring(0,8);
+document.getElementById("totalEarnings").textContent = Number(data.totalEarnings||0).toLocaleString(); // FIXED
+document.getElementById("refCode").textContent=(data.referralCode||user.uid.substring(0,8)).toUpperCase(); // UPPERCASE
 });
 });
 
@@ -250,76 +197,30 @@ passwordModal.classList.remove("active");
 };
 
 /* ---------- Gift Code ---------- */
-document.getElementById("giftCodeBtn").onclick = () => {
-    notify("Gift Code feature coming soon.", "success");
-};
+document.getElementById("giftCodeBtn").onclick = () => {notify("Gift Code feature coming soon.", "success");};
 
 /* ---------- Customer Support ---------- */
-document.getElementById("supportBtn").onclick = () => {
-    window.open("https://t.me/senteBotAi", "_blank");
-};
+document.getElementById("supportBtn").onclick = () => {window.open("https://t.me/senteBotAi", "_blank");};
 
 /* ---------- Install Button ---------- */
-document.querySelector(".install-btn").onclick = () => {
-    notify("Add this app to your Home Screen for the best experience.");
-};
+document.querySelector(".install-btn").onclick = () => {notify("Add this app to your Home Screen for the best experience.");};
 
-/* ---------- Logout Confirmation ---------- */
+/* ---------- Logout ---------- */
 const logoutModal=document.createElement("div");
 logoutModal.className="modal";
 logoutModal.innerHTML=`<div class="modal-box"><h2>Logout</h2><p style="margin:15px 0;color:#aaa;">Are you sure you want to logout?</p><div class="modal-buttons"><button id="cancelLogout">Cancel</button><button id="confirmLogout">Logout</button></div></div>`;
 document.body.appendChild(logoutModal);
 document.getElementById("logoutBtn").onclick=()=>{logoutModal.classList.add("active");};
 document.getElementById("cancelLogout").onclick=()=>{logoutModal.classList.remove("active");};
-document.getElementById("confirmLogout").onclick = async () => {
-    try{
-        await signOut(auth);
-        window.location.replace("index.html");
-    }catch(error){
-        notify("Logout failed.","error");
-    }
-};
+document.getElementById("confirmLogout").onclick = async () => {try{await signOut(auth);window.location.replace("index.html");}catch(error){notify("Logout failed.","error");}};
 
 /* ---------- Navigation ---------- */
-
-document.getElementById("transactionsBtn").onclick = () => {
-    window.location.href = "transactions.html";
-};
-
-/* ---------- Customer Support ---------- */
-document.getElementById("supportBtn").onclick = () => {
-    window.open("https://t.me/senteBotAi", "_blank");
-};
+document.getElementById("transactionsBtn").onclick = () => {window.location.href = "transactions.html";};
 
 /* ---------- Social Links ---------- */
-document.querySelector(".social-card:nth-child(1)").onclick = () => {
-    window.open("https://t.me/senteBotAi", "_blank");
-};
-
-document.querySelector(".social-card:nth-child(2)").onclick = () => {
-    window.open("https://t.me/+Zo2lA6xifhQ2Y2Y0", "_blank");
-};
-
-document.querySelector(".social-card:nth-child(3)").onclick = () => {
-    window.open("https://t.me/+Zo2lA6xifhQ2Y2Y0", "_blank");
-};
-
+document.querySelector(".social-card:nth-child(1)").onclick = () => {window.open("https://t.me/senteBotAi", "_blank");};
+document.querySelector(".social-card:nth-child(2)").onclick = () => {window.open("https://t.me/+Zo2lA6xifhQ2Y2Y0", "_blank");};
+document.querySelector(".social-card:nth-child(3)").onclick = () => {window.open("https://t.me/+Zo2lA6xifhQ2Y2Y0", "_blank");};
 </script>
-
-<style>
-.notify{position:fixed;top:25px;left:50%;transform:translateX(-50%) translateY(-80px);background:#111827;color:#fff;padding:15px 22px;border-radius:14px;display:flex;align-items:center;gap:12px;z-index:99999;opacity:0;transition:.35s;box-shadow:0 15px 40px rgba(0,0,0,.35);}
-.notify.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.notify.success i{color:#22C55E;}
-.notify.error i{color:#EF4444;}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;justify-content:center;align-items:center;opacity:0;visibility:hidden;transition:.3s;z-index:9999;}
-.modal.active{opacity:1;visibility:visible;}
-.modal-box{width:90%;max-width:360px;background:#0f172a;border-radius:22px;padding:25px;}
-.modal-box h2{margin-bottom:18px;}
-.modal-box input{width:100%;padding:14px;margin-bottom:15px;border:none;border-radius:12px;background:#1e293b;color:#fff;}
-.modal-buttons{display:flex;gap:12px;margin-top:10px;}
-.modal-buttons button{flex:1;padding:13px;border:none;border-radius:12px;font-weight:700;cursor:pointer;}
-.modal-buttons button:first-child{background:#374151;color:#fff;}
-.modal-buttons button:last-child{background:#22C55E;color:#fff;}
-</style>
 </body>
-  </html>
+    </html>
