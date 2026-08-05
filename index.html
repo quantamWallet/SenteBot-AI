@@ -292,12 +292,17 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
 
     let referrerUid = "";
     if(refInput !== ""){
-      const usersSnap = await get(ref(db,"users"));
-      usersSnap.forEach(child=>{
-        if(child.val().referralCode === refInput){
-          referrerUid = child.key;
-        }
-      });
+      if(refInput !== ""){
+    const referralSnap = await get(
+        ref(db,"referralCodes/" + refInput)
+    );
+
+    if(!referralSnap.exists()){
+        throw new Error("Invalid referral code");
+    }
+
+    referrerUid = referralSnap.val().uid;
+   }
       if(referrerUid === "") throw new Error("Invalid referral code");
     }
 
@@ -347,6 +352,14 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     setLoading(btn, false);
   }
 });
+   await set(
+    ref(db,"referralCodes/" + myReferralCode),
+    {
+        uid:user.uid,
+        username:username,
+        createdAt:Date.now()
+    }
+);
 
 /* LOGIN - RTDB */
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
