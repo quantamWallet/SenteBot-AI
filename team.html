@@ -8,50 +8,116 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
-:root{--bg:#070B14;--card:#111827;--card2:#182235;--green:#22C55E;--yellow:#F6B400;--text:#F8FAFC;--muted:#94A3B8;--border:rgba(255,255,255,.08);--shadow:0 18px 45px rgba(0,0,0,.45);}
-body{background:radial-gradient(circle at top,#14302a 0%,transparent 35%),linear-gradient(180deg,#08101E,#070B14);color:var(--text);min-height:100vh;padding-bottom:120px;}
-.container{max-width:520px;margin:auto;padding:18px;}
+:root{
+  --bg:#050A18;--card:#0E1629;--card2:#14243E;--green:#00E676;--cyan:#00D1FF;--gold:#F6B400;
+  --text:#F8FAFC;--muted:#94A3B8;--border:rgba(0,209,255,.15);
+  --glow-cyan:0 0 20px rgba(0,209,255,.35);
+  --glow-green:0 0 20px rgba(0,230,118,.25);
+}
+body{
+  background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),transparent 60%),
+             linear-gradient(180deg,#050A18,#070B14);
+  color:var(--text);min-height:100vh;padding-bottom:120px;
+}
+.container{max-width:540px;margin:auto;padding:18px;}
 .header{display:flex;align-items:center;gap:12px;margin-bottom:22px;}
-.back-btn{width:46px;height:46px;border-radius:15px;background:rgba(255,255,255,.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;}
-.page-title h2{font-size:20px;font-weight:800;}
-.referral-card{background:linear-gradient(180deg,#1a2333,#111827);border:1px solid var(--border);border-radius:22px;padding:18px;margin-bottom:16px;}
+.back-btn{
+  width:46px;height:46px;border-radius:15px;background:rgba(0,209,255,.06);
+  border:1px solid var(--border);display:flex;align-items:center;justify-content:center;
+  font-size:18px;cursor:pointer;transition:.3s;
+}
+.back-btn:hover{box-shadow:var(--glow-cyan);border-color:var(--cyan);}
+.page-title h2{font-size:22px;font-weight:800;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+/* FINTECH CARD */
+.card{
+  background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));
+  border:1px solid var(--border);border-radius:22px;padding:18px;margin-bottom:16px;
+  backdrop-filter:blur(14px);position:relative;overflow:hidden;transition:.3s;
+}
+.card::before{
+  content:"";position:absolute;inset:0;border-radius:22px;padding:1px;
+  background:linear-gradient(130deg,var(--cyan),transparent 40%,var(--green));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;opacity:.6;
+}
+.card:hover{transform:translateY(-2px);box-shadow:var(--glow-cyan);}
+
 .ref-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-.ref-header h3{font-size:16px;font-weight:800;color:var(--yellow);}
-.ref-code-box{background:#0E1627;border:1px solid var(--border);border-radius:14px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;}
-.ref-code{font-size:16px;font-weight:800;color:#22C55E;letter-spacing:1px;}
-.copy-btn{background:#22C55E;border:none;padding:10px 16px;border-radius:10px;color:#07111F;font-weight:700;font-size:13px;cursor:pointer;}
+.ref-header h3{font-size:15px;font-weight:800;letter-spacing:.5px;color:var(--gold);}
+.ref-code-badge{background:rgba(0,209,255,.1);border:1px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;}
+.ref-code-box{
+  background:linear-gradient(180deg,#0B1324,#0E1629);border:1px solid var(--border);
+  border-radius:14px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;
+}
+.ref-code{font-size:17px;font-weight:800;color:var(--green);letter-spacing:1.2px;text-shadow:var(--glow-green);}
+.copy-btn{
+  background:linear-gradient(90deg,var(--cyan),var(--green));border:none;padding:10px 16px;
+  border-radius:10px;color:#05121A;font-weight:800;font-size:13px;cursor:pointer;transition:.2s;
+}
+.copy-btn:hover{filter:brightness(1.1);transform:scale(1.03);}
+
 .levels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0;}
-.level-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center;}
-.level-card h4{font-size:13px;color:var(--muted);margin-bottom:6px;}
-.level-card.percent{color:#22C55E;font-weight:800;font-size:14px;}
+.level-card{
+  background:rgba(0,209,255,.05);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center;
+  transition:.3s;
+}
+.level-card:hover{box-shadow:var(--glow-cyan);border-color:var(--cyan);}
+.level-card h4{font-size:12px;color:var(--muted);margin-bottom:6px;letter-spacing:.5px;}
+.level-card.percent{color:var(--cyan);font-weight:800;font-size:15px;}
 .level-card.value{font-size:15px;font-weight:800;margin:6px 0;}
 .level-card.active{font-size:11px;color:var(--muted);}
+
 .stats-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
-.stat-3{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center;}
-.stat-3.val{font-size:18px;font-weight:800;color:#22C55E;}
+.stat-3{background:rgba(0,209,255,.05);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center;transition:.3s;}
+.stat-3:hover{box-shadow:var(--glow-green);border-color:var(--green);}
+.stat-3.val{font-size:20px;font-weight:800;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .stat-3.lab{font-size:11px;color:var(--muted);margin-top:4px;}
+
 .tabs{display:flex;gap:8px;margin-bottom:14px;}
-.tab-btn{flex:1;padding:10px;border:none;border-radius:12px;background:rgba(255,255,255,.05);color:var(--muted);font-weight:700;cursor:pointer;}
-.tab-btn.active{background:#22C55E;color:#07111F;}
-.milestone-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:10px;}
+.tab-btn{flex:1;padding:10px;border:none;border-radius:12px;background:rgba(255,255,255,.04);color:var(--muted);font-weight:700;cursor:pointer;transition:.2s;}
+.tab-btn.active{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;box-shadow:var(--glow-cyan);}
+
+.milestone-card{
+  background:rgba(0,209,255,.04);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:10px;transition:.3s;
+}
+.milestone-card:hover{border-color:var(--cyan);box-shadow:var(--glow-cyan);}
 .milestone-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-.milestone-top.left{display:flex;align-items:center;gap:10px;}
-.milestone-top.badge{width:36px;height:36px;border-radius:10px;background:#22C55E;display:flex;align-items:center;justify-content:center;font-weight:800;}
-.milestone-top.title{font-weight:700;font-size:14px;}
-.milestone-top.reward{color:#22C55E;font-weight:800;font-size:13px;}
-.progress-bar{height:6px;background:#0E1627;border-radius:10px;overflow:hidden;}
-.progress{height:100%;background:#22C55E;width:0%;transition:.3s;}
+.milestone-left{display:flex;align-items:center;gap:10px;}
+.badge{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),var(--green));display:flex;align-items:center;justify-content:center;font-weight:800;color:#05121A;}
+.title{font-weight:700;font-size:14px;}
+.reward{color:var(--green);font-weight:800;font-size:13px;text-shadow:var(--glow-green);}
+.progress-bar{height:7px;background:#0B1324;border-radius:10px;overflow:hidden;}
+.progress{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));width:0%;transition:.4s;}
+
 .directory-tabs{display:flex;gap:8px;margin:18px 0 12px;}
-.dir-tab{padding:8px 16px;border-radius:20px;background:rgba(255,255,255,.05);border:none;color:var(--muted);font-weight:700;font-size:12px;cursor:pointer;}
-.dir-tab.active{background:#F6B400;color:#08131f;}
+.dir-tab{padding:8px 16px;border-radius:20px;background:rgba(255,255,255,.04);border:none;color:var(--muted);font-weight:700;font-size:12px;cursor:pointer;transition:.2s;}
+.dir-tab.active{background:linear-gradient(90deg,var(--gold),#FFD700);color:#08131f;box-shadow:0 0 15px rgba(246,180,0,.3);}
+
+.team-item{display:flex;align-items:center;gap:14px;background:rgba(0,209,255,.04);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:8px;transition:.3s;}
+.team-item:hover{border-color:var(--cyan);box-shadow:var(--glow-cyan);}
+.team-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--green));display:flex;align-items:center;justify-content:center;font-weight:800;color:#05121A;}
+
+.bottom-nav{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:540px;height:74px;
+  background:rgba(8,16,32,.9);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;
+  display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 45px rgba(0,0,0,.45);z-index:999;
+}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;}
+.nav-item.active{color:var(--cyan);font-weight:700;}
+.nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;transition:.2s;}
+.nav-item.active.nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);}
+
+/* CENTERED TOAST */
+#toast{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);
+  background:linear-gradient(180deg,#0E1629,#0B1324);border:1px solid var(--border);
+  color:var(--text);padding:14px 22px;border-radius:14px;font-weight:600;font-size:14px;
+  z-index:10000;opacity:0;pointer-events:none;transition:.3s;box-shadow:0 10px 40px rgba(0,209,255,.25);
+  backdrop-filter:blur(16px);
+}
+#toast.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
 .directory-msg{text-align:center;color:var(--muted);padding:20px;font-size:13px;}
-.bottom-nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:520px;height:74px;background:rgba(13,20,34,.96);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 45px rgba(0,0,0,.45);z-index:999;}
-.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;}
-.nav-item.active{color:#22C55E;font-weight:700;}
-.nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;}
-.nav-item.active.nav-icon{background:rgba(34,197,94,.18);color:#22C55E;}
-.team-item{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;padding:14px;}
-.team-avatar{width:44px;height:44px;border-radius:50%;background:#22C55E;display:flex;align-items:center;justify-content:center;font-weight:800;}
 </style>
 </head>
 <body>
@@ -62,8 +128,8 @@ body{background:radial-gradient(circle at top,#14302a 0%,transparent 35%),linear
 <div class="page-title"><h2>Referral Network</h2></div>
 </div>
 
-<div class="referral-card">
-<div class="ref-header"><h3>INVITE FRIENDS & EARN</h3><span style="background:#0E1627;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;">Code: <span id="refCode">SBXXXX</span></span></div>
+<div class="card">
+<div class="ref-header"><h3>INVITE FRIENDS & EARN</h3><span class="ref-code-badge">Code: <span id="refCode">SBXXXX</span></span></div>
 <div class="ref-code-box"><span style="color:#94A3B8;font-size:13px;">Your Exclusive Referral Code</span><button class="copy-btn" onclick="copyRef()">Copy Code</button></div>
 
 <div class="levels">
@@ -71,7 +137,7 @@ body{background:radial-gradient(circle at top,#14302a 0%,transparent 35%),linear
 <div class="level-card"><h4>LEVEL 2</h4><div class="percent">5%</div><div class="value" id="level2Earn">UGX 0</div><div class="active" id="level2Count">0 Active</div></div>
 <div class="level-card"><h4>LEVEL 3</h4><div class="percent">2%</div><div class="value" id="level3Earn">UGX 0</div><div class="active" id="level3Count">0 Active</div></div>
 </div>
-<div style="margin-top:10px;text-align:center;"><div class="value" id="refEarnings">UGX 0</div><div class="lab" style="font-size:11px;color:#94A3B8;">TOTAL REFERRAL EARNINGS</div></div>
+<div style="margin-top:10px;text-align:center;"><div class="value" id="refEarnings" style="font-size:18px;">UGX 0</div><div class="lab" style="font-size:11px;color:#94A3B8;">TOTAL REFERRAL EARNINGS</div></div>
 </div>
 
 <div class="stats-3">
@@ -100,6 +166,8 @@ body{background:radial-gradient(circle at top,#14302a 0%,transparent 35%),linear
 <div class="nav-item" onclick="window.location='profile.html'"><div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
 </div>
 
+<div id="toast"></div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -110,6 +178,14 @@ const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getData
 let currentUser=null; let allUsers={};
 
 const MILESTONES = [{count:3,reward:3000},{count:5,reward:6000},{count:10,reward:10000},{count:20,reward:20000}];
+
+// TOAST FUNCTION
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2000);
+}
 
 onAuthStateChanged(auth,(user)=>{if(!user){window.location="index.html";return;}currentUser=user;loadAll();});
 
@@ -146,7 +222,7 @@ const teamCount = me.teamCount || 0;
 const list = document.getElementById("milestonesList"); list.innerHTML="";
 MILESTONES.forEach(m=>{
   const progress = Math.min(100, (teamCount/m.count)*100);
-  list.innerHTML += `<div class="milestone-card"><div class="milestone-top"><div class="left"><div class="badge">${m.count}</div><div><div class="title">${m.count} Active Team Members</div><div style="font-size:12px;color:#94A3B8;">Reward: UGX ${m.reward.toLocaleString()}</div></div></div><div class="reward">UGX ${m.reward.toLocaleString()}</div></div><div class="progress-bar"><div class="progress" style="width:${progress}%"></div></div><div style="font-size:11px;color:#94A3B8;margin-top:6px;">${teamCount} / ${m.count} (${progress.toFixed(0)}%)</div></div>`;
+  list.innerHTML += `<div class="milestone-card"><div class="milestone-top"><div class="milestone-left"><div class="badge">${m.count}</div><div><div class="title">${m.count} Active Team Members</div><div style="font-size:12px;color:#94A3B8;">Reward: UGX ${m.reward.toLocaleString()}</div></div></div><div class="reward">UGX ${m.reward.toLocaleString()}</div></div><div class="progress-bar"><div class="progress" style="width:${progress}%"></div></div><div style="font-size:11px;color:#94A3B8;margin-top:6px;">${teamCount} / ${m.count} (${progress.toFixed(0)}%)</div></div>`;
 });
 }
 
@@ -163,7 +239,7 @@ div.innerHTML="";
 list.forEach(uid=>{ const u = allUsers[uid]; div.innerHTML += `<div class="team-item"><div class="team-avatar">${u.username.charAt(0).toUpperCase()}</div><div><div style="font-weight:700;">${u.username}</div><div style="font-size:12px;color:#94A3B8;">${u.phone}</div></div></div>`; });
 }
 
-window.copyRef=()=>{navigator.clipboard.writeText(document.getElementById("refCode").textContent);alert("Referral code copied!");}
+window.copyRef=()=>{navigator.clipboard.writeText(document.getElementById("refCode").textContent);showToast("Referral code copied!");}
 </script>
 </body>
-</html>
+                                                              </html>
