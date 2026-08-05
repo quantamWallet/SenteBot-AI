@@ -23,6 +23,7 @@ Create 20 Machines
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"; // ADDED
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
@@ -35,14 +36,30 @@ const firebaseConfig = {
   appId: "1:24568208668:web:e01e4001149dfa93eeaed9"
 };
 const app=initializeApp(firebaseConfig);
+const auth=getAuth(app); // ADDED
 const db=getDatabase(app);
 
+const ADMIN_UID = "AQ1kRn34wlSGu0MPQfvRLXfmbqA3"; // ADDED
+
 window.seedMachines=async()=>{
+
+document.getElementById("status").innerHTML="⏳ Checking login...";
+
+// 1. CHECK IF YOU ARE LOGGED IN
+if(!auth.currentUser){
+    document.getElementById("status").innerHTML = "❌ Error: Login first. Open this page from profile.html while logged in.";
+    return;
+}
+
+// 2. CHECK IF YOU ARE ADMIN
+if(auth.currentUser.uid !== ADMIN_UID){
+    document.getElementById("status").innerHTML = "❌ Error: Only admin can seed machines.";
+    return;
+}
 
 document.getElementById("status").innerHTML="⏳ Creating machines...";
 
 const machines=[
-
 {id:"machine1",name:"Nano AI Miner",category:"Starter",price:20000,dailyProfit:2000,duration:20,totalReturn:60000,icon:"fa-solid fa-microchip"},
 {id:"machine2",name:"Crypto Seed Bot",category:"Starter",price:50000,dailyProfit:5000,duration:20,totalReturn:150000,icon:"fa-solid fa-robot"},
 {id:"machine3",name:"Quantum Mini",category:"Starter",price:100000,dailyProfit:10000,duration:20,totalReturn:300000,icon:"fa-solid fa-brain"},
@@ -63,37 +80,21 @@ const machines=[
 {id:"machine18",name:"AI Master Core",category:"High Yield",price:16000000,dailyProfit:1600000,duration:20,totalReturn:48000000,icon:"fa-solid fa-atom"},
 {id:"machine19",name:"Ultimate Hash Pro",category:"High Yield",price:18000000,dailyProfit:1800000,duration:20,totalReturn:54000000,icon:"fa-solid fa-fire"},
 {id:"machine20",name:"SenteBot Supreme X",category:"High Yield",price:20000000,dailyProfit:2000000,duration:20,totalReturn:60000000,icon:"fa-solid fa-rocket"}
-
 ];
 
 try {
-
     for (const machine of machines) {
-
-        document.getElementById("status").innerHTML =
-            `Creating ${machine.name}...`;
-
-        await set(
-            ref(db, "machines/" + machine.id),
-            machine
-        );
-
+        document.getElementById("status").innerHTML = `Creating ${machine.name}...`;
+        await set(ref(db, "machines/" + machine.id), machine);
     }
-
-    document.getElementById("status").innerHTML =
-        "✅ Successfully created all 20 machines in Realtime Database.";
-
+    document.getElementById("status").innerHTML = "✅ Successfully created all 20 machines in Realtime Database.";
 } catch (e) {
-
     console.error(e);
-
-    document.getElementById("status").innerHTML =
-        "❌ Error: " + e.message;
-
+    document.getElementById("status").innerHTML = "❌ Error: " + e.message;
 }
 
 };
-</script>
+ </script>
 
 </body>
 </html>
