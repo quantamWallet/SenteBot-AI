@@ -149,36 +149,37 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'), 2000);
 }
 
-// COPY LOGIC - PROFILE VERSION
-function copyToClipboard(text) {
-  return new Promise((resolve, reject) => {
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(text).then(resolve).catch(reject);
-    } else {
-      const textArea = document.createElement("textarea");
-      textArea.value = text;
-      textArea.style.position = "fixed"; textArea.style.left = "-999px";
-      document.body.appendChild(textArea);
-      textArea.focus(); textArea.select();
-      try { document.execCommand('copy'); resolve(); }
-      catch (err) { reject(err); }
-      document.body.removeChild(textArea);
-    }
-  });
-}
+/* ---------- Copy Referral - SAME AS PROFILE ---------- */
+document.getElementById("copyReferral").onclick = async () => {
+  const code = document.getElementById("refCodeDisplay").textContent.trim();
 
-document.getElementById('copyReferral').addEventListener('click', async () => {
-  const codeEl = document.getElementById("refCodeDisplay");
-  const code = codeEl.textContent.trim();
-  if(!code || code === "SBXXXX"){ showToast("Code not loaded yet"); return; }
+  if(!code || code === "SBXXXX"){
+    showToast("Code not loaded yet");
+    return;
+  }
+
   try{
-    await copyToClipboard(code);
+    await navigator.clipboard.writeText(code);
     showToast("Referral code copied!");
     const icon = document.querySelector('#copyReferral i');
     icon.className = "fa-solid fa-check";
     setTimeout(()=> icon.className = "fa-regular fa-copy", 1200);
-  }catch(err){ showToast("Copy failed"); console.error(err); }
-});
+  }catch{
+    // Fallback for old browsers / http
+    const textArea = document.createElement("textarea");
+    textArea.value = code;
+    textArea.style.position = "fixed"; textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      showToast("Referral code copied!");
+    } catch {
+      showToast("Long press to copy");
+    }
+    document.body.removeChild(textArea);
+  }
+};
 
 onAuthStateChanged(auth,(user)=>{
   if(!user){window.location="index.html";return;}
@@ -250,10 +251,12 @@ function loadDirectory(level){
   if(list.length===0){div.innerHTML=`<div class="directory-msg">No Level ${level} direct referrals found. Share your code to build your team!</div>`;return;}
   div.innerHTML="";
   list.forEach(uid=>{
-    const u = allUsers[uid];
-    div.innerHTML += `<div class="team-item"><div class="team-avatar">${u.username.charAt(0).toUpperCase()}</div><div><div style="font-weight:700;">${u.username}</div><div style="font-size:12px;color:#94A3B8;">${u.phone}</div></div></div>`;
+    const u = allUsers[uid] || {};
+    const name = u.username || "User";
+    const phone = u.phone || "-";
+    div.innerHTML += `<div class="team-item"><div class="team-avatar">${name.charAt(0).toUpperCase()}</div><div><div style="font-weight:700;">${name}</div><div style="font-size:12px;color:#94A3B8;">${phone}</div></div></div>`;
   });
-}
+  }
 </script>
 </body>
 </html>           
