@@ -201,16 +201,32 @@ setTimeout(()=>{box.classList.remove("show");setTimeout(()=>{box.remove();},400)
 }
 
 /* ---------- Load Profile ---------- */
+function maskPhone(phone){
+  if(!phone) return "-";
+  // +2567XXXXXXX -> +2567*** *** 123
+  const clean = phone.replace(/\D/g,'');
+  if(clean.length >= 12){
+    return `+${clean.substring(0,3)}${clean.substring(3,4)}*** *** ${clean.substring(clean.length-3)}`;
+  }
+  return phone; // fallback
+}
+
 onAuthStateChanged(auth,user=>{
 if(!user){window.location.replace("index.html");return;}
 onValue(ref(db,"users/"+user.uid),snapshot=>{
 if(!snapshot.exists()) return;
 const data=snapshot.val();
-document.getElementById("phone").textContent=data.phone||"-";
+document.getElementById("phone").textContent = maskPhone(data.phone); // MASKED
 document.getElementById("walletBalance").textContent="UGX " + Number(data.balance||0).toLocaleString(); // 1 LINE
 document.getElementById("totalEarnings").textContent = "UGX " + Number(data.referralEarnings || 0).toLocaleString(); // 1 LINE
 document.getElementById("refCode").textContent=data.referralCode||user.uid.substring(0,8);
 
+/* ---------- FIX: ADMIN PANEL - ONLY FOR YOU ---------- */
+if(user.uid === "AQ1kRn34wlSGu0MPQfvRLXfmbqA3" || data.isAdmin === true){
+    document.getElementById("adminPanelBtn").style.display = "flex";
+}
+});
+  
 /* ---------- FIX: ADMIN PANEL - ONLY FOR YOU ---------- */
 if(user.uid === "AQ1kRn34wlSGu0MPQfvRLXfmbqA3" || data.isAdmin === true){
     document.getElementById("adminPanelBtn").style.display = "flex";
