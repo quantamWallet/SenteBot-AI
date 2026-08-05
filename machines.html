@@ -4,9 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <title>SenteBot | Investment Machines</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
@@ -163,6 +160,19 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
     </div>
 </div>
 
+<!-- INSUFFICIENT BALANCE MODAL -->
+<div id="insufficientModal" class="modal">
+    <div class="modal-box">
+        <div class="modal-icon" style="background:linear-gradient(135deg,#EF4444,#F97316);"><i class="fa-solid fa-wallet"></i></div>
+        <h2>Insufficient Balance</h2>
+        <p id="insufficientText">You don't have enough balance to purchase this machine.</p>
+        <div class="modal-buttons">
+            <button class="cancel-btn" onclick="closeInsufficient()">Cancel</button>
+            <button class="confirm-btn" onclick="goToDeposit()">Deposit Now</button>
+        </div>
+    </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -185,10 +195,11 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
         </div>
     </div>
 
+    <!-- FIXED ORDER: All -> High Yield -> Starter -->
     <div class="category-tabs">
         <div class="category active" data-category="All">All Machines</div>
-        <div class="category" data-category="Starter">Starter Machines</div>
-        <div class="category" data-category="High Yield">High Yield</div>
+        <div class="category" data-category="High Yield">High Yield Machines</div>
+        <div class="category" data-category="Starter">Starter Plan Machines</div>
     </div>
 
     <div id="machineList" class="machine-list"></div>
@@ -200,9 +211,8 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
     <div class="nav-item active"><div class="nav-icon"><i class="fa-solid fa-microchip"></i></div><span>Machines</span></div>
     <div class="nav-item" onclick="window.location='wallet.html'"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></div>
     <div class="nav-item" onclick="window.location='profile.html'"><div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
-</div>
-
-<script type="module">
+              </div>
+              <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase, ref, onValue, get, update, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -340,6 +350,10 @@ window.buyMachine = (id) => {
 };
 window.closeModal = () => { document.getElementById("purchaseModal").style.display = "none"; };
 
+/* INSUFFICIENT MODAL */
+window.closeInsufficient = () => { document.getElementById("insufficientModal").style.display = "none"; };
+window.goToDeposit = () => { window.location.href = "deposit.html"; };
+
 /* CATEGORY FILTER */
 document.querySelectorAll(".category").forEach(tab => {
     tab.addEventListener("click", () => {
@@ -360,13 +374,21 @@ window.showToast = (message, success = true) => {
     window.toastTimer = setTimeout(() => { toast.style.display = "none"; }, 3000);
 };
 
-/* CONFIRM PURCHASE - RTDB VERSION */
+/* CONFIRM PURCHASE - WITH BALANCE DEDUCTION */
 window.confirmPurchase = async () => {
     if (!currentUser || !currentUserData) { closeModal(); showToast("User not loaded.", false); return; }
     const machine = selectedMachine;
     if (!machine) { closeModal(); return; }
     const balance = Number(currentUserData.balance || 0);
-    if (balance < machine.price) { closeModal(); showToast("Insufficient wallet balance.", false); return; }
+    
+    // 1. CHECK BALANCE
+    if (balance < machine.price) { 
+        closeModal(); 
+        document.getElementById("insufficientText").innerHTML = 
+        `You need <b>UGX ${machine.price.toLocaleString()}</b> but you only have <b>UGX ${balance.toLocaleString()}</b>`;
+        document.getElementById("insufficientModal").style.display = "flex"; 
+        return; 
+    }
     
     const userMachines = currentUserData.machines ? Object.values(currentUserData.machines) : [];
     const owned = userMachines.find(item => item.id === machine.id && item.status !== "COMPLETED");
@@ -378,7 +400,7 @@ window.confirmPurchase = async () => {
         const newActivityKey = push(ref(db, `users/${currentUser.uid}/activities`)).key;
 
         const updates = {};
-        updates[`balance`] = balance - machine.price;
+        updates[`balance`] = balance - machine.price; // DEDUCT FROM MAIN BALANCE
         updates[`machines/${newMachineKey}`] = {
             id: machine.id, name: machine.name, icon: machine.icon, category: machine.category,
             amount: machine.price, dailyProfit: machine.dailyProfit, duration: machine.duration,
