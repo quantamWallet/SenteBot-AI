@@ -64,15 +64,15 @@ body{
 }
 .level-card:hover{box-shadow:var(--glow-cyan);border-color:var(--cyan);}
 .level-card h4{font-size:12px;color:var(--muted);margin-bottom:6px;letter-spacing:.5px;}
-.level-card .percent{color:var(--cyan);font-weight:800;font-size:15px;}
-.level-card .value{font-size:15px;font-weight:800;margin:6px 0;}
-.level-card .active{font-size:11px;color:var(--muted);}
+.level-card.percent{color:var(--cyan);font-weight:800;font-size:15px;}
+.level-card.value{font-size:15px;font-weight:800;margin:6px 0;}
+.level-card.active{font-size:11px;color:var(--muted);}
 
 .stats-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
 .stat-3{background:rgba(0,209,255,.05);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center;transition:.3s;}
 .stat-3:hover{box-shadow:var(--glow-green);border-color:var(--green);}
-.stat-3 .val{font-size:20px;font-weight:800;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.stat-3 .lab{font-size:11px;color:var(--muted);margin-top:4px;}
+.stat-3.val{font-size:20px;font-weight:800;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-3.lab{font-size:11px;color:var(--muted);margin-top:4px;}
 
 .tabs{display:flex;gap:8px;margin-bottom:14px;}
 .tab-btn{flex:1;padding:10px;border:none;border-radius:12px;background:rgba(255,255,255,.04);color:var(--muted);font-weight:700;cursor:pointer;transition:.2s;}
@@ -106,7 +106,7 @@ body{
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;}
 .nav-item.active{color:var(--cyan);font-weight:700;}
 .nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;transition:.2s;}
-.nav-item.active .nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);}
+.nav-item.active.nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);}
 
 /* CENTERED TOAST */
 #toast{
@@ -202,26 +202,30 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'), 2000);
 }
 
-// FIXED COPY BUTTON - works on iPhone
-document.getElementById('copyBtn').addEventListener('click', async ()=>{
-  const code = document.getElementById("refCodeDisplay").textContent;
+// FIX 1: COPY BUTTON FOR ALL DEVICES
+document.getElementById('copyBtn').addEventListener('click', ()=>{
+  const code = document.getElementById("refCodeDisplay").textContent.trim();
+  if(code === "SBXXXX"){ showToast("Code not loaded yet"); return; }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = code;
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.focus(); textarea.select();
   try{
-    if(navigator.clipboard){
-      await navigator.clipboard.writeText(code);
-    }else{ // Fallback for old browsers
-      const textarea = document.createElement("textarea");
-      textarea.value = code; document.body.appendChild(textarea);
-      textarea.select(); document.execCommand("copy"); document.body.removeChild(textarea);
-    }
+    document.execCommand("copy");
     showToast("Referral code copied!");
-  }catch(e){ showToast("Failed to copy"); }
+  }catch(e){
+    showToast("Failed to copy");
+  }
+  document.body.removeChild(textarea);
 });
 
 onAuthStateChanged(auth,(user)=>{
   if(!user){window.location="index.html";return;}
   currentUser=user;
 
-  // FIX 1: USE onValue FOR REALTIME SYNC
   onValue(ref(db,"users"), (snapshot)=>{
     allUsers = snapshot.val() || {};
     loadTeamData();
@@ -232,6 +236,7 @@ onAuthStateChanged(auth,(user)=>{
 
 function loadTeamData(){
   const me = allUsers[currentUser.uid] || {};
+  // FIX 2: SHOW CODE EVEN IF NOT IN DB
   const code = me.referralCode || "SB" + currentUser.uid.substring(0,6).toUpperCase();
   document.getElementById("refCodeDisplay").textContent = code;
   document.getElementById("totalTeam").textContent = me.teamCount || 0;
@@ -295,4 +300,4 @@ function loadDirectory(level){
 }
 </script>
 </body>
-</html>
+                                                                                                               </html>
