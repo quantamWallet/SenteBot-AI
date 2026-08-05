@@ -12,79 +12,79 @@
 :root{--bg:#070B14;--bg2:#101827;--card:#111827;--card2:#182235;--green:#22C55E;--green2:#16A34A;--cyan:#00D1FF;--text:#F8FAFC;--muted:#94A3B8;--border:rgba(255,255,255,.08);--shadow:0 18px 45px rgba(0,0,0,.45);--glow:0 0 20px rgba(34,197,94,.15);}
 
 body{background:radial-gradient(circle at top,#14302a 0%,transparent 35%),linear-gradient(180deg,#08101E,#070B14);color:var(--text);min-height:100vh;padding-bottom:120px;}
-.container{max-width:520px;margin:auto;padding:18px;}
+.container{max-width:520px;margin:auto;padding:16px;} /* REDUCED PADDING */
 
 /* PROFILE CARD - NOW MATCHES TEAM.HTML */
 .profile-card{
   background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));
-  border:1px solid var(--border);border-radius:28px;padding:18px;display:flex;align-items:center;gap:16px;
-  box-shadow:var(--shadow);margin-bottom:20px;backdrop-filter:blur(14px);transition:.3s;
+  border:1px solid var(--border);border-radius:24px;padding:16px;display:flex;align-items:center;gap:14px; /* SMALLER */
+  box-shadow:var(--shadow);margin-bottom:18px;backdrop-filter:blur(14px);transition:.3s;
 }
 .profile-card:hover{box-shadow:var(--shadow),var(--glow);border-color:var(--green);}
-.avatar{width:80px;height:80px;border-radius:20px;border:2px solid var(--green);overflow:hidden;flex-shrink:0;}
+.avatar{width:70px;height:70px;border-radius:18px;border:2px solid var(--green);overflow:hidden;flex-shrink:0;} /* SMALLER */
 .avatar img{width:100%;height:100%;object-fit:cover;}
 .profile-info{flex:1;}
-.badge{display:inline-block;padding:5px 14px;border-radius:30px;border:1px solid var(--green);background:rgba(34,197,94,.15);color:var(--green);font-weight:700;font-size:12px;margin-bottom:8px;}
-.phone{font-size:20px;font-weight:800;color:var(--text);margin-bottom:5px;}
-.referral{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--muted);font-size:13px;}
+.badge{display:inline-block;padding:4px 12px;border-radius:30px;border:1px solid var(--green);background:rgba(34,197,94,.15);color:var(--green);font-weight:700;font-size:11px;margin-bottom:6px;} /* SMALLER */
+.phone{font-size:18px;font-weight:800;color:var(--text);margin-bottom:4px;} /* SMALLER */
+.referral{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--muted);font-size:12px;} /* SMALLER */
 .referral span{color:var(--green);}
-.copy-btn{width:32px;height:32px;border:none;border-radius:10px;background:linear-gradient(90deg,#00D1FF,#22C55E);color:#05121A;font-size:15px;cursor:pointer;transition:.2s;}
+.copy-btn{width:28px;height:28px;border:none;border-radius:9px;background:linear-gradient(90deg,#00D1FF,#22C55E);color:#05121A;font-size:13px;cursor:pointer;transition:.2s;} /* SMALLER */
 .copy-btn:hover{transform:scale(1.05);}
 
 /* STATS */
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
-.stat-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:22px;padding:18px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);transition:.3s;}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;} /* SMALLER GAP */
+.stat-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:20px;padding:16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:.3s;} /* SMALLER */
 .stat-card:hover{border-color:var(--green);box-shadow:var(--glow);}
-.stat-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.stat-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;} /* SMALLER */
 .wallet-icon{background:rgba(34,197,94,.15);color:#22C55E;}
 .earn-icon{background:rgba(249,115,22,.15);color:#F97316;}
-.stat-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px;text-transform:uppercase;}
-.stat-value{font-size:18px;font-weight:800;color:var(--text);}
+.stat-title{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:3px;text-transform:uppercase;} /* SMALLER */
+.stat-value{font-size:16px;font-weight:800;color:var(--text);white-space:nowrap;} /* SMALLER + 1 LINE */
 
 /* INSTALL */
-.install-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:22px;padding:18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;box-shadow:var(--shadow);transition:.3s;}
+.install-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:20px;padding:16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;box-shadow:var(--shadow);transition:.3s;} /* SMALLER */
 .install-card:hover{border-color:var(--green);box-shadow:var(--glow);}
-.install-left{display:flex;align-items:center;gap:14px;}
-.install-icon{width:54px;height:54px;border-radius:16px;background:rgba(59,130,246,.15);display:flex;align-items:center;justify-content:center;font-size:24px;color:#3B82F6;}
-.install-title{font-size:16px;font-weight:800;color:var(--text);}
-.install-sub{font-size:12px;color:var(--muted);}
-.install-btn{padding:12px 20px;border:none;border-radius:14px;background:#22C55E;color:#07111F;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;}
+.install-left{display:flex;align-items:center;gap:12px;} /* SMALLER */
+.install-icon{width:48px;height:48px;border-radius:14px;background:rgba(59,130,246,.15);display:flex;align-items:center;justify-content:center;font-size:22px;color:#3B82F6;} /* SMALLER */
+.install-title{font-size:15px;font-weight:800;color:var(--text);} /* SMALLER */
+.install-sub{font-size:11px;color:var(--muted);} /* SMALLER */
+.install-btn{padding:10px 16px;border:none;border-radius:12px;background:#22C55E;color:#07111F;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;} /* SMALLER */
 .install-btn:hover{filter:brightness(1.1);}
 
 /* SECTION TITLE */
-.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:0 4px;}
-.section-title h3{color:#f6c443;font-size:18px;font-weight:800;}
-.section-title span{color:#f6c443;font-weight:700;font-size:12px;}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;padding:0 4px;} /* SMALLER */
+.section-title h3{color:#f6c443;font-size:16px;font-weight:800;} /* SMALLER */
+.section-title span{color:#f6c443;font-weight:700;font-size:11px;} /* SMALLER */
 
 /* MENU */
-.menu-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:20px;padding:16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;cursor:pointer;box-shadow:var(--shadow);transition:.3s;}
+.menu-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:18px;padding:14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;cursor:pointer;box-shadow:var(--shadow);transition:.3s;} /* SMALLER */
 .menu-card:hover{border-color:var(--green);box-shadow:var(--glow);}
-.menu-left{display:flex;align-items:center;gap:14px;}
-.menu-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.menu-left{display:flex;align-items:center;gap:12px;} /* SMALLER */
+.menu-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;} /* SMALLER */
 .pink{background:rgba(236,72,153,.15);color:#EC4899;}
 .purple{background:rgba(168,85,247,.15);color:#A855F7;}
 .blue{background:rgba(59,130,246,.15);color:#3B82F6;}
 .green{background:rgba(34,197,94,.15);color:#22C55E;}
 .orange{background:rgba(249,115,22,.15);color:#F97316;}
 .red{background:rgba(239,68,68,.15);color:#EF4444;} /* ADDED */
-.menu-title{font-size:16px;font-weight:800;color:var(--text);}
-.menu-sub{font-size:12px;color:var(--muted);margin-top:3px;}
-.arrow{font-size:18px;color:#64748B;}
+.menu-title{font-size:15px;font-weight:800;color:var(--text);} /* SMALLER */
+.menu-sub{font-size:11px;color:var(--muted);margin-top:2px;} /* SMALLER */
+.arrow{font-size:16px;color:#64748B;} /* SMALLER */
 
 /* SOCIAL */
-.social-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px;}
-.social-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:20px;padding:18px;text-align:center;cursor:pointer;box-shadow:var(--shadow);transition:.3s;}
+.social-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px;} /* SMALLER */
+.social-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:18px;padding:16px;text-align:center;cursor:pointer;box-shadow:var(--shadow);transition:.3s;} /* SMALLER */
 .social-card:hover{border-color:var(--green);box-shadow:var(--glow);}
-.social-card i{font-size:28px;margin-bottom:10px;}
+.social-card i{font-size:24px;margin-bottom:8px;} /* SMALLER */
 .support{color:#F97316;}
 .channel{color:#3B82F6;}
 .community{color:#22C55E;}
-.social-card p{color:var(--text);font-weight:800;font-size:12px;letter-spacing:1px;}
+.social-card p{color:var(--text);font-weight:800;font-size:11px;letter-spacing:1px;} /* SMALLER */
 
-#logoutBtn{background:#EF4444;color:#fff;border:none;padding:14px 20px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.3s;width:100%;margin-top:10px;}
+#logoutBtn{background:#EF4444;color:#fff;border:none;padding:12px 18px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.3s;width:100%;margin-top:10px;} /* SMALLER */
 #logoutBtn:hover{background:#DC2626;transform:translateY(-2px);}
 
-/* BOTTOM NAV - SAME AS MACHINES PAGE */
+/* BOTTOM NAV - SAME AS MACHINES PAGE - UNTOUCHED */
 .bottom-nav{
 position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:540px;height:74px;
 background:rgba(8,16,32,.9);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;
@@ -117,8 +117,8 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
 </div>
 
 <div class="stats">
-<div class="stat-card"><div class="stat-icon wallet-icon"><i class="fa-solid fa-wallet"></i></div><div><div class="stat-title">Wallet</div><div class="stat-value">UGX <span id="walletBalance">0</span></div></div></div>
-<div class="stat-card"><div class="stat-icon earn-icon"><i class="fa-solid fa-arrow-trend-up"></i></div><div><div class="stat-title">Total Earnings</div><div class="stat-value">UGX <span id="totalEarnings">0</span></div></div></div>
+<div class="stat-card"><div class="stat-icon wallet-icon"><i class="fa-solid fa-wallet"></i></div><div><div class="stat-title">Wallet</div><div class="stat-value" id="walletBalance">UGX 0</div></div></div> <!-- 1 LINE -->
+<div class="stat-card"><div class="stat-icon earn-icon"><i class="fa-solid fa-arrow-trend-up"></i></div><div><div class="stat-title">Total Earnings</div><div class="stat-value" id="totalEarnings">UGX 0</div></div></div> <!-- 1 LINE -->
 </div>
 
 <div class="install-card"><div class="install-left"><div class="install-icon"><i class="fa-solid fa-mobile-screen"></i></div><div><div class="install-title">Download SenteBot App</div><div class="install-sub">Install for fast access & alerts</div></div></div><button class="install-btn"><i class="fa-solid fa-download"></i>Install</button></div>
@@ -128,7 +128,7 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
 <div class="menu-card" id="transactionsBtn"><div class="menu-left"><div class="menu-icon pink"><i class="fa-solid fa-receipt"></i></div><div><div class="menu-title">All Transactions</div><div class="menu-sub">View complete deposit & withdrawal history</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-right"></i></div></div>
 <div class="menu-card" id="changePasswordBtn"><div class="menu-left"><div class="menu-icon purple"><i class="fa-solid fa-lock"></i></div><div><div class="menu-title">Change Password</div><div class="menu-sub">Update account security credentials</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-down"></i></div></div>
 <div class="menu-card" id="giftCodeBtn"><div class="menu-left"><div class="menu-icon blue"><i class="fa-solid fa-gift"></i></div><div><div class="menu-title">Gift Code</div><div class="menu-sub">Redeem promotional cash reward vouchers</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-down"></i></div></div>
-<div class="menu-card"><div class="menu-left"><div class="menu-icon green"><i class="fa-solid fa-building"></i></div><div><div class="menu-title">About Us</div><div class="menu-sub">Learn more about SenteBot technology</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-down"></i></div></div>
+<div class="menu-card" id="aboutBtn"><div class="menu-left"><div class="menu-icon green"><i class="fa-solid fa-building"></i></div><div><div class="menu-title">About Us</div><div class="menu-sub">Learn more about SenteBot technology</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-down"></i></div></div> <!-- ADDED ID -->
 <div class="menu-card" id="supportBtn"><div class="menu-left"><div class="menu-icon orange"><i class="fa-solid fa-headset"></i></div><div><div class="menu-title">Customer Support</div><div class="menu-sub">Get 24/7 live assistance</div></div></div><div class="arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div></div>
 
 <!-- ADMIN PANEL BUTTON - HIDDEN BY DEFAULT -->
@@ -207,8 +207,8 @@ onValue(ref(db,"users/"+user.uid),snapshot=>{
 if(!snapshot.exists()) return;
 const data=snapshot.val();
 document.getElementById("phone").textContent=data.phone||"-";
-document.getElementById("walletBalance").textContent=Number(data.balance||0).toLocaleString();
-document.getElementById("totalEarnings").textContent = Number(data.referralEarnings || 0).toLocaleString();
+document.getElementById("walletBalance").textContent="UGX " + Number(data.balance||0).toLocaleString(); // 1 LINE
+document.getElementById("totalEarnings").textContent = "UGX " + Number(data.referralEarnings || 0).toLocaleString(); // 1 LINE
 document.getElementById("refCode").textContent=data.referralCode||user.uid.substring(0,8);
 
 /* ---------- FIX: ADMIN PANEL - ONLY FOR YOU ---------- */
@@ -221,6 +221,11 @@ if(user.uid === "AQ1kRn34wlSGu0MPQfvRLXfmbqA3" || data.isAdmin === true){
 /* ---------- ADMIN PANEL CLICK ---------- */
 document.getElementById("adminPanelBtn").onclick = () => {
     window.location.href = "admin.html";
+};
+
+/* ---------- ABOUT US CLICK ---------- */
+document.getElementById("aboutBtn").onclick = () => {
+    window.location.href = "about.html";
 };
 
 /* ---------- Copy Referral - FIXED FOR IOS ---------- */
@@ -320,4 +325,4 @@ document.querySelector(".social-card:nth-child(3)").onclick = () => {
 .modal-buttons button:last-child{background:#22C55E;color:#fff;}
 </style>
 </body>
-                         </html>
+</html>
