@@ -305,28 +305,29 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const user = userCredential.user;
     await updateProfile(user, { displayName: username });
     
+    // FIXED: REMOVED DUPLICATE await set
     await set(ref(db, "users/" + user.uid), {
-    await set(ref(db, "users/" + user.uid), {
-  username, 
-  phone: fullPhone, 
-  email, 
-  balance: 0, 
-  todayProfit: 0,
-  referralEarnings: 0, 
-  totalEarnings: 0, 
-  checkinDays: 0, 
-  activeMachines: 0,
-  teamCount: 0, 
-  machines: {}, 
-  activities: {}, 
-  createdAt: Date.now(),
-  status: "active", 
-  referrer: referrerUid, 
-  referralCode: myReferralCode,
-  referralClaimed: false, // NEW: so we only pay bonus once
-  lastActive: Date.now() // NEW: for activeToday/activeWeek later
-});
-await set(phoneRef, { uid: user.uid });
+      username, 
+      phone: fullPhone, 
+      email, 
+      balance: 0, 
+      todayProfit: 0,
+      referralEarnings: 0, 
+      totalEarnings: 0, 
+      checkinDays: 0, 
+      activeMachines: 0,
+      teamCount: 0, 
+      machines: {}, 
+      activities: {}, 
+      createdAt: Date.now(),
+      status: "active", 
+      referrer: referrerUid, 
+      referralCode: myReferralCode,
+      referralClaimed: false, // NEW
+      lastActive: Date.now() // NEW
+    });
+    await set(phoneRef, { uid: user.uid });
+
     if(referrerUid !== ""){
       const referrerRef = ref(db, "users/" + referrerUid);
       const refSnap = await get(referrerRef);
@@ -373,6 +374,6 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     setLoading(btn, false);
   }
 });
-</script>
+ </script>
 </body>
 </html>
