@@ -15,9 +15,9 @@
   --glow-cyan:0 0 25px rgba(0,209,255,.25);--glow-green:0 0 25px rgba(0,230,118,.25);
 }
 body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),transparent 60%),linear-gradient(180deg,#050A18,#070B14);color:var(--text);min-height:100vh;padding-bottom:120px;}
-.container{max-width:540px;margin:auto;padding:16px;} /* reduced padding */
+.container{max-width:540px;margin:auto;padding:16px;}
 
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;} /* reduced */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
 .back-btn{width:42px;height:42px;border-radius:14px;background:rgba(0,209,255,.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;}
 .page-title{text-align:center;flex:1;}
 .page-title h2{font-size:20px;font-weight:800;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
@@ -26,11 +26,11 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 .balance-card{background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));border-radius:22px;padding:20px;border:1px solid var(--border);box-shadow:var(--glow-cyan);margin-bottom:16px;position:relative;overflow:hidden;backdrop-filter:blur(16px);}
 .balance-card::before{content:"";position:absolute;inset:0;border-radius:22px;padding:1px;background:linear-gradient(130deg,var(--cyan),transparent 40%,var(--green));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.6;}
 .balance-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
-.balance-value{font-size:28px;font-weight:800;margin:8px 0;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;} /* reduced + nowrap */
+.balance-value{font-size:28px;font-weight:800;margin:8px 0;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;}
 .balance-stats{display:flex;gap:12px;margin-top:14px;}
 .stat-box{flex:1;background:rgba(0,0,0,.25);padding:10px;border-radius:12px;border:1px solid var(--border);}
 .stat-box small{color:var(--muted);font-size:10px;}
-.stat-box strong{font-size:13px;font-weight:800;white-space:nowrap;} /* force 1 line */
+.stat-box strong{font-size:13px;font-weight:800;white-space:nowrap;}
 
 /* ACTION BUTTONS */
 .wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
@@ -39,10 +39,11 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 .withdraw{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--red);}
 .action-btn:active{transform:scale(.97);}
 
-/* TRANSACTION FILTER */
-.filter-tabs{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;}
-.filter-tab{padding:8px 16px;border-radius:30px;background:rgba(255,255,255,.04);border:1px solid var(--border);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
-.filter-tab.active{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;border:none;}
+/* TRANSACTION FILTER - BIGGER */
+.filter-tabs{display:flex;gap:10px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;}
+.filter-tab{padding:12px 20px;border-radius:30px;background:rgba(255,255,255,.04);border:1px solid var(--border);font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;transition:.2s;}
+.filter-tab:active{transform:scale(.96);}
+.filter-tab.active{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;border:none;box-shadow:var(--glow-cyan);}
 
 /* TRANSACTION LIST - AMOUNT IN 1 LINE */
 .tx-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:18px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;backdrop-filter:blur(14px);transition:.3s;}
@@ -51,10 +52,10 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 .tx-deposit{background:rgba(0,230,118,.15);color:var(--green);}
 .tx-withdraw{background:rgba(239,68,68,.15);color:var(--red);}
 .tx-machine{background:rgba(0,209,255,.15);color:var(--cyan);}
-.tx-info{flex:1;min-width:0;} /* min-width:0 for text-overflow */
+.tx-info{flex:1;min-width:0;}
 .tx-title{font-size:14px;font-weight:800;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .tx-time{font-size:11px;color:var(--muted);}
-.tx-amount{font-size:14px;font-weight:800;white-space:nowrap;margin-left:auto;flex-shrink:0;} /* KEY: force 1 line */
+.tx-amount{font-size:14px;font-weight:800;white-space:nowrap;margin-left:auto;flex-shrink:0;}
 .tx-amount.positive{color:var(--green);}
 .tx-amount.negative{color:var(--red);}
 
@@ -112,9 +113,9 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 
 <div class="bottom-nav">
 <div class="nav-item" onclick="window.location='dashboard.html'"><div class="nav-icon"><i class="fa-solid fa-house"></i></div><span>Home</span></div>
-<div class="nav-item active"><div class="nav-icon"><i class="fa-solid fa-users"></i></div><span>Team</span></div>
+<div class="nav-item" onclick="window.location='team.html'"><div class="nav-icon"><i class="fa-solid fa-users"></i></div><span>Team</span></div>
 <div class="nav-item" onclick="window.location='machines.html'"><div class="nav-icon"><i class="fa-solid fa-microchip"></i></div><span>Machines</span></div>
-<div class="nav-item" onclick="window.location='wallet.html'"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></div>
+<div class="nav-item active"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></div>
 <div class="nav-item" onclick="window.location='profile.html'"><div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
 </div>
 
@@ -140,7 +141,6 @@ let currentUser = null;
 let allTransactions = [];
 let currentFilter = "All";
 
-/* BLOCK ZOOM */
 let lastTouchEnd = 0;
 document.addEventListener('touchend', function (event) {
   const now = Date.now();
@@ -148,7 +148,6 @@ document.addEventListener('touchend', function (event) {
   lastTouchEnd = now;
 }, { passive: false });
 
-/* TOAST */
 function showToast(message){
     const toast=document.getElementById("toast");
     toast.textContent=message;
@@ -156,17 +155,15 @@ function showToast(message){
     setTimeout(()=>{toast.style.display="none";},3000);
 }
 
-/* AUTH */
 onAuthStateChanged(auth,(user)=>{
     if(!user){window.location.href="index.html";return;}
     currentUser = user;
     loadWallet();
 });
 
-/* LOAD WALLET DATA REALTIME */
 function loadWallet(){
     const userRef = ref(db,"users/" + currentUser.uid);
-    onValue(userRef,(snapshot)=>{ // REALTIME: fires on every DB change
+    onValue(userRef,(snapshot)=>{
         if(!snapshot.exists()) return;
         const data = snapshot.val();
 
@@ -180,7 +177,6 @@ function loadWallet(){
     });
 }
 
-/* RENDER TRANSACTIONS */
 function renderTransactions(){
     const container = document.getElementById("transactionList");
     let txs = allTransactions;
@@ -226,7 +222,6 @@ function renderTransactions(){
     });
 }
 
-/* FILTER TABS */
 document.querySelectorAll(".filter-tab").forEach(tab => {
     tab.addEventListener("click", () => {
         document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
@@ -237,4 +232,4 @@ document.querySelectorAll(".filter-tab").forEach(tab => {
 });
 </script>
 </body>
-                                                                                                                                 </html>
+                  </html>
