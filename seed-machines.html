@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SenteBot Machine Seeder</title>
+<style>
+body{font-family:Inter, sans-serif;background:#0a0f1a;color:#fff;padding:40px;text-align:center}
+button{background:#22C55E;color:#07111F;border:none;padding:14px 28px;border-radius:12px;font-weight:800;font-size:16px;cursor:pointer}
+button:active{transform:scale(.97)}
+#status{margin-top:20px;font-size:14px;color:#94A3B8}
+</style>
+</head>
+<body>
+
+<h2>SenteBot Machine Seeder</h2>
+<p>This will create 20 machines in Firebase Realtime Database</p>
+
+<button onclick="seedMachines()">
+Create 20 Machines
+</button>
+
+<p id="status"></p>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
+  authDomain: "sentebot-7428b.firebaseapp.com",
+  databaseURL: "https://sentebot-7428b-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "sentebot-7428b",
+  storageBucket: "sentebot-7428b.firebasestorage.app",
+  messagingSenderId: "24568208668",
+  appId: "1:24568208668:web:e01e4001149dfa93eeaed9"
+};
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+
+window.seedMachines=async()=>{
+
+document.getElementById("status").innerHTML="⏳ Creating machines...";
+
+const machines=[
+
+{id:"machine1",name:"Nano AI Miner",category:"Starter",price:20000,dailyProfit:2000,duration:20,totalReturn:60000,icon:"fa-solid fa-microchip"},
+{id:"machine2",name:"Crypto Seed Bot",category:"Starter",price:50000,dailyProfit:5000,duration:20,totalReturn:150000,icon:"fa-solid fa-robot"},
+{id:"machine3",name:"Quantum Mini",category:"Starter",price:100000,dailyProfit:10000,duration:20,totalReturn:300000,icon:"fa-solid fa-brain"},
+{id:"machine4",name:"Smart Trader X1",category:"Starter",price:200000,dailyProfit:20000,duration:20,totalReturn:600000,icon:"fa-solid fa-chart-line"},
+{id:"machine5",name:"Alpha Core",category:"Starter",price:350000,dailyProfit:35000,duration:20,totalReturn:1050000,icon:"fa-solid fa-cube"},
+{id:"machine6",name:"Profit Engine",category:"Starter",price:500000,dailyProfit:50000,duration:20,totalReturn:1500000,icon:"fa-solid fa-gears"},
+{id:"machine7",name:"Auto Signal AI",category:"Starter",price:750000,dailyProfit:75000,duration:20,totalReturn:2250000,icon:"fa-solid fa-satellite-dish"},
+{id:"machine8",name:"Neural Profit",category:"Starter",price:1000000,dailyProfit:100000,duration:20,totalReturn:3000000,icon:"fa-solid fa-network-wired"},
+{id:"machine9",name:"Quantum Pro",category:"Starter",price:1500000,dailyProfit:150000,duration:20,totalReturn:4500000,icon:"fa-solid fa-bolt"},
+{id:"machine10",name:"Titan Miner",category:"Starter",price:2000000,dailyProfit:200000,duration:20,totalReturn:6000000,icon:"fa-solid fa-server"},
+{id:"machine11",name:"Galaxy Engine",category:"High Yield",price:2500000,dailyProfit:250000,duration:20,totalReturn:7500000,icon:"fa-solid fa-globe"},
+{id:"machine12",name:"Infinity AI",category:"High Yield",price:3000000,dailyProfit:300000,duration:20,totalReturn:9000000,icon:"fa-solid fa-infinity"},
+{id:"machine13",name:"Ultra Matrix",category:"High Yield",price:5000000,dailyProfit:500000,duration:20,totalReturn:15000000,icon:"fa-solid fa-layer-group"},
+{id:"machine14",name:"Diamond Node",category:"High Yield",price:7500000,dailyProfit:750000,duration:20,totalReturn:22500000,icon:"fa-solid fa-gem"},
+{id:"machine15",name:"Elite Quantum",category:"High Yield",price:10000000,dailyProfit:1000000,duration:20,totalReturn:30000000,icon:"fa-solid fa-crown"},
+{id:"machine16",name:"Hyper Chain",category:"High Yield",price:12000000,dailyProfit:1200000,duration:20,totalReturn:36000000,icon:"fa-solid fa-link"},
+{id:"machine17",name:"Neural Max",category:"High Yield",price:14000000,dailyProfit:1400000,duration:20,totalReturn:42000000,icon:"fa-solid fa-shield-halved"},
+{id:"machine18",name:"AI Master Core",category:"High Yield",price:16000000,dailyProfit:1600000,duration:20,totalReturn:48000000,icon:"fa-solid fa-atom"},
+{id:"machine19",name:"Ultimate Hash Pro",category:"High Yield",price:18000000,dailyProfit:1800000,duration:20,totalReturn:54000000,icon:"fa-solid fa-fire"},
+{id:"machine20",name:"SenteBot Supreme X",category:"High Yield",price:20000000,dailyProfit:2000000,duration:20,totalReturn:60000000,icon:"fa-solid fa-rocket"}
+
+];
+
+try {
+
+    for (const machine of machines) {
+
+        document.getElementById("status").innerHTML =
+            `Creating ${machine.name}...`;
+
+        await set(
+            ref(db, "machines/" + machine.id),
+            machine
+        );
+
+    }
+
+    document.getElementById("status").innerHTML =
+        "✅ Successfully created all 20 machines in Realtime Database.";
+
+} catch (e) {
+
+    console.error(e);
+
+    document.getElementById("status").innerHTML =
+        "❌ Error: " + e.message;
+
+}
+
+};
+</script>
+
+</body>
+</html>
