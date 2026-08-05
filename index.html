@@ -161,21 +161,25 @@
   </div>
 
  <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
-  getAuth,
-  onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile
+getAuth,
+onAuthStateChanged,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 import {
-  getDatabase,
-  ref,
-  set,
-  get,
-  update
+getDatabase,
+ref,
+set,
+get,
+update
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
@@ -187,206 +191,533 @@ const firebaseConfig = {
   appId: "1:24568208668:web:e01e4001149dfa93eeaed9"
 };
 
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
-const PHONE_SUFFIX = "@sentebot.app";
 
-/* Auto redirect */
-onAuthStateChanged(auth, (user) => {
-    if (user) { window.location.href = "dashboard.html"; }
+const PHONE_SUFFIX="@sentebot.app";
+
+
+
+onAuthStateChanged(auth,(user)=>{
+ if(user){
+   window.location.href="dashboard.html";
+ }
 });
 
-/* Show/Hide Login Password */
-const loginToggle = document.getElementById("toggleLoginPassword");
-const loginPassword = document.getElementById("loginPassword");
-if (loginToggle && loginPassword) {
-    loginToggle.addEventListener("click", () => {
-        loginPassword.type = loginPassword.type === "password" ? "text" : "password";
-        loginToggle.classList.toggle("fa-eye-slash");
-    });
+
+
+function showMessage(el,text,type){
+
+ el.textContent=text;
+ el.className="message "+type;
+ el.style.display="block";
+
+ setTimeout(()=>{
+  el.style.display="none";
+ },5000);
+
 }
 
-/* Show/Hide Register Password - NEW */
-const regToggle = document.getElementById("toggleRegisterPassword");
-const regPassword = document.getElementById("registerPassword");
-if (regToggle && regPassword) {
-    regToggle.addEventListener("click", () => {
-        regPassword.type = regPassword.type === "password" ? "text" : "password";
-        regToggle.classList.toggle("fa-eye-slash");
-    });
+
+
+function setLoading(btn,state){
+
+ btn.disabled=state;
+
+ btn.textContent =
+ state ? "Please wait..." : btn.dataset.text;
+
 }
 
-/* Show/Hide Confirm Password - NEW */
-const regConfirmToggle = document.getElementById("toggleRegisterConfirm");
-const regConfirmPassword = document.getElementById("registerConfirmPassword");
-if (regConfirmToggle && regConfirmPassword) {
-    regConfirmToggle.addEventListener("click", () => {
-        regConfirmPassword.type = regConfirmPassword.type === "password" ? "text" : "password";
-        regConfirmToggle.classList.toggle("fa-eye-slash");
-    });
+
+
+function formatPhone(phone){
+ return "+256"+phone;
 }
 
-/* Tab switching */
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    const form = e.target.dataset.form;
-    document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(form + 'Form').classList.add('active');
-    e.target.classList.add('active');
-  });
+
+function phoneToEmail(phone){
+ return formatPhone(phone)+PHONE_SUFFIX;
+}
+
+
+function generateRefCode(){
+
+ return "SB"+Math.random()
+ .toString(36)
+ .substring(2,8)
+ .toUpperCase();
+
+}
+
+
+
+document.querySelectorAll(".btn")
+.forEach(btn=>{
+ btn.dataset.text=btn.textContent;
 });
 
-   function showMessage(el, text, type) {
-  el.textContent = text;
-  el.className = 'message ' + type;
-  el.style.display = 'block';
-  setTimeout(() => el.style.display = 'none', 5000);
-}
 
-function setLoading(btn, loading) {
-  btn.disabled = loading;
-  btn.textContent = loading ? 'Please wait...' : btn.dataset.text;
-}
 
-function formatPhone(phone) { return `+256${phone}`; }
-function phoneToEmail(phone) { return `${formatPhone(phone)}${PHONE_SUFFIX}`; }
-function generateRefCode(){ return "SB" + Math.random().toString(36).substring(2,8).toUpperCase(); }
+// PASSWORD TOGGLE
 
-document.querySelectorAll('.btn').forEach(b => b.dataset.text = b.textContent);
+[
+["toggleLoginPassword","loginPassword"],
+["toggleRegisterPassword","registerPassword"],
+["toggleRegisterConfirm","registerConfirmPassword"]
 
-/* REGISTER - RTDB WITH CONFIRM PASSWORD + REFERRAL */
-document.getElementById('registerForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const btn = document.getElementById('registerBtn');
-  setLoading(btn, true);
-  const username = document.getElementById('registerUsername').value.trim();
-  const phone = document.getElementById('registerPhone').value.trim();
-  const password = document.getElementById('registerPassword').value;
-  const confirmPassword = document.getElementById('registerConfirmPassword').value;
-  const refInput = document.getElementById('referralInput').value.trim().toUpperCase();
-  const msgEl = document.getElementById('registerMessage');
+].forEach(item=>{
 
-  if(!/^[0-9]{9}$/.test(phone)) {
-    showMessage(msgEl, 'Enter 9 digits after +256', 'error');
-    setLoading(btn, false); return;
-  }
-  if(password !== confirmPassword){
-    showMessage(msgEl, 'Passwords do not match', 'error');
-    setLoading(btn, false); return;
-  }
-  if(password.length < 6){
-    showMessage(msgEl, 'Password must be at least 6 characters', 'error');
-    setLoading(btn, false); return;
-  }
+ const icon=document.getElementById(item[0]);
+ const input=document.getElementById(item[1]);
 
-  const email = phoneToEmail(phone);
-  const fullPhone = formatPhone(phone);
-  const myReferralCode = generateRefCode();
+ if(icon && input){
 
-  try {
-    const phoneRef = ref(db, "phones/" + fullPhone);
-    const phoneSnap = await get(phoneRef);
-    if(phoneSnap.exists()) throw new Error("This phone number is already registered");
+ icon.onclick=()=>{
 
-    let referrerUid = "";
-    if(refInput !== ""){
-      if(refInput !== ""){
-    const referralSnap = await get(
-        ref(db,"referralCodes/" + refInput)
-    );
+ input.type =
+ input.type==="password"
+ ?"text"
+ :"password";
 
-    if(!referralSnap.exists()){
-        throw new Error("Invalid referral code");
-    }
+ icon.classList.toggle("fa-eye-slash");
 
-    referrerUid = referralSnap.val().uid;
-   }
-      if(referrerUid === "") throw new Error("Invalid referral code");
-    }
+ };
 
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    await updateProfile(user, { displayName: username });
-    
-    // FIXED: REMOVED DUPLICATE await set
-    await set(ref(db, "users/" + user.uid), {
-      username, 
-      phone: fullPhone, 
-      email, 
-      balance: 0, 
-      todayProfit: 0,
-      referralEarnings: 0, 
-      totalEarnings: 0, 
-      checkinDays: 0, 
-      activeMachines: 0,
-      teamCount: 0, 
-      machines: {}, 
-      activities: {}, 
-      createdAt: Date.now(),
-      status: "active", 
-      referrer: referrerUid, 
-      referralCode: myReferralCode,
-      referralClaimed: false, // NEW
-      lastActive: Date.now() // NEW
-    });
-    await set(phoneRef, { uid: user.uid });
+ }
 
-    if(referrerUid !== ""){
-      const referrerRef = ref(db, "users/" + referrerUid);
-      const refSnap = await get(referrerRef);
-      const refData = refSnap.val();
-      await update(referrerRef, {
-        teamCount: Number(refData.teamCount || 0) + 1
-      });
-    }
-
-    showMessage(msgEl, 'Account created successfully!', 'success');
-    document.getElementById('registerForm').reset();
-    setTimeout(() => document.querySelector('.tab[data-form="login"]').click(), 1000);
-  } catch (error) {
-    console.error(error);
-    showMessage(msgEl, error.message.replace('Firebase: ', ''), 'error');
-  } finally {
-    setLoading(btn, false);
-  }
 });
-   await set(
-    ref(db,"referralCodes/" + myReferralCode),
-    {
-        uid:user.uid,
-        username:username,
-        createdAt:Date.now()
-    }
+
+
+
+// TABS
+
+document.querySelectorAll(".tab")
+.forEach(btn=>{
+
+btn.onclick=(e)=>{
+
+const form=e.target.dataset.form;
+
+document.querySelectorAll(".form")
+.forEach(f=>f.classList.remove("active"));
+
+document.querySelectorAll(".tab")
+.forEach(t=>t.classList.remove("active"));
+
+document.getElementById(form+"Form")
+.classList.add("active");
+
+e.target.classList.add("active");
+
+};
+
+});
+
+
+
+
+// REGISTER
+
+
+document.getElementById("registerForm")
+.addEventListener("submit",async(e)=>{
+
+e.preventDefault();
+
+
+const btn=document.getElementById("registerBtn");
+setLoading(btn,true);
+
+
+const username =
+document.getElementById("registerUsername")
+.value.trim();
+
+
+const phone =
+document.getElementById("registerPhone")
+.value.trim();
+
+
+const password =
+document.getElementById("registerPassword")
+.value;
+
+
+const confirmPassword =
+document.getElementById("registerConfirmPassword")
+.value;
+
+
+const referralInput =
+document.getElementById("referralInput")
+.value.trim()
+.toUpperCase();
+
+
+const msg =
+document.getElementById("registerMessage");
+
+
+
+try{
+
+
+if(!/^[0-9]{9}$/.test(phone))
+throw Error("Enter valid phone number");
+
+
+if(password!==confirmPassword)
+throw Error("Passwords do not match");
+
+
+if(password.length<6)
+throw Error("Password minimum is 6 characters");
+
+
+
+const fullPhone=formatPhone(phone);
+const email=phoneToEmail(phone);
+
+
+
+/*
+ CHECK PHONE
+*/
+
+const phoneCheck=
+await get(ref(db,"phones/"+fullPhone));
+
+
+if(phoneCheck.exists())
+throw Error("Phone already registered");
+
+
+
+/*
+ CHECK REFERRAL
+*/
+
+
+let referrerUid="";
+
+
+if(referralInput!==""){
+
+
+const refSnap=
+await get(ref(db,"referralCodes/"+referralInput));
+
+
+if(!refSnap.exists())
+throw Error("Invalid referral code");
+
+
+referrerUid=refSnap.val().uid;
+
+
+}
+
+
+
+
+/*
+ CREATE ACCOUNT
+*/
+
+
+const credential=
+await createUserWithEmailAndPassword(
+auth,
+email,
+password
 );
 
-/* LOGIN - RTDB */
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const btn = document.getElementById('loginBtn');
-  setLoading(btn, true);
-  const phone = document.getElementById('loginPhone').value.trim();
-  const password = document.getElementById('loginPassword').value;
-  const msgEl = document.getElementById('loginMessage');
 
-  if(!/^[0-9]{9}$/.test(phone)) {
-    showMessage(msgEl, 'Enter 9 digits after +256', 'error');
-    setLoading(btn, false); return;
-  }
+const user=credential.user;
 
-  const email = phoneToEmail(phone);
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    showMessage(msgEl, 'Login successful! Redirecting...', 'success');
-    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
-  } catch (error) {
-    console.error(error);
-    showMessage(msgEl, 'Invalid phone or password', 'error');
-  } finally {
-    setLoading(btn, false);
-  }
+
+
+await updateProfile(user,{
+displayName:username
 });
- </script>
+
+
+
+const myReferralCode=
+generateRefCode();
+
+
+
+
+
+/*
+ SAVE USER
+*/
+
+
+await set(
+ref(db,"users/"+user.uid),
+{
+
+username,
+
+phone:fullPhone,
+
+email,
+
+balance:0,
+
+todayProfit:0,
+
+referralEarnings:0,
+
+totalEarnings:0,
+
+checkinDays:0,
+
+activeMachines:0,
+
+teamCount:0,
+
+machines:{},
+
+activities:{},
+
+createdAt:Date.now(),
+
+status:"active",
+
+referrer:referrerUid,
+
+referralCode:myReferralCode,
+
+referralClaimed:false,
+
+lastActive:Date.now()
+
+}
+
+);
+
+
+
+
+
+/*
+ SAVE PHONE LOCK
+*/
+
+
+await set(
+ref(db,"phones/"+fullPhone),
+{
+uid:user.uid
+}
+
+);
+
+
+
+
+
+/*
+ SAVE REFERRAL LOOKUP
+*/
+
+
+await set(
+ref(db,"referralCodes/"+myReferralCode),
+{
+
+uid:user.uid,
+
+username,
+
+createdAt:Date.now()
+
+}
+
+);
+
+
+
+
+
+/*
+ UPDATE REFERRER TEAM COUNT
+*/
+
+
+if(referrerUid){
+
+
+const refUser=
+ref(db,"users/"+referrerUid);
+
+
+const snap=
+await get(refUser);
+
+
+const old =
+snap.val()?.teamCount || 0;
+
+
+await update(
+refUser,
+{
+teamCount:Number(old)+1
+}
+);
+
+
+}
+
+
+
+
+showMessage(
+msg,
+"Account created successfully!",
+"success"
+);
+
+
+document.getElementById("registerForm")
+.reset();
+
+
+setTimeout(()=>{
+
+document.querySelector(
+'.tab[data-form="login"]'
+).click();
+
+},1000);
+
+
+
+}
+
+catch(error){
+
+console.error(error);
+
+showMessage(
+msg,
+error.message,
+"error"
+);
+
+}
+
+finally{
+
+setLoading(btn,false);
+
+}
+
+
+});
+
+
+
+
+
+
+
+// LOGIN
+
+
+document.getElementById("loginForm")
+.addEventListener("submit",async(e)=>{
+
+
+e.preventDefault();
+
+
+const btn=
+document.getElementById("loginBtn");
+
+
+setLoading(btn,true);
+
+
+
+const phone=
+document.getElementById("loginPhone")
+.value.trim();
+
+
+const password=
+document.getElementById("loginPassword")
+.value;
+
+
+
+const msg=
+document.getElementById("loginMessage");
+
+
+
+try{
+
+
+if(!/^[0-9]{9}$/.test(phone))
+throw Error("Invalid phone");
+
+
+await signInWithEmailAndPassword(
+auth,
+phoneToEmail(phone),
+password
+);
+
+
+
+showMessage(
+msg,
+"Login successful!",
+"success"
+);
+
+
+
+setTimeout(()=>{
+
+window.location.href="dashboard.html";
+
+},1000);
+
+
+
+}
+
+catch(error){
+
+showMessage(
+msg,
+"Invalid phone or password",
+"error"
+);
+
+}
+
+finally{
+
+setLoading(btn,false);
+
+}
+
+
+});
+
+
+
+  </script>
 </body>
 </html>
