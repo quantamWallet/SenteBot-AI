@@ -12,80 +12,46 @@
       --green:#00E676;--cyan:#00D1FF;--green-dark:#16A34A;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-
     body {
       background: radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),transparent 60%),linear-gradient(180deg,#050A18,#070B14);
       min-height: 100vh; color: var(--text);
-      overflow-x:hidden; overflow-y:hidden; /* prevent scroll */
+      overflow-x:hidden; overflow-y:hidden;
     }
-
-   .wrap{
-      display:flex;justify-content:center;align-items:center;gap:30px;
-      min-height:100vh;padding:16px;flex-wrap:wrap;
-    }
-
-   .brand{text-align:center;padding:12px 0;max-width:400px;} /* reduced padding from 20px */
-   .logo{
-      width:85px;height:85px;margin:0 auto 12px;border-radius:22px; /* WAS 120px -> NOW 85px */
-      background:linear-gradient(135deg,#00D1FF,#00E676);
-      box-shadow:0 0 25px rgba(0,209,255,.4); /* reduced glow */
-      display:flex;align-items:center;justify-content:center;overflow:hidden;
-      border:2px solid rgba(0,209,255,.3);
-    }
-   .logo img{width:100%;height:100%;object-fit:cover;}
-   .brand h1{
-      font-size:26px;font-weight:800;margin-bottom:4px; /* -2px */
-      background:linear-gradient(90deg,#fff,#00D1FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    }
-   .brand p{color:#94A3B8;font-size:13px;font-weight:600;} /* -1px */
-
-   .card {
-      background: linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));
-      border: 1px solid var(--border);
-      backdrop-filter: blur(16px);
-      border-radius: 20px;
-      padding: 6px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-      width:100%;max-width:380px;
-    }
-   .tabs { display: flex; gap: 6px; padding: 5px; background: rgba(0,0,0,0.2); border-radius: 14px; margin-bottom: 14px; }
-   .tab { flex: 1; padding: 10px; border-radius: 10px; background: transparent; border: none; color: var(--muted); font-weight: 700; cursor: pointer; transition:.2s; font-size:14px; }
-   .tab.active { background: linear-gradient(90deg,var(--cyan),var(--green)); color: #05121A; }
-   .form { display: none; }
-   .form.active { display: block; padding: 0 14px 12px; }
-   .input-group { margin-bottom: 10px; }
-   .input-group label { display: block; margin-bottom: 4px; font-size: 12px; color: var(--muted); font-weight:600; }
-   .input-wrap { display: flex; align-items: center; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 12px; padding: 0 12px; height:44px; }
-   .input-wrap .prefix { color: var(--muted); font-weight: 700; padding-right: 8px; border-right: 1px solid var(--border); margin-right: 8px; font-size:13px; }
-   .input-wrap input { width: 100%; padding: 10px 4px; background: transparent; border: none; outline: none; color: var(--text); font-size: 14px; font-weight:600; }
-   .input-wrap:focus-within { border-color: var(--cyan); box-shadow:0 0 10px rgba(0,209,255,.2); }
-   .btn { width: 100%; padding: 12px; margin-top: 6px; background: linear-gradient(90deg,var(--cyan),var(--green)); color: #051b0a; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; transition:.2s; }
-   .btn:hover { transform: translateY(-1px); box-shadow:0 0 15px rgba(0,209,255,.35); }
-   .btn:disabled { opacity:.6; cursor: not-allowed; }
-   .message { margin-top: 8px; padding: 8px 10px; border-radius: 8px; font-size: 13px; display: none; font-weight:600; }
-   .message.success { background: rgba(0,230,118,.15); color: var(--green); border: 1px solid rgba(0,230,118,.3); }
-   .message.error { background: rgba(239,68,68,.15); color: #F87171; border: 1px solid rgba(239,68,68,.3); }
-   .footer-note { text-align: center; margin-top: 10px; font-size: 11px; color: var(--muted); }
-
-   .input-wrap i{
-        color:#94A3B8;
-        cursor:pointer;
-        font-size:16px;
-        padding-left:8px;
-    }
-   .input-wrap i:hover{
-        color:#22C55E;
-    }
-
+ .wrap{ display:flex;justify-content:center;align-items:center;gap:30px; min-height:100vh;padding:16px;flex-wrap:wrap; }
+ .brand{text-align:center;padding:12px 0;max-width:400px;}
+ .logo{ width:85px;height:85px;margin:0 auto 12px;border-radius:22px; background:linear-gradient(135deg,#00D1FF,#00E676); box-shadow:0 0 25px rgba(0,209,255,.4); display:flex;align-items:center;justify-content:center;overflow:hidden; border:2px solid rgba(0,209,255,.3); }
+ .logo img{width:100%;height:100%;object-fit:cover;}
+ .brand h1{ font-size:26px;font-weight:800;margin-bottom:4px; background:linear-gradient(90deg,#fff,#00D1FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent; }
+ .brand p{color:#94A3B8;font-size:13px;font-weight:600;}
+ .card { background: linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9)); border: 1px solid var(--border); backdrop-filter: blur(16px); border-radius: 20px; padding: 6px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); width:100%;max-width:380px; }
+ .tabs { display: flex; gap: 6px; padding: 5px; background: rgba(0,0,0,0.2); border-radius: 14px; margin-bottom: 14px; }
+ .tab { flex: 1; padding: 10px; border-radius: 10px; background: transparent; border: none; color: var(--muted); font-weight: 700; cursor: pointer; transition:.2s; font-size:14px; }
+ .tab.active { background: linear-gradient(90deg,var(--cyan),var(--green)); color: #05121A; }
+ .form { display: none; }
+ .form.active { display: block; padding: 0 14px 12px; }
+ .input-group { margin-bottom: 10px; }
+ .input-group label { display: block; margin-bottom: 4px; font-size: 12px; color: var(--muted); font-weight:600; }
+ .input-wrap { display: flex; align-items: center; background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 12px; padding: 0 12px; height:44px; }
+ .input-wrap.prefix { color: var(--muted); font-weight: 700; padding-right: 8px; border-right: 1px solid var(--border); margin-right: 8px; font-size:13px; }
+ .input-wrap input { width: 100%; padding: 10px 4px; background: transparent; border: none; outline: none; color: var(--text); font-size: 14px; font-weight:600; }
+ .input-wrap:focus-within { border-color: var(--cyan); box-shadow:0 0 10px rgba(0,209,255,.2); }
+ .btn { width: 100%; padding: 12px; margin-top: 6px; background: linear-gradient(90deg,var(--cyan),var(--green)); color: #051b0a; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; transition:.2s; }
+ .btn:hover { transform: translateY(-1px); box-shadow:0 0 15px rgba(0,209,255,.35); }
+ .btn:disabled { opacity:.6; cursor: not-allowed; }
+ .message { margin-top: 8px; padding: 8px 10px; border-radius: 8px; font-size: 13px; display: none; font-weight:600; }
+ .message.success { background: rgba(0,230,118,.15); color: var(--green); border: 1px solid rgba(0,230,118,.3); }
+ .message.error { background: rgba(239,68,68,.15); color: #F87171; border: 1px solid rgba(239,68,68,.3); }
+ .footer-note { text-align: center; margin-top: 10px; font-size: 11px; color: var(--muted); }
+ .input-wrap i{ color:#94A3B8; cursor:pointer; font-size:16px; padding-left:8px; }
+ .input-wrap i:hover{ color:#22C55E; }
     @media(max-width:900px){
-     .wrap{flex-direction:column;gap:12px;padding:12px;} /* reduced gap */
-     .brand{padding:6px 0;}
-     .logo{width:75px;height:75px;} /* even smaller on mobile */
+   .wrap{flex-direction:column;gap:12px;padding:12px;}
+   .brand{padding:6px 0;}
+   .logo{width:75px;height:75px;}
     }
-                 </style>
+  </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-
 <body>
   <div class="wrap">
     <div class="brand">
@@ -95,14 +61,11 @@
         <h1>SenteBot-AI</h1>
         <p>AI-Powered Investment Platform</p>
     </div>
-
     <div class="card">
       <div class="tabs">
         <button class="tab active" data-form="login">Login</button>
         <button class="tab" data-form="register">Create Account</button>
       </div>
-
-      <!-- LOGIN -->
       <form id="loginForm" class="form active">
         <div class="input-group">
           <label>Phone Number</label>
@@ -121,8 +84,6 @@
         <button type="submit" class="btn" id="loginBtn">Login to Dashboard</button>
         <div id="loginMessage" class="message"></div>
       </form>
-
-      <!-- REGISTER -->
       <form id="registerForm" class="form">
         <div class="input-group">
           <label>Username</label>
@@ -162,28 +123,11 @@
       </form>
       <p class="footer-note">By joining you agree to SenteBot Terms & Risk Disclosure</p>
     </div>
-  </div> <!-- ONLY 1 closing div for wrap -->
-
- <script type="module">
-
+  </div>
+  <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-getAuth,
-onAuthStateChanged,
-createUserWithEmailAndPassword,
-signInWithEmailAndPassword,
-updateProfile
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-getDatabase,
-ref,
-set,
-get,
-update
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
@@ -194,527 +138,144 @@ const firebaseConfig = {
   messagingSenderId: "24568208668",
   appId: "1:24568208668:web:e01e4001149dfa93eeaed9"
 };
-
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
-
 const PHONE_SUFFIX="@sentebot.app";
 
-
+let isRegistering = false;
 
 onAuthStateChanged(auth,(user)=>{
- if(user){
+ if(user &&!isRegistering){
    window.location.href="dashboard.html";
  }
 });
 
-
-
 function showMessage(el,text,type){
-
  el.textContent=text;
  el.className="message "+type;
  el.style.display="block";
-
- setTimeout(()=>{
-  el.style.display="none";
- },5000);
-
+ setTimeout(()=>{ el.style.display="none"; },5000);
 }
-
-
 
 function setLoading(btn,state){
-
  btn.disabled=state;
-
- btn.textContent =
- state ? "Please wait..." : btn.dataset.text;
-
+ btn.textContent = state? "Please wait..." : btn.dataset.text;
 }
 
+function formatPhone(phone){ return "+256"+phone; }
+function phoneToEmail(phone){ return formatPhone(phone)+PHONE_SUFFIX; }
+function generateRefCode(){ return "SB"+Math.random().toString(36).substring(2,8).toUpperCase(); }
 
+document.querySelectorAll(".btn").forEach(btn=>{ btn.dataset.text=btn.textContent; });
 
-function formatPhone(phone){
- return "+256"+phone;
-}
-
-
-function phoneToEmail(phone){
- return formatPhone(phone)+PHONE_SUFFIX;
-}
-
-
-function generateRefCode(){
-
- return "SB"+Math.random()
- .toString(36)
- .substring(2,8)
- .toUpperCase();
-
-}
-
-
-
-document.querySelectorAll(".btn")
-.forEach(btn=>{
- btn.dataset.text=btn.textContent;
-});
-
-
-
-// PASSWORD TOGGLE
-
-[
-["toggleLoginPassword","loginPassword"],
-["toggleRegisterPassword","registerPassword"],
-["toggleRegisterConfirm","registerConfirmPassword"]
-
-].forEach(item=>{
-
+[["toggleLoginPassword","loginPassword"],["toggleRegisterPassword","registerPassword"],["toggleRegisterConfirm","registerConfirmPassword"]].forEach(item=>{
  const icon=document.getElementById(item[0]);
  const input=document.getElementById(item[1]);
-
  if(icon && input){
-
- icon.onclick=()=>{
-
- input.type =
- input.type==="password"
- ?"text"
- :"password";
-
- icon.classList.toggle("fa-eye-slash");
-
- };
-
+  icon.onclick=()=>{ input.type = input.type==="password"? "text" : "password"; icon.classList.toggle("fa-eye-slash"); };
  }
-
 });
 
-
-
-// TABS
-
-document.querySelectorAll(".tab")
-.forEach(btn=>{
-
+document.querySelectorAll(".tab").forEach(btn=>{
 btn.onclick=(e)=>{
-
 const form=e.target.dataset.form;
-
-document.querySelectorAll(".form")
-.forEach(f=>f.classList.remove("active"));
-
-document.querySelectorAll(".tab")
-.forEach(t=>t.classList.remove("active"));
-
-document.getElementById(form+"Form")
-.classList.add("active");
-
+document.querySelectorAll(".form").forEach(f=>f.classList.remove("active"));
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+document.getElementById(form+"Form").classList.add("active");
 e.target.classList.add("active");
-
 };
-
 });
 
-
-
-
-// REGISTER
-
-
-document.getElementById("registerForm")
-.addEventListener("submit",async(e)=>{
-
+document.getElementById("registerForm").addEventListener("submit",async(e)=>{
 e.preventDefault();
-
-
 const btn=document.getElementById("registerBtn");
 setLoading(btn,true);
+isRegistering = true;
 
-
-const username =
-document.getElementById("registerUsername")
-.value.trim();
-
-
-const phone =
-document.getElementById("registerPhone")
-.value.trim();
-
-
-const password =
-document.getElementById("registerPassword")
-.value;
-
-
-const confirmPassword =
-document.getElementById("registerConfirmPassword")
-.value;
-
-
-const referralInput =
-document.getElementById("referralInput")
-.value.trim()
-.toUpperCase();
-
-
-const msg =
-document.getElementById("registerMessage");
-
-
+const username = document.getElementById("registerUsername").value.trim();
+const phone = document.getElementById("registerPhone").value.trim();
+const password = document.getElementById("registerPassword").value;
+const confirmPassword = document.getElementById("registerConfirmPassword").value;
+const referralInput = document.getElementById("referralInput").value.trim().toUpperCase();
+const msg = document.getElementById("registerMessage");
 
 try{
-
-
-if(!/^[0-9]{9}$/.test(phone))
-throw Error("Enter valid phone number");
-
-
-if(password!==confirmPassword)
-throw Error("Passwords do not match");
-
-
-if(password.length<6)
-throw Error("Password minimum is 6 characters");
-
-
+if(!/^[0-9]{9}$/.test(phone)) throw Error("Enter valid 9 digit phone number");
+if(password!==confirmPassword) throw Error("Passwords do not match");
+if(password.length<6) throw Error("Password minimum is 6 characters");
 
 const fullPhone=formatPhone(phone);
 const email=phoneToEmail(phone);
 
-
-
-/*
- CHECK PHONE
-*/
-
-const phoneCheck=
-await get(ref(db,"phones/"+fullPhone));
-
-
-if(phoneCheck.exists())
-throw Error("Phone already registered");
-
-
-
-/*
- CHECK REFERRAL
-*/
-
+const phoneCheck = await get(ref(db,"phones/"+fullPhone));
+if(phoneCheck.exists()) throw Error("Phone already registered");
 
 let referrerUid="";
-
-
 if(referralInput!==""){
-
-
-const refSnap=
-await get(ref(db,"referralCodes/"+referralInput));
-
-
-if(!refSnap.exists())
-throw Error("Invalid referral code");
-
-
-referrerUid=refSnap.val().uid;
-
-
+  const refSnap = await get(ref(db,"referralCodes/"+referralInput));
+  if(!refSnap.exists()) throw Error("Invalid referral code");
+  referrerUid=refSnap.val().uid;
 }
 
-
-
-
-/*
- CREATE ACCOUNT
-*/
-
-
-const credential=
-await createUserWithEmailAndPassword(
-auth,
-email,
-password
-);
-
-
+const credential = await createUserWithEmailAndPassword(auth, email, password);
 const user=credential.user;
+await updateProfile(user,{displayName:username});
+const myReferralCode = generateRefCode();
 
-
-
-await updateProfile(user,{
-displayName:username
+await set(ref(db,"users/"+user.uid),{
+  username, phone:fullPhone, email, balance:0, todayProfit:0, referralEarnings:0,
+  totalEarnings:0, checkinDays:0, activeMachines:0, teamCount:0, machines:{},
+  activities:{}, createdAt:Date.now(), status:"active", referrer:referrerUid,
+  referralCode:myReferralCode, referralClaimed:false, lastActive:Date.now()
 });
-
-
-
-const myReferralCode=
-generateRefCode();
-
-
-
-
-
-/*
- SAVE USER
-*/
-
-
-await set(
-ref(db,"users/"+user.uid),
-{
-
-username,
-
-phone:fullPhone,
-
-email,
-
-balance:0,
-
-todayProfit:0,
-
-referralEarnings:0,
-
-totalEarnings:0,
-
-checkinDays:0,
-
-activeMachines:0,
-
-teamCount:0,
-
-machines:{},
-
-activities:{},
-
-createdAt:Date.now(),
-
-status:"active",
-
-referrer:referrerUid,
-
-referralCode:myReferralCode,
-
-referralClaimed:false,
-
-lastActive:Date.now()
-
-}
-
-);
-
-
-
-
-
-/*
- SAVE PHONE LOCK
-*/
-
-
-await set(
-ref(db,"phones/"+fullPhone),
-{
-uid:user.uid
-}
-
-);
-
-
-
-
-
-/*
- SAVE REFERRAL LOOKUP
-*/
-
-
-await set(
-ref(db,"referralCodes/"+myReferralCode),
-{
-
-uid:user.uid,
-
-username,
-
-createdAt:Date.now()
-
-}
-
-);
-
-
-
-
-
-/*
- UPDATE REFERRER TEAM COUNT
-*/
-
+await set(ref(db,"phones/"+fullPhone),{ uid:user.uid });
+await set(ref(db,"referralCodes/"+myReferralCode),{ uid:user.uid, username, createdAt:Date.now() });
 
 if(referrerUid){
-
-
-const refUser=
-ref(db,"users/"+referrerUid);
-
-
-const snap=
-await get(refUser);
-
-
-const old =
-snap.val()?.teamCount || 0;
-
-
-await update(
-refUser,
-{
-teamCount:Number(old)+1
-}
-);
-
-
+  const refUser = ref(db,"users/"+referrerUid);
+  const snap = await get(refUser);
+  const old = snap.val()?.teamCount || 0;
+  await update(refUser,{ teamCount:Number(old)+1 });
 }
 
-
-
-
-showMessage(
-msg,
-"Account created successfully!",
-"success"
-);
-
-
-document.getElementById("registerForm")
-.reset();
-
+showMessage(msg,"Account created successfully! Redirecting in 2s...","success");
+document.getElementById("registerForm").reset();
 
 setTimeout(()=>{
+  isRegistering = false;
+  window.location.href="dashboard.html";
+},2000);
 
-document.querySelector(
-'.tab[data-form="login"]'
-).click();
-
-},1000);
-
-
-
-}
-
-catch(error){
+}catch(error){
   console.error("FIREBASE ERROR:", error.code, error.message);
-  showMessage(msg, error.message, "error"); // show real firebase error
-   }
-
-finally{
-
-setLoading(btn,false);
-
+  showMessage(msg, error.message, "error");
+  isRegistering = false;
+}finally{
+  setLoading(btn,false);
 }
-
-
 });
 
-
-
-
-
-
-
-// LOGIN
-
-
-document.getElementById("loginForm")
-.addEventListener("submit",async(e)=>{
-
-
+document.getElementById("loginForm").addEventListener("submit",async(e)=>{
 e.preventDefault();
-
-
-const btn=
-document.getElementById("loginBtn");
-
-
+const btn=document.getElementById("loginBtn");
 setLoading(btn,true);
-
-
-
-const phone=
-document.getElementById("loginPhone")
-.value.trim();
-
-
-const password=
-document.getElementById("loginPassword")
-.value;
-
-
-
-const msg=
-document.getElementById("loginMessage");
-
-
+const phone=document.getElementById("loginPhone").value.trim();
+const password=document.getElementById("loginPassword").value;
+const msg=document.getElementById("loginMessage");
 
 try{
-
-
-if(!/^[0-9]{9}$/.test(phone))
-throw Error("Invalid phone");
-
-
-await signInWithEmailAndPassword(
-auth,
-phoneToEmail(phone),
-password
-);
-
-
-
-showMessage(
-msg,
-"Login successful!",
-"success"
-);
-
-
-
-setTimeout(()=>{
-
-window.location.href="dashboard.html";
-
-},1000);
-
-
-
+if(!/^[0-9]{9}$/.test(phone)) throw Error("Invalid phone");
+await signInWithEmailAndPassword(auth, phoneToEmail(phone), password);
+showMessage(msg,"Login successful!","success");
+setTimeout(()=>{ window.location.href="dashboard.html"; },1000);
+}catch(error){
+  console.error("FIREBASE ERROR:", error.code, error.message);
+  showMessage(msg, error.code === 'auth/invalid-credential'? "Invalid phone or password" : error.message, "error");
+}finally{
+  setLoading(btn,false);
 }
-
-catch(error){
-
-showMessage(
-msg,
-"Invalid phone or password",
-"error"
-);
-
-}
-
-finally{
-
-setLoading(btn,false);
-
-}
-
-
 });
-
-
-
-  </script>
+</script>
 </body>
 </html>
