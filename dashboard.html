@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SenteBot Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;}
+:root{--bg:#070B14;--bg2:#0F172A;--card:#111827;--card2:#172033;--green:#22C55E;--green2:#16A34A;--text:#F8FAFC;--muted:#94A3B8;--border:rgba(255,255,255,.08);--shadow:0 15px 40px rgba(0,0,0,.45);}
+body{background:radial-gradient(circle at top,#14302a 0%,transparent 35%),linear-gradient(180deg,#08101E,#070B14);color:var(--text);min-height:100vh;padding-bottom:120px;}
+.container{max-width:520px;margin:auto;padding:18px;}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;}
+.profile{display:flex;align-items:center;gap:14px;}
+.avatar{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#22C55E,#16A34A);display:flex;justify-content:center;align-items:center;font-size:22px;font-weight:700;color:white;box-shadow:0 0 25px rgba(34,197,94,.4);}
+.profile h2{font-size:20px;font-weight:700;}
+.profile span{font-size:13px;color:var(--muted);}
+.header-icons{display:flex;gap:12px;}
+.header-icons div{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:.3s;}
+.header-icons div:active{transform:scale(.92);}
+.wallet{background:linear-gradient(135deg,#1C2538,#111827);border-radius:28px;padding:24px;box-shadow:var(--shadow);border:1px solid var(--border);position:relative;overflow:hidden;margin-bottom:20px;}
+.wallet::before{content:"";position:absolute;width:220px;height:220px;background:rgba(34,197,94,.12);border-radius:50%;right:-90px;top:-90px;}
+.wallet small{color:#CBD5E1;font-size:13px;}
+.wallet h1{font-size:34px;margin:10px 0;font-weight:800;}
+.wallet-profit{display:flex;align-items:center;gap:8px;color:#22C55E;font-weight:700;margin-top:4px;}
+.wallet-actions{display:flex;gap:12px;margin-top:24px;}
+.wallet-actions button{flex:1;height:52px;border:none;border-radius:16px;font-size:15px;font-weight:700;cursor:pointer;transition:.25s;}
+.deposit-btn{background:#22C55E;color:#08101E;}
+.withdraw-btn{background:rgba(255,255,255,.06);border:1px solid var(--border);color:white;}
+.wallet-actions button:active{transform:scale(.97);}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:25px 0 15px;}
+.section-title h3{font-size:18px;font-weight:700;}
+.section-title span{font-size:13px;color:var(--muted);}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:22px;}
+.stat-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:22px;padding:18px;box-shadow:var(--shadow);transition:.25s;}
+.stat-card:active{transform:scale(.98);}
+.stat-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px;}
+.green{background:rgba(34,197,94,.15);color:#22C55E;}
+.blue{background:rgba(59,130,246,.15);color:#3B82F6;}
+.orange{background:rgba(249,115,22,.15);color:#F97316;}
+.purple{background:rgba(168,85,247,.15);color:#A855F7;}
+.stat-title{font-size:13px;color:var(--muted);margin-bottom:8px;}
+.stat-value{font-size:22px;font-weight:800;}
+.stat-small{margin-top:6px;font-size:12px;color:#22C55E;}
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+.quick-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:22px;padding:18px 10px;text-align:center;transition:.25s;cursor:pointer;}
+.quick-card:active{transform:scale(.96);}
+.quick-icon{width:58px;height:58px;margin:auto;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:26px;background:rgba(34,197,94,.12);color:#22C55E;margin-bottom:12px;}
+.quick-card h4{font-size:14px;font-weight:700;}
+.quick-card p{margin-top:5px;font-size:11px;color:var(--muted);}
+.card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:22px;padding:20px;box-shadow:var(--shadow);margin-bottom:18px;}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.card-header h3{font-size:17px;font-weight:700;}
+.card-header span{font-size:13px;color:var(--muted);}
+.machine-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:18px;padding:16px;margin-bottom:14px;}
+.machine-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.machine-name{font-size:16px;font-weight:700;}
+.machine-status{padding:6px 12px;border-radius:30px;font-size:12px;font-weight:700;background:rgba(34,197,94,.15);color:#22C55E;}
+.machine-info{display:flex;justify-content:space-between;margin:12px 0;}
+.machine-info div{display:flex;flex-direction:column;gap:4px;}
+.machine-label{font-size:12px;color:var(--muted);}
+.machine-value{font-weight:700;font-size:15px;}
+.machine-btn{margin-top:16px;width:100%;height:48px;border:none;border-radius:14px;background:#22C55E;color:#08101E;font-weight:700;font-size:15px;cursor:pointer;transition:.25s;}
+.machine-btn:active{transform:scale(.98);}
+.checkin-card{background:linear-gradient(135deg,#132033,#0F172A);border:1px solid var(--border);border-radius:22px;padding:20px;margin-bottom:18px;box-shadow:var(--shadow);}
+.checkin-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.checkin-title{font-size:18px;font-weight:700;}
+.checkin-days{color:var(--green);font-size:14px;font-weight:700;}
+.checkin-text{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px;}
+.claim-btn{width:100%;height:52px;border:none;border-radius:16px;background:linear-gradient(135deg,#22C55E,#16A34A);color:#07111F;font-size:15px;font-weight:800;cursor:pointer;transition:.25s;}
+.claim-btn:active{transform:scale(.98);}
+.promo-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:22px;padding:20px;margin-bottom:18px;box-shadow:var(--shadow);}
+.promo-card h3{font-size:17px;margin-bottom:8px;}
+.promo-card p{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5;}
+.promo-box{display:flex;gap:10px;}
+.promo-box input{flex:1;height:52px;background:#0E1627;border:1px solid var(--border);border-radius:14px;padding:0 16px;color:#fff;font-size:14px;outline:none;}
+.promo-box input::placeholder{color:#64748B;}
+.promo-box button{padding:0 22px;border:none;border-radius:14px;background:#22C55E;color:#07111F;font-weight:700;cursor:pointer;}
+.activity-list{display:flex;flex-direction:column;gap:12px;}
+.activity-item{display:flex;align-items:center;gap:14px;padding:15px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:18px;}
+.activity-icon{width:48px;height:48px;border-radius:14px;display:flex;justify-content:center;align-items:center;background:rgba(34,197,94,.15);font-size:22px;color:#22C55E;}
+.activity-details{flex:1;}
+.activity-title{font-size:15px;font-weight:700;margin-bottom:4px;}
+.activity-time{font-size:12px;color:var(--muted);}
+.activity-amount{font-size:15px;font-weight:800;color:#22C55E;}
+.bottom-nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:520px;height:74px;background:rgba(13,20,34,.96);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 45px rgba(0,0,0,.45);z-index:999;}
+.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;transition:.25s;}
+.nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;}
+.nav-item.active{color:#22C55E;font-weight:700;}
+.nav-item.active .nav-icon{background:rgba(34,197,94,.18);color:#22C55E;box-shadow:0 0 18px rgba(34,197,94,.35);}
+.nav-item:active{transform:scale(.94);}
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);min-width:260px;max-width:90%;padding:15px 20px;border-radius:16px;font-size:14px;font-weight:600;text-align:center;color:#fff;z-index:99999;opacity:0;visibility:hidden;transition:all .35s ease;box-shadow:0 12px 35px rgba(0,0,0,.45);backdrop-filter:blur(12px);}
+.toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);}
+.toast.success{background:linear-gradient(135deg,#22C55E,#16A34A);}
+.toast.error{background:linear-gradient(135deg,#EF4444,#DC2626);}
+.toast.info{background:linear-gradient(135deg,#3B82F6,#2563EB);}
+@media (max-width:420px){.wallet h1{font-size:28px;}.stat-value{font-size:20px;}.quick-grid{gap:10px;}.quick-card{padding:16px 8px;}.quick-icon{width:52px;height:52px;font-size:22px;}.bottom-nav{height:70px;}}
+</style>
+</head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<body>
+<div id="toast" class="toast"></div>
+<div class="container">
+<div class="header">
+    <div class="profile">
+        <div class="avatar" id="avatarLetter">S</div>
+        <div>
+            <h2 id="welcomeName">Welcome</h2>
+            <span id="greetingTime">Good Evening</span>
+        </div>
+    </div>
+    <div class="header-icons">
+        <div onclick="showToast('No new notifications')"> 🔔</div>
+        <div onclick="window.location='profile.html'"> 👤</div>
+    </div>
+</div>
+
+<div class="wallet">
+    <small>Available Balance</small>
+    <h1 id="walletBalance">UGX 0</h1>
+    <div class="wallet-profit">▲ <span id="todayProfit">Today's Profit: UGX 0</span></div>
+</div>
+
+<div class="section-title"><h3>Portfolio Overview</h3><span>Live Data</span></div>
+<div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon green">💰</div><div class="stat-title">Portfolio</div><div class="stat-value" id="portfolioValue">UGX 0</div><div class="stat-small">Total Assets</div></div>
+    <div class="stat-card"><div class="stat-icon blue">📈</div><div class="stat-title">Today's Earnings</div><div class="stat-value" id="earningsToday">UGX 0</div><div class="stat-small">Updated Today</div></div>
+    <div class="stat-card"><div class="stat-icon orange">👥</div><div class="stat-title">Referral Earnings</div><div class="stat-value" id="referralEarnings">UGX 0</div><div class="stat-small">Referral Rewards</div></div>
+    <div class="stat-card"><div class="stat-icon purple">🤖</div><div class="stat-title">Active Machines</div><div class="stat-value" id="machineCount">0</div><div class="stat-small">Running Machines</div></div>
+</div>
+
+<div class="section-title"><h3>Quick Actions</h3><span>One Tap Access</span></div>
+<div class="quick-grid">
+    <div class="quick-card" onclick="window.location='deposit.html'"><div class="quick-icon">⬇️</div><h4>Deposit</h4><p>Add Funds</p></div>
+    <div class="quick-card" onclick="window.location='withdraw.html'"><div class="quick-icon">⬆️</div><h4>Withdraw</h4><p>Cash Out</p></div>
+    <div class="quick-card" onclick="window.location='machines.html'"><div class="quick-icon">🤖</div><h4>Machines</h4><p>Invest</p></div>
+    <div class="quick-card" onclick="window.location='team.html'"><div class="quick-icon">👥</div><h4>Team</h4><p>Referrals</p></div>
+    <div class="quick-card" onclick="claimDaily()"><div class="quick-icon">🎁</div><h4>Bonus</h4><p>Claim</p></div>
+    <div class="quick-card" onclick="window.location='wallet.html'"><div class="quick-icon">💳</div><h4>Wallet</h4><p>History</p></div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>🤖 Active Machines</h3><span id="machineStatus">0 Running</span></div>
+    <div id="activeMachines"></div>
+</div>
+
+<div class="checkin-card">
+    <div class="checkin-top"><div class="checkin-title">🎁 Daily Check-in</div><div class="checkin-days" id="checkinDays">Day 0</div></div>
+    <div class="checkin-text">Check in every day to receive your daily investment reward and build your attendance streak.</div>
+    <button class="claim-btn" onclick="claimDaily()">Claim Today's Bonus</button>
+</div>
+
+<div class="promo-card">
+    <h3>🎟 Redeem Promo Code</h3>
+    <p>Enter your gift code below to receive instant rewards directly into your wallet.</p>
+    <div class="promo-box"><input id="promoInput" type="text" placeholder="Enter promo code"><button onclick="applyPromo()">Apply</button></div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h3>📋 Recent Activities</h3><span id="activityCount">Latest</span></div>
+    <div class="activity-list" id="recentActivities"></div>
+</div>
+</div>
+
+<div class="bottom-nav">
+    <div class="nav-item active" onclick="window.location='dashboard.html'"><div class="nav-icon"><i class="fa-solid fa-house"></i></div><span>Home</span></div>
+    <div class="nav-item" onclick="window.location='team.html'"><div class="nav-icon"><i class="fa-solid fa-users"></i></div><span>Team</span></div>
+    <div class="nav-item" onclick="window.location='machines.html'"><div class="nav-icon"><i class="fa-solid fa-microchip"></i></div><span>Machines</span></div>
+    <div class="nav-item" onclick="window.location='wallet.html'"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></div>
+    <div class="nav-item" onclick="window.location='profile.html'"><div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
+</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, onValue, update, get, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* FIREBASE CONFIG */
+const firebaseConfig = {
+  apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
+  authDomain: "sentebot-7428b.firebaseapp.com",
+  databaseURL: "https://sentebot-7428b-default-rtdb.firebaseio.com", // <-- ADD THIS
+  projectId: "sentebot-7428b",
+  storageBucket: "sentebot-7428b.firebasestorage.app",
+  messagingSenderId: "24568208668",
+  appId: "1:24568208668:web:e01e4001149dfa93eeaed9"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+let currentUser = null;
+
+/* GREETING */
+const hour = new Date().getHours();
+let greeting = "Good Evening";
+if(hour < 12){greeting = "Good Morning";}else if(hour < 18){greeting = "Good Afternoon";}
+document.getElementById("greetingTime").textContent = greeting;
+
+/* AUTH */
+onAuthStateChanged(auth,(user)=>{
+    if(!user){window.location.href="index.html";return;}
+    currentUser = user;
+    loadUser();
+});
+
+/* REALTIME USER DATA FROM RTDB */
+function loadUser(){
+    const userRef = ref(db,"users/" + currentUser.uid);
+    onValue(userRef,(snapshot)=>{
+        if(!snapshot.exists()) return;
+        const data = snapshot.val();
+
+        const username = data.username || "Investor";
+        document.getElementById("welcomeName").textContent = username;
+        document.getElementById("avatarLetter").textContent = username.charAt(0).toUpperCase();
+
+        const balance = Number(data.balance || 0);
+        document.getElementById("walletBalance").textContent = "UGX " + balance.toLocaleString();
+        document.getElementById("portfolioValue").textContent = "UGX " + balance.toLocaleString();
+
+        const todayProfit = Number(data.todayProfit || 0);
+        document.getElementById("todayProfit").textContent = "Today's Profit: UGX " + todayProfit.toLocaleString();
+        document.getElementById("earningsToday").textContent = "UGX " + todayProfit.toLocaleString();
+
+        const referral = Number(data.referralEarnings || 0);
+        document.getElementById("referralEarnings").textContent = "UGX " + referral.toLocaleString();
+
+        const machines = data.machines ? Object.values(data.machines).filter(m => m.status === "RUNNING").length : 0;
+        document.getElementById("machineCount").textContent = machines;
+        document.getElementById("machineStatus").textContent = machines + " Running";
+
+        const days = Number(data.checkinDays || 0);
+        document.getElementById("checkinDays").textContent = "Day " + days;
+
+        renderActivities(data);
+        renderMachines(data);
+    });
+}
+
+/* RENDER ACTIVE MACHINES */
+function renderMachines(data){
+    const container = document.getElementById("activeMachines");
+    const machines = data.machines ? Object.values(data.machines) : [];
+    if (machines.length === 0) {
+        container.innerHTML=`<div class="machine-card"><div class="machine-top"><div class="machine-name">No Active Machines</div><div class="machine-status">INACTIVE</div></div><div class="machine-info"><div><span class="machine-label">Investment</span><span class="machine-value">UGX 0</span></div><div><span class="machine-label">Daily Profit</span><span class="machine-value">UGX 0</span></div></div><button class="machine-btn" onclick="window.location='machines.html'">Explore Machines</button></div>`;
+        return;
+    }
+    container.innerHTML="";
+    machines.forEach(machine=>{
+        container.innerHTML += `<div class="machine-card"><div class="machine-top"><div class="machine-name">${machine.name || "Investment Machine"}</div><div class="machine-status">${machine.status || "RUNNING"}</div></div><div class="machine-info"><div><span class="machine-label">Investment</span><span class="machine-value">UGX ${Number(machine.amount||0).toLocaleString()}</span></div><div><span class="machine-label">Daily Profit</span><span class="machine-value">UGX ${Number(machine.dailyProfit||0).toLocaleString()}</span></div></div></div>`;
+    });
+}
+  /* RENDER RECENT ACTIVITIES */
+function renderActivities(data){
+    const list = document.getElementById("recentActivities");
+    const activities = data.activities ? Object.values(data.activities).reverse() : [];
+    if(!Array.isArray(activities) || activities.length===0){
+        list.innerHTML=`<div class="activity-item"><div class="activity-icon">📋</div><div class="activity-details"><div class="activity-title">No recent activities</div><div class="activity-time">Your latest deposits, withdrawals and profits will appear here.</div></div><div class="activity-amount">--</div></div>`;
+        return;
+    }
+    list.innerHTML="";
+    activities.slice(0,10).forEach(item=>{
+        list.innerHTML += `<div class="activity-item"><div class="activity-icon">${item.icon || "💰"}</div><div class="activity-details"><div class="activity-title">${item.title || "Transaction"}</div><div class="activity-time">${item.time || ""}</div></div><div class="activity-amount">${item.amount || ""}</div></div>`;
+    });
+    document.getElementById("activityCount").textContent = activities.length + " Records";
+}
+
+/* TOAST NOTIFICATION */
+window.showToast = (message,type="success")=>{
+    const toast=document.getElementById("toast");
+    if(!toast) return;
+    toast.textContent=message;
+    toast.className="toast " + type + " show";
+    clearTimeout(window.toastTimer);
+    window.toastTimer=setTimeout(()=>{toast.classList.remove("show");},3000);
+}
+
+/* DAILY CHECK-IN RTDB */
+window.claimDaily = async ()=>{
+    if(!currentUser){window.showToast("Please login first","error");return;}
+    const userRef = ref(db,"users/" + currentUser.uid);
+    const snap = await get(userRef);
+    if(!snap.exists()) return;
+    const data = snap.val();
+    const updates = {};
+    updates[`balance`] = Number(data.balance || 0) + 500;
+    updates[`todayProfit`] = Number(data.todayProfit || 0) + 500;
+    updates[`checkinDays`] = Number(data.checkinDays || 0) + 1;
+    const actKey = push(ref(db,`users/${currentUser.uid}/activities`)).key;
+    updates[`activities/${actKey}`] = {icon:"🎁", title:"Daily Check-in Bonus", amount:"+UGX 500", time:new Date().toLocaleString()};
+    await update(userRef, updates);
+    window.showToast("Daily bonus claimed successfully!","success");
+};
+
+/* PROMO CODE RTDB */
+window.applyPromo = async ()=>{
+    const input = document.getElementById("promoInput");
+    const code = input.value.trim().toUpperCase();
+    if(code===""){window.showToast("Enter a promo code","error");return;}
+    if(code==="WELCOME500"){
+        const userRef = ref(db,"users/" + currentUser.uid);
+        const snap = await get(userRef);
+        if(!snap.exists()) return;
+        const data = snap.val();
+        const updates = {};
+        updates[`balance`] = Number(data.balance || 0) + 500;
+        updates[`todayProfit`] = Number(data.todayProfit || 0) + 500;
+        const actKey = push(ref(db,`users/${currentUser.uid}/activities`)).key;
+        updates[`activities/${actKey}`] = {icon:"🎟", title:"Promo Code: WELCOME500", amount:"+UGX 500", time:new Date().toLocaleString()};
+        await update(userRef, updates);
+        input.value="";
+        window.showToast("Promo redeemed successfully!","success");
+        return;
+    }
+    window.showToast("Invalid promo code","error");
+};
+
+/* HELPERS */
+function formatUGX(value){return "UGX " + Number(value || 0).toLocaleString();}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible" && currentUser){loadUser();}});
+</script>
+</body>
+</html>
