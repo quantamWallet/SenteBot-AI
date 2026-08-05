@@ -94,7 +94,6 @@
         <h1>SenteBot-AI</h1>
         <p>AI-Powered Investment Platform</p>
     </div>
-  </div>
 
     <div class="card">
       <div class="tabs">
@@ -112,12 +111,12 @@
           </div>
         </div>
         <div class="input-group">
-  <label>Password</label>
-  <div class="input-wrap">
-    <input type="password" id="loginPassword" placeholder="Enter your password" required>
-    <i class="fa-solid fa-eye" id="toggleLoginPassword"></i>
-  </div>
-  </div>
+          <label>Password</label>
+          <div class="input-wrap">
+            <input type="password" id="loginPassword" placeholder="Enter your password" required>
+            <i class="fa-solid fa-eye" id="toggleLoginPassword"></i>
+          </div>
+        </div>
         <button type="submit" class="btn" id="loginBtn">Login to Dashboard</button>
         <div id="loginMessage" class="message"></div>
       </form>
@@ -138,33 +137,31 @@
           </div>
         </div>
         <div class="input-group">
-  <label>Password</label>
-  <div class="input-wrap">
-    <input type="password" id="registerPassword" minlength="6" placeholder="Min 6 characters" required />
-    <i class="fa-solid fa-eye" id="toggleRegisterPassword"></i>
-  </div>
-</div>
-
-<div class="input-group">
-  <label>Confirm Password</label>
-  <div class="input-wrap">
-    <input type="password" id="registerConfirmPassword" placeholder="Re-enter password" required />
-    <i class="fa-solid fa-eye" id="toggleRegisterConfirm"></i>
-  </div>
-</div>
-
-<div class="input-group">
-  <label>Referral Code - Optional</label>
-  <div class="input-wrap">
-    <input type="text" id="referralInput" placeholder="SB7K9P2" style="text-transform:uppercase" />
-  </div>
-</div>
+          <label>Password</label>
+          <div class="input-wrap">
+            <input type="password" id="registerPassword" minlength="6" placeholder="Min 6 characters" required />
+            <i class="fa-solid fa-eye" id="toggleRegisterPassword"></i>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Confirm Password</label>
+          <div class="input-wrap">
+            <input type="password" id="registerConfirmPassword" placeholder="Re-enter password" required />
+            <i class="fa-solid fa-eye" id="toggleRegisterConfirm"></i>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Referral Code - Optional</label>
+          <div class="input-wrap">
+            <input type="text" id="referralInput" placeholder="SB7K9P2" style="text-transform:uppercase" />
+          </div>
+        </div>
         <button type="submit" class="btn" id="registerBtn">Create SenteBot Account</button>
         <div id="registerMessage" class="message"></div>
       </form>
       <p class="footer-note">By joining you agree to SenteBot Terms & Risk Disclosure</p>
     </div>
-  </div>
+  </div> <!-- ONLY 1 closing div for wrap -->
 
  <script type="module">
 
