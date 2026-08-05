@@ -93,6 +93,7 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
 .nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;transition:.2s;}
 .nav-item.active{color:var(--cyan);font-weight:700;}
 .nav-item.active .nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);box-shadow:0 0 18px rgba(0,209,255,.35);}
+  .red{background:rgba(239,68,68,.15);color:#EF4444;}
 </style>
 </head>
 <body>
@@ -129,7 +130,18 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
 <div class="menu-card" id="giftCodeBtn"><div class="menu-left"><div class="menu-icon blue"><i class="fa-solid fa-gift"></i></div><div><div class="menu-title">Gift Code</div><div class="menu-sub">Redeem promotional cash reward vouchers</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-down"></i></div></div>
 <div class="menu-card"><div class="menu-left"><div class="menu-icon green"><i class="fa-solid fa-building"></i></div><div><div class="menu-title">About Us</div><div class="menu-sub">Learn more about SenteBot technology</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-down"></i></div></div>
 <div class="menu-card" id="supportBtn"><div class="menu-left"><div class="menu-icon orange"><i class="fa-solid fa-headset"></i></div><div><div class="menu-title">Customer Support</div><div class="menu-sub">Get 24/7 live assistance</div></div></div><div class="arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div></div>
-
+<div class="menu-card" id="adminPanelBtn" style="display:none;">
+  <div class="menu-left">
+    <div class="menu-icon red" style="background:rgba(239,68,68,.15);color:#EF4444;">
+      <i class="fa-solid fa-shield-halved"></i>
+    </div>
+    <div>
+      <div class="menu-title">Admin Panel</div>
+      <div class="menu-sub">Manage app data & machines</div>
+    </div>
+  </div>
+  <div class="arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                       </div>
 <button id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i>Logout</button>
 
 <div class="social-grid">
@@ -197,7 +209,13 @@ document.getElementById("totalEarnings").textContent = Number(data.referralEarni
 document.getElementById("refCode").textContent=data.referralCode||user.uid.substring(0,8);
 });
 });
-
+/* ---------- ADMIN PANEL - ONLY FOR YOU ---------- */
+if(user.uid === "AQ1kRn34wlSGu0MPQfvRLXfmbqA3"){
+    document.getElementById("adminPanelBtn").style.display = "flex";
+}
+document.getElementById("adminPanelBtn").onclick = () => {
+    window.location.href = "admin.html";
+};
 /* ---------- Copy Referral - FIXED FOR IOS ---------- */
 document.getElementById("copyReferral").onclick=async()=>{
 const code=document.getElementById("refCode").textContent;
