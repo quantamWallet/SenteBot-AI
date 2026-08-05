@@ -202,16 +202,19 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'), 2000);
 }
 
-// FIXED COPY BUTTON - WORKS ON ALL DEVICES ANDROID + IOS + PC
-document.getElementById('copyBtn').addEventListener('click', ()=>{
+// FIXED COPY BUTTON - WORKS ON ALL DEVICES
+function copyReferralCode(){
   const code = document.getElementById("refCodeDisplay").textContent.trim();
   if(code === "SBXXXX"){ showToast("Code not loaded yet"); return; }
 
   const textarea = document.createElement("textarea");
   textarea.value = code;
-  textarea.style.position = "fixed"; textarea.style.left = "-9999px";
+  textarea.style.position = "fixed"; textarea.style.top = "0"; textarea.style.left = "-9999px";
+  textarea.setAttribute('readonly', '');
   document.body.appendChild(textarea);
-  textarea.focus(); textarea.select();
+  textarea.select();
+  textarea.setSelectionRange(0, 99999); // For mobile
+  
   try{
     document.execCommand("copy");
     showToast("Referral code copied!");
@@ -219,7 +222,13 @@ document.getElementById('copyBtn').addEventListener('click', ()=>{
     showToast("Failed to copy");
   }
   document.body.removeChild(textarea);
+}
+
+// Wait for DOM to load before adding event
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('copyBtn').onclick = copyReferralCode;
 });
+  
 onAuthStateChanged(auth,(user)=>{
   if(!user){window.location="index.html";return;}
   currentUser=user;
