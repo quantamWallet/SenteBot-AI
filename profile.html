@@ -200,20 +200,21 @@ setTimeout(()=>{box.classList.add("show");},100);
 setTimeout(()=>{box.classList.remove("show");setTimeout(()=>{box.remove();},400);},3000);
 }
 
-/* ---------- Load Profile ---------- */
+/* ---------- Phone Mask ---------- */
 function maskPhone(phone){
   if(!phone) return "-";
   const clean = phone.replace(/\D/g,''); // remove non-digits
-  // Format: +2567*** *** 789
+  // +256700123456 -> +2567*** *** 456
   if(clean.length >= 10){
     const country = clean.length > 9 ? `+${clean.substring(0,3)}` : "";
     const first = clean.substring(country?3:0, country?4:1);
     const last3 = clean.substring(clean.length-3);
     return `${country}${first}*** *** ${last3}`;
   }
-  return phone; // fallback if too short
+  return phone; 
 }
 
+/* ---------- Load Profile ---------- */
 onAuthStateChanged(auth,user=>{
   if(!user){window.location.replace("index.html");return;}
   onValue(ref(db,"users/"+user.uid),snapshot=>{
@@ -229,21 +230,8 @@ onAuthStateChanged(auth,user=>{
         document.getElementById("adminPanelBtn").style.display = "flex";
     }
   });
-});
+}); // <- this was missing + duplicates removed
   
-/* ---------- FIX: ADMIN PANEL - ONLY FOR YOU ---------- */
-if(user.uid === "AQ1kRn34wlSGu0MPQfvRLXfmbqA3" || data.isAdmin === true){
-    document.getElementById("adminPanelBtn").style.display = "flex";
-}
-});
-  
-/* ---------- FIX: ADMIN PANEL - ONLY FOR YOU ---------- */
-if(user.uid === "AQ1kRn34wlSGu0MPQfvRLXfmbqA3" || data.isAdmin === true){
-    document.getElementById("adminPanelBtn").style.display = "flex";
-}
-});
-});
-
 /* ---------- ADMIN PANEL CLICK ---------- */
 document.getElementById("adminPanelBtn").onclick = () => {
     window.location.href = "admin.html";
@@ -274,7 +262,7 @@ document.getElementById("changePasswordBtn").onclick=()=>{passwordModal.classLis
 document.getElementById("cancelPassword").onclick=()=>{passwordModal.classList.remove("active");};
 document.getElementById("savePassword").onclick=async()=>{
 const oldPass=document.getElementById("oldPassword").value;
-const newPass=document.getElementById("newPassword").value;
+const newPass=document.getElementById("newPassword")..value;
 const user=auth.currentUser;
 if(!oldPass||!newPass){notify("Fill all fields.","error");return;}
 try{
@@ -333,7 +321,7 @@ document.querySelector(".social-card:nth-child(3)").onclick = () => {
     window.open("https://t.me/+Zo2lA6xifhQ2Y2Y0", "_blank");
 };
 
-</script>
+  </script>
 
 <style>
 .notify{position:fixed;top:25px;left:50%;transform:translateX(-50%) translateY(-80px);background:#111827;color:#fff;padding:15px 22px;border-radius:14px;display:flex;align-items:center;gap:12px;z-index:99999;opacity:0;transition:.35s;box-shadow:0 15px 40px rgba(0,0,0,.35);}
