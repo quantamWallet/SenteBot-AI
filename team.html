@@ -178,6 +178,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+// YOUR CONFIG - ALREADY UPDATED
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
   authDomain: "sentebot-7428b.firebaseapp.com",
@@ -194,7 +195,6 @@ let currentUser=null; let allUsers={}; let currentTab = 'daily'; let currentLeve
 const dailyMilestones = [{count:3,reward:3000},{count:5,reward:6000},{count:10,reward:10000},{count:20,reward:20000}];
 const weeklyMilestones = [{count:10,reward:15000},{count:20,reward:40000},{count:50,reward:120000},{count:100,reward:300000}];
 
-// TOAST FUNCTION
 function showToast(msg){
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -202,15 +202,14 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'), 2000);
 }
 
-// FIX 1: COPY BUTTON FOR ALL DEVICES
+// FIXED COPY BUTTON - WORKS ON ALL DEVICES ANDROID + IOS + PC
 document.getElementById('copyBtn').addEventListener('click', ()=>{
   const code = document.getElementById("refCodeDisplay").textContent.trim();
   if(code === "SBXXXX"){ showToast("Code not loaded yet"); return; }
 
   const textarea = document.createElement("textarea");
   textarea.value = code;
-  textarea.style.position = "fixed";
-  textarea.style.left = "-9999px";
+  textarea.style.position = "fixed"; textarea.style.left = "-9999px";
   document.body.appendChild(textarea);
   textarea.focus(); textarea.select();
   try{
@@ -225,7 +224,6 @@ document.getElementById('copyBtn').addEventListener('click', ()=>{
 onAuthStateChanged(auth,(user)=>{
   if(!user){window.location="index.html";return;}
   currentUser=user;
-
   onValue(ref(db,"users"), (snapshot)=>{
     allUsers = snapshot.val() || {};
     loadTeamData();
@@ -236,7 +234,7 @@ onAuthStateChanged(auth,(user)=>{
 
 function loadTeamData(){
   const me = allUsers[currentUser.uid] || {};
-  // FIX 2: SHOW CODE EVEN IF NOT IN DB
+  // FIX: SHOW CODE EVEN IF NOT IN DB
   const code = me.referralCode || "SB" + currentUser.uid.substring(0,6).toUpperCase();
   document.getElementById("refCodeDisplay").textContent = code;
   document.getElementById("totalTeam").textContent = me.teamCount || 0;
@@ -266,7 +264,6 @@ function renderMilestones(type){
   });
 }
 
-// EVENT LISTENERS
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click', (e)=>{
     currentTab = e.target.dataset.tab;
@@ -300,4 +297,4 @@ function loadDirectory(level){
 }
 </script>
 </body>
-                                                                                                               </html>
+</html>
