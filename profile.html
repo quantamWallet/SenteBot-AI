@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+
+<title>SenteBot Profile</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;}
+:root{--bg:#070B14;--bg2:#101827;--card:#111827;--card2:#182235;--green:#22C55E;--green2:#16A34A;--text:#F8FAFC;--muted:#94A3B8;--border:rgba(255,255,255,.08);--shadow:0 18px 45px rgba(0,0,0,.45);}
+
+body{background:radial-gradient(circle at top,#14302a 0%,transparent 35%),linear-gradient(180deg,#08101E,#070B14);color:var(--text);min-height:100vh;padding-bottom:120px;}
+.container{max-width:520px;margin:auto;padding:18px;}
+
+/* PROFILE CARD */
+.profile-card{background:#fff;border:3px solid #f6b400;border-radius:28px;padding:18px;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow);margin-bottom:20px;}
+.avatar{width:80px;height:80px;border-radius:20px;border:3px solid #f6b400;overflow:hidden;flex-shrink:0;}
+.avatar img{width:100%;height:100%;object-fit:cover;}
+.profile-info{flex:1;}
+.badge{display:inline-block;padding:5px 14px;border-radius:30px;border:2px solid #f6b400;background:#fff8e5;color:#9a6400;font-weight:700;font-size:12px;margin-bottom:8px;}
+.phone{font-size:20px;font-weight:800;color:#08131f;margin-bottom:5px;}
+.referral{display:flex;align-items:center;gap:10px;font-weight:700;color:#555;font-size:13px;}
+.referral span{color:#d38d00;}
+.copy-btn{width:32px;height:32px;border:none;border-radius:10px;background:#fff7db;color:#d38d00;font-size:15px;cursor:pointer;}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.stat-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:22px;padding:18px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);}
+.stat-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.wallet-icon{background:rgba(34,197,94,.15);color:#22C55E;}
+.earn-icon{background:rgba(249,115,22,.15);color:#F97316;}
+.stat-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px;text-transform:uppercase;}
+.stat-value{font-size:18px;font-weight:800;color:var(--text);}
+
+/* INSTALL */
+.install-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:22px;padding:18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;box-shadow:var(--shadow);}
+.install-left{display:flex;align-items:center;gap:14px;}
+.install-icon{width:54px;height:54px;border-radius:16px;background:rgba(59,130,246,.15);display:flex;align-items:center;justify-content:center;font-size:24px;color:#3B82F6;}
+.install-title{font-size:16px;font-weight:800;color:var(--text);}
+.install-sub{font-size:12px;color:var(--muted);}
+.install-btn{padding:12px 20px;border:none;border-radius:14px;background:#22C55E;color:#07111F;font-size:14px;font-weight:700;cursor:pointer;}
+
+/* SECTION TITLE */
+.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding:0 4px;}
+.section-title h3{color:#f6c443;font-size:18px;font-weight:800;}
+.section-title span{color:#f6c443;font-weight:700;font-size:12px;}
+
+/* MENU */
+.menu-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:20px;padding:16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;cursor:pointer;box-shadow:var(--shadow);}
+.menu-left{display:flex;align-items:center;gap:14px;}
+.menu-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.pink{background:rgba(236,72,153,.15);color:#EC4899;}
+.purple{background:rgba(168,85,247,.15);color:#A855F7;}
+.blue{background:rgba(59,130,246,.15);color:#3B82F6;}
+.green{background:rgba(34,197,94,.15);color:#22C55E;}
+.orange{background:rgba(249,115,22,.15);color:#F97316;}
+.menu-title{font-size:16px;font-weight:800;color:var(--text);}
+.menu-sub{font-size:12px;color:var(--muted);margin-top:3px;}
+.arrow{font-size:18px;color:#64748B;}
+
+/* SOCIAL */
+.social-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px;}
+.social-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:20px;padding:18px;text-align:center;cursor:pointer;box-shadow:var(--shadow);}
+.social-card i{font-size:28px;margin-bottom:10px;}
+.support{color:#F97316;}
+.channel{color:#3B82F6;}
+.community{color:#22C55E;}
+.social-card p{color:var(--text);font-weight:800;font-size:12px;letter-spacing:1px;}
+
+#logoutBtn{background:#EF4444;color:#fff;border:none;padding:14px 20px;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:.3s;width:100%;margin-top:10px;}
+#logoutBtn:hover{background:#DC2626;transform:translateY(-2px);}
+
+/* BOTTOM NAV - SAME AS MACHINES PAGE */
+.bottom-nav{
+position:fixed;
+left:50%;
+bottom:18px;
+transform:translateX(-50%);
+width:calc(100% - 26px);
+max-width:520px;
+height:74px;
+background:rgba(13,20,34,.96);
+backdrop-filter:blur(20px);
+border:1px solid var(--border);
+border-radius:24px;
+display:flex;
+justify-content:space-around;
+align-items:center;
+box-shadow:0 15px 45px rgba(0,0,0,.45);
+z-index:999;
+}
+
+.nav-item{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:5px;
+flex:1;
+font-size:11px;
+color:var(--muted);
+cursor:pointer;
+transition:.25s;
+}
+
+.nav-icon{
+width:42px;
+height:42px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:14px;
+font-size:22px;
+}
+
+.nav-item.active{
+color:#22C55E;
+font-weight:700;
+}
+
+.nav-item.active .nav-icon{
+background:rgba(34,197,94,.18);
+color:#22C55E;
+box-shadow:0 0 18px rgba(34,197,94,.35);
+}
+
+.nav-item:active{
+transform:scale(.94);
+}
+</style>
+</head>
+<body>
+
+<div class="bottom-nav">
+    <div class="nav-item" onclick="window.location='dashboard.html'"><div class="nav-icon"><i class="fa-solid fa-house"></i></div><span>Home</span></div>
+    <div class="nav-item" onclick="window.location='team.html'"><div class="nav-icon"><i class="fa-solid fa-users"></i></div><span>Team</span></div>
+    <div class="nav-item" onclick="window.location='machines.html'"><div class="nav-icon"><i class="fa-solid fa-microchip"></i></div><span>Machines</span></div>
+    <div class="nav-item" onclick="window.location='wallet.html'"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></div>
+    <div class="nav-item active">
+      <div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
+</div>
+
+<div class="container">
+<div class="profile-card">
+<div class="avatar"><img src="images/avatar.png" id="profileImage"></div>
+<div class="profile-info">
+<div class="badge">VERIFIED INVESTOR</div>
+<div class="phone" id="phone">Loading...</div>
+<div class="referral">Ref: <span id="refCode">Loading...</span><button class="copy-btn" id="copyReferral"><i class="fa-regular fa-copy"></i></button></div>
+</div>
+</div>
+
+<div class="stats">
+<div class="stat-card"><div class="stat-icon wallet-icon"><i class="fa-solid fa-wallet"></i></div><div><div class="stat-title">Wallet</div><div class="stat-value">UGX <span id="walletBalance">0</span></div></div></div>
+<div class="stat-card"><div class="stat-icon earn-icon"><i class="fa-solid fa-arrow-trend-up"></i></div><div><div class="stat-title">Total Earnings</div><div class="stat-value">UGX <span id="totalEarnings">0</span></div></div></div>
+</div>
+
+<div class="install-card"><div class="install-left"><div class="install-icon"><i class="fa-solid fa-mobile-screen"></i></div><div><div class="install-title">Download SenteBot App</div><div class="install-sub">Install for fast access & alerts</div></div></div><button class="install-btn"><i class="fa-solid fa-download"></i>Install</button></div>
+
+<div class="section-title"><h3>QUICK LINKS & SERVICES</h3><span>SENTEBOT</span></div>
+
+<div class="menu-card" id="transactionsBtn"><div class="menu-left"><div class="menu-icon pink"><i class="fa-solid fa-receipt"></i></div><div><div class="menu-title">All Transactions</div><div class="menu-sub">View complete deposit & withdrawal history</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-right"></i></div></div>
+<div class="menu-card" id="changePasswordBtn"><div class="menu-left"><div class="menu-icon purple"><i class="fa-solid fa-lock"></i></div><div><div class="menu-title">Change Password</div><div class="menu-sub">Update account security credentials</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-down"></i></div></div>
+<div class="menu-card" id="giftCodeBtn"><div class="menu-left"><div class="menu-icon blue"><i class="fa-solid fa-gift"></i></div><div><div class="menu-title">Gift Code</div><div class="menu-sub">Redeem promotional cash reward vouchers</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-down"></i></div></div>
+<div class="menu-card"><div class="menu-left"><div class="menu-icon green"><i class="fa-solid fa-building"></i></div><div><div class="menu-title">About Us</div><div class="menu-sub">Learn more about SenteBot technology</div></div></div><div class="arrow"><i class="fa-solid fa-chevron-down"></i></div></div>
+<div class="menu-card" id="supportBtn"><div class="menu-left"><div class="menu-icon orange"><i class="fa-solid fa-headset"></i></div><div><div class="menu-title">Customer Support</div><div class="menu-sub">Get 24/7 live assistance</div></div></div><div class="arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></div></div>
+
+<button id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i>Logout</button>
+
+<div class="social-grid">
+<div class="social-card"><i class="fa-brands fa-telegram support"></i><p>SUPPORT</p></div>
+<div class="social-card"><i class="fa-brands fa-telegram channel"></i><p>CHANNEL</p></div>
+<div class="social-card"><i class="fa-brands fa-telegram community"></i><p>COMMUNITY</p></div>
+</div>
+</div>
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,updatePassword,EmailAuthProvider,reauthenticateWithCredential,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getDatabase,ref,onValue} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
+authDomain:"sentebot-7428b.firebaseapp.com",
+databaseURL:"https://sentebot-7428b-default-rtdb.europe-west1.firebasedatabase.app",
+projectId:"sentebot-7428b",
+storageBucket:"sentebot-7428b.firebasestorage.app",
+messagingSenderId:"24568208668",
+appId:"1:24568208668:web:e01e4001149dfa93eeaed9"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getDatabase(app);
+
+/* ---------- Notification ---------- */
+function notify(message,type="success"){
+const box=document.createElement("div");
+box.className="notify "+type;
+box.innerHTML=`<i class="fa-solid ${type==="success"?"fa-circle-check":"fa-circle-xmark"}"></i><span>${message}</span>`;
+document.body.appendChild(box);
+setTimeout(()=>{box.classList.add("show");},100);
+setTimeout(()=>{box.classList.remove("show");setTimeout(()=>{box.remove();},400);},3000);
+}
+
+/* ---------- Load Profile ---------- */
+onAuthStateChanged(auth,user=>{
+if(!user){window.location.replace("index.html");
+return;}
+onValue(ref(db,"users/"+user.uid),snapshot=>{
+if(!snapshot.exists()) return;
+const data=snapshot.val();
+document.getElementById("phone").textContent=data.phone||"-";
+document.getElementById("walletBalance").textContent=Number(data.balance||0).toLocaleString();
+document.getElementById("totalEarnings").textContent =
+Number(data.referralEarnings || 0).toLocaleString();
+document.getElementById("refCode").textContent=data.referralCode||user.uid.substring(0,8);
+});
+});
+
+/* ---------- Copy Referral ---------- */
+document.getElementById("copyReferral").onclick=()=>{
+const code=document.getElementById("refCode").textContent;
+navigator.clipboard.writeText(code);
+notify("Referral code copied.");
+};
+
+/* ---------- Password Modal ---------- */
+const passwordModal=document.createElement("div");
+passwordModal.className="modal";
+passwordModal.innerHTML=`<div class="modal-box"><h2>Change Password</h2><input type="password" id="oldPassword" placeholder="Current Password"><input type="password" id="newPassword" placeholder="New Password"><div class="modal-buttons"><button id="cancelPassword">Cancel</button><button id="savePassword">Update</button></div></div>`;
+document.body.appendChild(passwordModal);
+document.getElementById("changePasswordBtn").onclick=()=>{passwordModal.classList.add("active");};
+document.getElementById("cancelPassword").onclick=()=>{passwordModal.classList.remove("active");};
+document.getElementById("savePassword").onclick=async()=>{
+const oldPass=document.getElementById("oldPassword").value;
+const newPass=document.getElementById("newPassword").value;
+const user=auth.currentUser;
+if(!oldPass||!newPass){notify("Fill all fields.","error");return;}
+try{
+const credential=EmailAuthProvider.credential(user.email,oldPass);
+await reauthenticateWithCredential(user,credential);
+await updatePassword(user,newPass);
+notify("Password updated.");
+passwordModal.classList.remove("active");
+}catch(err){notify(err.message,"error");}
+};
+
+/* ---------- Gift Code ---------- */
+document.getElementById("giftCodeBtn").onclick = () => {
+    notify("Gift Code feature coming soon.", "success");
+};
+
+/* ---------- Customer Support ---------- */
+document.getElementById("supportBtn").onclick = () => {
+    window.open("https://t.me/senteBotAi", "_blank");
+};
+
+/* ---------- Install Button ---------- */
+document.querySelector(".install-btn").onclick = () => {
+    notify("Add this app to your Home Screen for the best experience.");
+};
+
+/* ---------- Logout Confirmation ---------- */
+const logoutModal=document.createElement("div");
+logoutModal.className="modal";
+logoutModal.innerHTML=`<div class="modal-box"><h2>Logout</h2><p style="margin:15px 0;color:#aaa;">Are you sure you want to logout?</p><div class="modal-buttons"><button id="cancelLogout">Cancel</button><button id="confirmLogout">Logout</button></div></div>`;
+document.body.appendChild(logoutModal);
+document.getElementById("logoutBtn").onclick=()=>{logoutModal.classList.add("active");};
+document.getElementById("cancelLogout").onclick=()=>{logoutModal.classList.remove("active");};
+document.getElementById("confirmLogout").onclick = async () => {
+    try{
+        await signOut(auth);
+        window.location.replace("index.html");
+    }catch(error){
+        notify("Logout failed.","error");
+    }
+};
+
+/* ---------- Navigation ---------- */
+
+document.getElementById("transactionsBtn").onclick = () => {
+    window.location.href = "transactions.html";
+};
+
+/* ---------- Customer Support ---------- */
+document.getElementById("supportBtn").onclick = () => {
+    window.open("https://t.me/senteBotAi", "_blank");
+};
+
+/* ---------- Social Links ---------- */
+document.querySelector(".social-card:nth-child(1)").onclick = () => {
+    window.open("https://t.me/senteBotAi", "_blank");
+};
+
+document.querySelector(".social-card:nth-child(2)").onclick = () => {
+    window.open("https://t.me/+Zo2lA6xifhQ2Y2Y0", "_blank");
+};
+
+document.querySelector(".social-card:nth-child(3)").onclick = () => {
+    window.open("https://t.me/+Zo2lA6xifhQ2Y2Y0", "_blank");
+};
+
+</script>
+
+<style>
+.notify{position:fixed;top:25px;left:50%;transform:translateX(-50%) translateY(-80px);background:#111827;color:#fff;padding:15px 22px;border-radius:14px;display:flex;align-items:center;gap:12px;z-index:99999;opacity:0;transition:.35s;box-shadow:0 15px 40px rgba(0,0,0,.35);}
+.notify.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.notify.success i{color:#22C55E;}
+.notify.error i{color:#EF4444;}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;justify-content:center;align-items:center;opacity:0;visibility:hidden;transition:.3s;z-index:9999;}
+.modal.active{opacity:1;visibility:visible;}
+.modal-box{width:90%;max-width:360px;background:#0f172a;border-radius:22px;padding:25px;}
+.modal-box h2{margin-bottom:18px;}
+.modal-box input{width:100%;padding:14px;margin-bottom:15px;border:none;border-radius:12px;background:#1e293b;color:#fff;}
+.modal-buttons{display:flex;gap:12px;margin-top:10px;}
+.modal-buttons button{flex:1;padding:13px;border:none;border-radius:12px;font-weight:700;cursor:pointer;}
+.modal-buttons button:first-child{background:#374151;color:#fff;}
+.modal-buttons button:last-child{background:#22C55E;color:#fff;}
+</style>
+</body>
+  </html>
