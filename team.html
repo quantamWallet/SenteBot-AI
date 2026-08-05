@@ -131,9 +131,11 @@ body{
 <div class="card">
 <div class="ref-header"><h3>INVITE FRIENDS & EARN</h3><span class="ref-code-badge">Level 1: 10%</span></div>
 <div class="ref-code-box">
+  <div class="ref-code-box">
   <span class="ref-code" id="refCodeDisplay">SBXXXX</span>
-  <button class="copy-btn" id="copyBtn" type="button">Copy</button>
-</div>
+  <button class="copy-btn" id="copyReferral" type="button"><i class="fa-regular fa-copy"></i></button>
+  </div>
+
 
 <div class="levels">
 <div class="level-card"><h4>LEVEL 1</h4><div class="percent">10%</div><div class="value" id="level1Earn">UGX 0</div><div class="active" id="level1Count">0 Active</div></div>
@@ -201,37 +203,53 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'), 2000);
 }
 
-// SINGLE COPY FUNCTION - FIXED FOR MOBILE
-async function copyReferralCode(){
+// COPY LOGIC - SAME AS PROFILE
+function copyToClipboard(text) {
+  return new Promise((resolve, reject) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(resolve).catch(reject);
+    } else {
+      // Fallback
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        resolve();
+      } catch (err) {
+        reject(err);
+      }
+      document.body.removeChild(textArea);
+    }
+  });
+}
+
+document.getElementById('copyReferral').addEventListener('click', async () => {
   const codeEl = document.getElementById("refCodeDisplay");
-  const code = codeEl ? codeEl.textContent.trim() : "";
-  if(!code || code === "SBXXXX"){ showToast("Code not loaded yet"); return; }
+  const code = codeEl.textContent.trim();
+  
+  if(!code || code === "SBXXXX"){ 
+    showToast("Code not loaded yet"); 
+    return; 
+  }
 
   try{
-    // Modern API
-    if(navigator.clipboard && window.isSecureContext){
-      await navigator.clipboard.writeText(code);
-    }else{
-      // Fallback for http / older browsers
-      const textarea = document.createElement("textarea");
-      textarea.value = code;
-      textarea.style.position = "fixed"; 
-      textarea.style.top = "0";
-      textarea.style.left = "-9999px";
-      textarea.setAttribute("readonly", "");
-      document.body.appendChild(textarea);
-      textarea.focus();
-      textarea.select();
-      textarea.setSelectionRange(0, 99999); // for mobile
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-    }
+    await copyToClipboard(code);
     showToast("Referral code copied!");
+    // optional: change icon for 1s
+    const icon = document.querySelector('#copyReferral i');
+    icon.className = "fa-solid fa-check";
+    setTimeout(()=> icon.className = "fa-regular fa-copy", 1200);
   }catch(err){
+    showToast("Copy failed");
     console.error(err);
-    showToast("Copy failed. Long-press to copy manually");
   }
-}
+});
 
 // Attach after DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
