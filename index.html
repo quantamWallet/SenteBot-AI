@@ -608,16 +608,9 @@ document.querySelector(
 }
 
 catch(error){
-
-console.error(error);
-
-showMessage(
-msg,
-error.message,
-"error"
-);
-
-}
+  console.error("FIREBASE ERROR:", error.code, error.message);
+  showMessage(msg, error.message, "error"); // show real firebase error
+   }
 
 finally{
 
