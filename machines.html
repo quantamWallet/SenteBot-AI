@@ -99,7 +99,7 @@ body{
   background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;
   padding:16px 28px;border-radius:16px;font-weight:800;font-size:15px;display:none;z-index:10000;
   box-shadow:0 20px 60px rgba(0,209,255,.4);text-align:center;min-width:280px;
-  animation:pop.3s ease;
+  animation:pop .3s ease; /* FIXED SPACE */
 }
 @keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.9);}100%{opacity:1;transform:translate(-50%,-50%) scale(1);}}
 
@@ -109,7 +109,7 @@ body{
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:30px;transition:.4s;box-shadow:0 0 10px rgba(0,209,255,.4);}
 .countdown{font-size:13px;font-weight:700;color:var(--gold);text-align:center;margin-top:10px;}
 .loading-box{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;}
-.loader{width:45px;height:45px;border:4px solid rgba(0,209,255,.2);border-top:4px solid var(--cyan);border-radius:50%;animation:spin.8s linear infinite;margin-bottom:18px;}
+.loader{width:45px;height:45px;border:4px solid rgba(0,209,255,.2);border-top:4px solid var(--cyan);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:18px;} /* FIXED SPACE */
 @keyframes spin{100%{transform:rotate(360deg);}}
 .empty-state{text-align:center;padding:60px 20px;color:#94A3B8;}
 .empty-state h3{color:#fff;margin-bottom:10px;}
@@ -122,7 +122,7 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;transition:.25s;}
 .nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;transition:.2s;}
 .nav-item.active{color:var(--cyan);font-weight:700;}
-.nav-item.active.nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);box-shadow:0 0 18px rgba(0,209,255,.35);}
+.nav-item.active .nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);box-shadow:0 0 18px rgba(0,209,255,.35);} /* FIXED SPACE */
 </style>
 </head>
 <body>
@@ -233,7 +233,7 @@ onAuthStateChanged(auth, async (user) => {
     showLoading();
     await loadMachinePlans();
     loadUser();
-    setInterval(renderMachines, 1000); // update countdown every second
+    setInterval(renderMachines, 1000);
 });
 
 /* LOAD MACHINES */
@@ -264,7 +264,7 @@ function loadUser() {
     });
 }
 
-/* RENDER MACHINES WITH COUNTDOWN + CLAIM */
+/* RENDER MACHINES WITH COUNTDOWN + CLAIM - FIXED LOOP */
 function renderMachines() {
     const container = document.getElementById("machineList");
     if (!container) return;
@@ -277,8 +277,7 @@ function renderMachines() {
     const purchased = currentUserData?.machines || {};
     container.innerHTML = "";
 
-    Object.keys(plans).forEach(i => {
-        const plan = plans[i];
+    plans.forEach(plan => { // FIXED: use forEach on array
         const ownedKey = Object.keys(purchased).find(k => purchased[k].id === plan.id && purchased[k].status!== "COMPLETED");
         const owned = ownedKey? purchased[ownedKey] : null;
 
@@ -291,7 +290,7 @@ function renderMachines() {
 
         if (owned) {
             const now = Date.now();
-            const nextClaimTime = owned.nextClaimAt || (owned.startDate + 86400000); // 24h after purchase
+            const nextClaimTime = owned.nextClaimAt || (owned.startDate + 86400000);
             const timeLeft = nextClaimTime - now;
             const elapsed = Math.floor((now - owned.startDate) / 86400000);
             const remaining = Math.max(plan.duration - elapsed, 0);
@@ -376,7 +375,7 @@ document.querySelectorAll(".category").forEach(tab => {
     });
 });
 
-/* CONFIRM PURCHASE - DEDUCT BALANCE IMMEDIATELY */
+/* CONFIRM PURCHASE - FIXED UPDATE PATH */
 window.confirmPurchase = async () => {
     if (!currentUser ||!currentUserData) { closeModal(); showToast("User not loaded.", false); return; }
     const machine = selectedMachine;
@@ -391,37 +390,36 @@ window.confirmPurchase = async () => {
         return;
     }
 
-  const userMachines = currentUserData.machines || {};
+    const userMachines = currentUserData.machines || {};
     const owned = Object.values(userMachines).find(item => item.id === machine.id && item.status!== "COMPLETED");
     if (owned) { closeModal(); showToast("Machine already active.", false); return; }
 
     try {
-        const userRef = ref(db, "users/" + currentUser.uid);
         const newMachineKey = push(ref(db, `users/${currentUser.uid}/machines`)).key;
         const newActivityKey = push(ref(db, `users/${currentUser.uid}/activities`)).key;
         const startTime = Date.now();
 
         const updates = {};
-        updates[`balance`] = balance - machine.price; // IMMEDIATE DEBIT
-        updates[`machines/${newMachineKey}`] = {
+        updates[`users/${currentUser.uid}/balance`] = balance - machine.price; // FULL PATH - IMMEDIATE DEBIT
+        updates[`users/${currentUser.uid}/machines/${newMachineKey}`] = {
             id: machine.id, name: machine.name, icon: machine.icon, category: machine.category,
             amount: machine.price, dailyProfit: machine.dailyProfit, duration: machine.duration,
             totalReturn: machine.totalReturn, purchasedAt: startTime, startDate: startTime,
             nextClaimAt: startTime + 86400000, // FIRST CLAIM IN 24H
             remainingDays: machine.duration, progress: 0, totalEarned: 0, status: "RUNNING"
         };
-        updates[`activities/${newActivityKey}`] = {
+        updates[`users/${currentUser.uid}/activities/${newActivityKey}`] = {
             icon: "fa-solid fa-microchip", title: "Purchased " + machine.name,
             amount: "-UGX " + machine.price.toLocaleString(), time: new Date().toLocaleString()
         };
 
-        await update(userRef, updates);
+        await update(ref(db), updates); // FIXED: update root ref
         closeModal();
         showToast("Investment activated. First payout in 24 hours.");
     } catch (error) {
         console.error(error);
         closeModal();
-        showToast("Purchase failed.", false);
+        showToast("Purchase failed: " + error.message, false);
     }
 };
 
@@ -435,29 +433,28 @@ window.claimProfit = async (machineKey) => {
     if(now < machine.nextClaimAt){ showToast("Not ready to claim yet", false); return; }
 
     try{
-        const userRef = ref(db, "users/" + currentUser.uid);
-        const activityKey = push(ref(db, `users/${currentUser.uid}/activities`)).key;
         const newNextClaim = machine.nextClaimAt + 86400000;
         const daysPassed = Math.floor((now - machine.startDate) / 86400000);
         const newRemaining = Math.max(machine.duration - daysPassed, 0);
+        const activityKey = push(ref(db, `users/${currentUser.uid}/activities`)).key;
 
         const updates = {};
-        updates[`balance`] = Number(currentUserData.balance) + machine.dailyProfit; // CREDIT ON CLAIM
-        updates[`machines/${machineKey}/totalEarned`] = Number(machine.totalEarned) + machine.dailyProfit;
-        updates[`machines/${machineKey}/nextClaimAt`] = newNextClaim;
-        updates[`machines/${machineKey}/remainingDays`] = newRemaining;
-        if(newRemaining <= 0) updates[`machines/${machineKey}/status`] = "COMPLETED";
+        updates[`users/${currentUser.uid}/balance`] = Number(currentUserData.balance) + machine.dailyProfit; // CREDIT ON CLAIM
+        updates[`users/${currentUser.uid}/machines/${machineKey}/totalEarned`] = Number(machine.totalEarned) + machine.dailyProfit;
+        updates[`users/${currentUser.uid}/machines/${machineKey}/nextClaimAt`] = newNextClaim;
+        updates[`users/${currentUser.uid}/machines/${machineKey}/remainingDays`] = newRemaining;
+        if(newRemaining <= 0) updates[`users/${currentUser.uid}/machines/${machineKey}/status`] = "COMPLETED";
 
-        updates[`activities/${activityKey}`] = {
+        updates[`users/${currentUser.uid}/activities/${activityKey}`] = {
             icon: "fa-solid fa-coins", title: "Claimed from " + machine.name,
             amount: "+UGX " + machine.dailyProfit.toLocaleString(), time: new Date().toLocaleString()
         };
 
-        await update(userRef, updates);
+        await update(ref(db), updates); // FIXED
         showToast(`Claimed UGX ${machine.dailyProfit.toLocaleString()} successfully`);
     }catch(e){
         console.error(e);
-        showToast("Claim failed", false);
+        showToast("Claim failed: " + e.message, false);
     }
 };
 
