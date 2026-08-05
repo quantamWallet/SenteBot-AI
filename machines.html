@@ -37,12 +37,6 @@ body{
   border-radius:24px;padding:24px;border:1px solid var(--border);
   box-shadow:var(--glow-cyan);margin-bottom:24px;position:relative;overflow:hidden;backdrop-filter:blur(16px);
 }
-.balance-card::before{
-  content:"";position:absolute;inset:0;border-radius:24px;padding:1px;
-  background:linear-gradient(130deg,var(--cyan),transparent 40%,var(--green));
-  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;opacity:.6;
-}
 .balance-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
 .balance-value{font-size:34px;font-weight:800;margin:10px 0;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .balance-info{display:flex;justify-content:space-between;margin-top:14px;font-size:13px;color:var(--muted);}
@@ -57,15 +51,8 @@ body{
 .machine-card{
   background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));
   border:1px solid var(--border);border-radius:22px;padding:20px;
-  box-shadow:0 8px 30px rgba(0,0,0,.35);backdrop-filter:blur(16px);position:relative;overflow:hidden;transition:.3s;
+  box-shadow:0 8px 30px rgba(0,0,0,.35);backdrop-filter:blur(16px);position:relative;transition:.3s;
 }
-.machine-card::before{
-  content:"";position:absolute;inset:0;border-radius:22px;padding:1px;
-  background:linear-gradient(135deg,var(--cyan),transparent 50%,var(--green));
-  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:.4s;
-}
-.machine-card:hover::before{opacity:1;}
 .machine-card:hover{transform:translateY(-3px);box-shadow:var(--glow-cyan);}
 .machine-top{display:flex;align-items:center;gap:16px;margin-bottom:18px;}
 .machine-icon{
@@ -78,6 +65,7 @@ body{
 .machine-status{margin-top:5px;display:inline-block;padding:6px 12px;border-radius:30px;font-size:12px;font-weight:700;}
 .machine-status.available{background:rgba(0,230,118,.15);color:var(--green);}
 .machine-status.active{background:rgba(0,209,255,.18);color:var(--cyan);}
+.machine-status.completed{background:rgba(148,163,184,.18);color:var(--muted);}
 .machine-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:20px;}
 .machine-grid small{display:block;color:var(--muted);font-size:12px;margin-bottom:6px;}
 .machine-grid strong{font-size:15px;}
@@ -86,8 +74,9 @@ body{
   background:linear-gradient(90deg,var(--cyan),var(--green));
   color:#05121A;font-size:15px;font-weight:800;cursor:pointer;transition:.25s;
 }
-.invest-btn:hover{filter:brightness(1.1);transform:scale(1.01);}
-.invest-btn:disabled{opacity:.5;cursor:default;filter:grayscale(1);}
+.invest-btn:hover:not(:disabled){filter:brightness(1.1);transform:scale(1.01);}
+.invest-btn:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(1);}
+.claim-btn{background:linear-gradient(90deg,var(--gold),#F59E0B);}
 .modal{position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.8);display:none;justify-content:center;align-items:center;padding:20px;z-index:9999;backdrop-filter:blur(10px);}
 .modal-box{
   width:100%;max-width:380px;background:linear-gradient(180deg,#0E1629,#0B1324);
@@ -103,18 +92,24 @@ body{
 .cancel-btn:hover{background:#334155;}
 .confirm-btn{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;}
 .confirm-btn:hover{filter:brightness(1.1);}
+
+/* CENTERED TOAST */
 #toast{
-  position:fixed;left:50%;bottom:100px;transform:translateX(-50%);
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
   background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;
-  padding:14px 24px;border-radius:14px;font-weight:800;font-size:14px;display:none;z-index:10000;
-  box-shadow:0 10px 30px rgba(0,209,255,.35);
+  padding:16px 28px;border-radius:16px;font-weight:800;font-size:15px;display:none;z-index:10000;
+  box-shadow:0 20px 60px rgba(0,209,255,.4);text-align:center;min-width:280px;
+  animation:pop.3s ease;
 }
+@keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.9);}100%{opacity:1;transform:translate(-50%,-50%) scale(1);}}
+
 .machine-progress{margin-top:16px;margin-bottom:16px;}
 .progress-top{display:flex;justify-content:space-between;font-size:12px;color:#94A3B8;margin-bottom:8px;}
 .progress-bar{height:10px;background:#0B1324;border-radius:30px;overflow:hidden;}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:30px;transition:.4s;box-shadow:0 0 10px rgba(0,209,255,.4);}
+.countdown{font-size:13px;font-weight:700;color:var(--gold);text-align:center;margin-top:10px;}
 .loading-box{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;}
-.loader{width:45px;height:45px;border:4px solid rgba(0,209,255,.2);border-top:4px solid var(--cyan);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:18px;}
+.loader{width:45px;height:45px;border:4px solid rgba(0,209,255,.2);border-top:4px solid var(--cyan);border-radius:50%;animation:spin.8s linear infinite;margin-bottom:18px;}
 @keyframes spin{100%{transform:rotate(360deg);}}
 .empty-state{text-align:center;padding:60px 20px;color:#94A3B8;}
 .empty-state h3{color:#fff;margin-bottom:10px;}
@@ -127,7 +122,7 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;transition:.25s;}
 .nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;transition:.2s;}
 .nav-item.active{color:var(--cyan);font-weight:700;}
-.nav-item.active .nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);box-shadow:0 0 18px rgba(0,209,255,.35);}
+.nav-item.active.nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);box-shadow:0 0 18px rgba(0,209,255,.35);}
 </style>
 </head>
 <body>
@@ -150,7 +145,7 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
     <div class="modal-box">
         <div class="modal-icon" style="background:linear-gradient(135deg,#EF4444,#F97316);"><i class="fa-solid fa-wallet"></i></div>
         <h2>Insufficient Balance</h2>
-        <p id="insufficientText">You don't have enough balance to purchase this machine.</p>
+        <p id="insufficientText">You don't have enough balance.</p>
         <div class="modal-buttons">
             <button class="cancel-btn" onclick="closeInsufficient()">Cancel</button>
             <button class="confirm-btn" onclick="goToDeposit()">Deposit Now</button>
@@ -158,7 +153,7 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
     </div>
 </div>
 
-<!-- TOAST -->
+<!-- TOAST CENTERED -->
 <div id="toast"></div>
 
 <div class="container">
@@ -180,7 +175,6 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
         </div>
     </div>
 
-    <!-- FIXED ORDER: All > Starter > High Yield -->
     <div class="category-tabs">
         <div class="category active" data-category="All">All Machines</div>
         <div class="category" data-category="Starter">Starter Machines</div>
@@ -221,6 +215,17 @@ let currentUserData = null;
 let machinePlans = [];
 window.currentCategory = "All";
 
+/* CENTERED TOAST */
+let toastTimeout;
+window.showToast = (message, success = true) => {
+    const toast = document.getElementById("toast");
+    clearTimeout(toastTimeout);
+    toast.textContent = message;
+    toast.style.background = success? "linear-gradient(90deg,#00D1FF,#00E676)" : "#EF4444";
+    toast.style.display = "block";
+    toastTimeout = setTimeout(() => { toast.style.display = "none"; }, 3000);
+};
+
 /* AUTH */
 onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href = "index.html"; return; }
@@ -228,74 +233,88 @@ onAuthStateChanged(auth, async (user) => {
     showLoading();
     await loadMachinePlans();
     loadUser();
-    runMachineEngine();
-    setInterval(runMachineEngine, 60000);
+    setInterval(renderMachines, 1000); // update countdown every second
 });
 
-/* LOAD MACHINES FROM RTDB /machines */
+/* LOAD MACHINES */
 async function loadMachinePlans() {
     const machinesRef = ref(db, "machines");
     onValue(machinesRef, (snapshot) => {
         machinePlans = [];
         if(snapshot.exists()){
-            snapshot.forEach(child => {
-                machinePlans.push({ id: child.key, ...child.val() });
-            });
+            snapshot.forEach(child => machinePlans.push({ id: child.key,...child.val() }));
         }
-        // SORT: Always ascending by price first
         machinePlans.sort((a,b) => Number(a.price) - Number(b.price));
-        renderMachines(currentUserData);
+        renderMachines();
     });
 }
 
-/* REALTIME USER DATA FROM /users/{uid} */
+/* LOAD USER */
 function loadUser() {
     const userRef = ref(db, "users/" + currentUser.uid);
     onValue(userRef, (snapshot) => {
         if (!snapshot.exists()) return;
         currentUserData = snapshot.val();
         const balance = Number(currentUserData.balance || 0);
-        const machines = currentUserData.machines ? Object.values(currentUserData.machines) : [];
+        const machines = currentUserData.machines? Object.values(currentUserData.machines) : [];
         const activeMachines = machines.filter(m => m.status === "RUNNING").length;
         document.getElementById("userBalance").textContent = "UGX " + balance.toLocaleString();
         document.getElementById("machineCount").textContent = activeMachines + " Active";
-        renderMachines(currentUserData);
+        renderMachines();
     });
 }
 
-/* RENDER MACHINE CARDS */
-function renderMachines(data) {
+/* RENDER MACHINES WITH COUNTDOWN + CLAIM */
+function renderMachines() {
     const container = document.getElementById("machineList");
     if (!container) return;
     if(machinePlans.length === 0){ showLoading(); return; }
 
-    let plans = [...machinePlans]; // clone
-    if (window.currentCategory !== "All") {
-        plans = machinePlans.filter(m => m.category === window.currentCategory);
-    }
-    // Already sorted by price ascending from loadMachinePlans
+    let plans = [...machinePlans];
+    if (window.currentCategory!== "All") plans = plans.filter(m => m.category === window.currentCategory);
     if(plans.length === 0){ showEmpty(); return; }
 
-    const purchased = data?.machines ? Object.values(data.machines) : [];
+    const purchased = currentUserData?.machines || {};
     container.innerHTML = "";
 
-    plans.forEach(plan => {
-        const owned = purchased.find(item => item.id === plan.id && item.status !== "COMPLETED");
+    Object.keys(plans).forEach(i => {
+        const plan = plans[i];
+        const ownedKey = Object.keys(purchased).find(k => purchased[k].id === plan.id && purchased[k].status!== "COMPLETED");
+        const owned = ownedKey? purchased[ownedKey] : null;
 
         let status = "Available";
         let buttonText = '<i class="fa-solid fa-bolt"></i> Invest Now';
-        let buttonStyle = "";
+        let buttonClass = "invest-btn";
+        let buttonDisabled = false;
         let progressHtml = "";
+        let countdownHtml = "";
 
         if (owned) {
-            const elapsed = Math.floor((Date.now() - (owned.startDate || Date.now())) / 86400000);
-            const remaining = Math.max((plan.duration || 0) - elapsed, 0);
-            const progress = Math.min(Math.floor((elapsed / (plan.duration || 1)) * 100), 100);
-            status = owned.status === "COMPLETED"? "COMPLETED" : "RUNNING";
-            buttonText = owned.status === "COMPLETED"
-               ? '<i class="fa-solid fa-flag-checkered"></i> Completed'
-                : '<i class="fa-solid fa-coins"></i> Earning UGX ' + Number(plan.dailyProfit || 0).toLocaleString() + '/Day';
-            buttonStyle = "opacity:.5;filter:grayscale(1);";
+            const now = Date.now();
+            const nextClaimTime = owned.nextClaimAt || (owned.startDate + 86400000); // 24h after purchase
+            const timeLeft = nextClaimTime - now;
+            const elapsed = Math.floor((now - owned.startDate) / 86400000);
+            const remaining = Math.max(plan.duration - elapsed, 0);
+            const progress = Math.min(Math.floor((elapsed / plan.duration) * 100), 100);
+
+            if(owned.status === "COMPLETED"){
+                status = "COMPLETED";
+                buttonText = '<i class="fa-solid fa-flag-checkered"></i> Completed';
+                buttonDisabled = true;
+            } else if(timeLeft <= 0){
+                status = "RUNNING";
+                buttonText = '<i class="fa-solid fa-coins"></i> Claim UGX ' + Number(plan.dailyProfit).toLocaleString();
+                buttonClass = "invest-btn claim-btn";
+                buttonDisabled = false;
+            } else {
+                status = "RUNNING";
+                const hours = Math.floor(timeLeft / 3600000);
+                const mins = Math.floor((timeLeft % 3600000) / 60000);
+                const secs = Math.floor((timeLeft % 60000) / 1000);
+                countdownHtml = `<div class="countdown"><i class="fa-solid fa-clock"></i> Next Claim: ${hours}h ${mins}m ${secs}s</div>`;
+                buttonText = '<i class="fa-solid fa-hourglass"></i> Claimed';
+                buttonDisabled = true;
+            }
             progressHtml = `
             <div class="machine-progress">
                 <div class="progress-top"><span>${remaining} Days Left</span><span>${progress}%</span></div>
@@ -309,24 +328,25 @@ function renderMachines(data) {
                 <div class="machine-icon"><i class="${plan.icon || 'fa-solid fa-microchip'}"></i></div>
                 <div>
                     <div class="machine-name">${plan.name}</div>
-                    <div class="machine-status ${owned? "active" : "available"}">${status}</div>
+                    <div class="machine-status ${owned? status.toLowerCase() : "available"}">${status}</div>
                 </div>
             </div>
             <div class="machine-grid">
-                <div><small>Investment</small><strong>UGX ${Number(plan.price || 0).toLocaleString()}</strong></div>
-                <div><small>Daily Profit</small><strong>UGX ${Number(plan.dailyProfit || 0).toLocaleString()}</strong></div>
-                <div><small>Duration</small><strong>${plan.duration || 0} Days</strong></div>
-                <div><small>Total Return</small><strong>UGX ${Number(plan.totalReturn || plan.price * plan.duration || 0).toLocaleString()}</strong></div>
+                <div><small>Investment</small><strong>UGX ${Number(plan.price).toLocaleString()}</strong></div>
+                <div><small>Daily Profit</small><strong>UGX ${Number(plan.dailyProfit).toLocaleString()}</strong></div>
+                <div><small>Duration</small><strong>${plan.duration} Days</strong></div>
+                <div><small>Total Return</small><strong>UGX ${Number(plan.totalReturn).toLocaleString()}</strong></div>
             </div>
             ${progressHtml}
-            <button class="invest-btn" onclick="buyMachine('${plan.id}')" ${owned? "disabled" : ""} style="${buttonStyle}">
+            ${countdownHtml}
+            <button class="${buttonClass}" onclick="${owned? `claimProfit('${ownedKey}')` : `buyMachine('${plan.id}')`}" ${buttonDisabled? "disabled" : ""}>
                 ${buttonText}
             </button>
         </div>`;
     });
 }
 
-/* BUY MODAL - FIXED GUARD */
+/* BUY MACHINE */
 let selectedMachine = null;
 window.buyMachine = (id) => {
     if(machinePlans.length === 0) { showToast("Machines still loading...", false); return; }
@@ -336,12 +356,13 @@ window.buyMachine = (id) => {
     document.getElementById("modalText").innerHTML =
         `Investment Amount<br><b>UGX ${Number(selectedMachine.price).toLocaleString()}</b><br><br>
          Daily Profit<br><b>UGX ${Number(selectedMachine.dailyProfit).toLocaleString()}</b><br><br>
-         Duration<br><b>${selectedMachine.duration} Days</b>`;
+         Duration<br><b>${selectedMachine.duration} Days</b><br><br>
+         <i>First payout in 24 hours</i>`;
     document.getElementById("purchaseModal").style.display = "flex";
 };
 window.closeModal = () => { document.getElementById("purchaseModal").style.display = "none"; };
 
-/* INSUFFICIENT MODAL */
+/* INSUFFICIENT */
 window.closeInsufficient = () => { document.getElementById("insufficientModal").style.display = "none"; };
 window.goToDeposit = () => { window.location.href = "deposit.html"; };
 
@@ -351,60 +372,52 @@ document.querySelectorAll(".category").forEach(tab => {
         document.querySelectorAll(".category").forEach(item => item.classList.remove("active"));
         tab.classList.add("active");
         window.currentCategory = tab.dataset.category;
-        renderMachines(currentUserData);
+        renderMachines();
     });
 });
 
-/* TOAST */
-window.showToast = (message, success = true) => {
-    const toast = document.getElementById("toast");
-    toast.textContent = message;
-    toast.style.background = success? "linear-gradient(90deg,#00D1FF,#00E676)" : "#EF4444";
-    toast.style.display = "block";
-    clearTimeout(window.toastTimer);
-    window.toastTimer = setTimeout(() => { toast.style.display = "none"; }, 3000);
-};
-
-/* CONFIRM PURCHASE - WITH BALANCE DEDUCTION */
+/* CONFIRM PURCHASE - DEDUCT BALANCE IMMEDIATELY */
 window.confirmPurchase = async () => {
-    if (!currentUser || !currentUserData) { closeModal(); showToast("User not loaded.", false); return; }
+    if (!currentUser ||!currentUserData) { closeModal(); showToast("User not loaded.", false); return; }
     const machine = selectedMachine;
     if (!machine) { closeModal(); return; }
     const balance = Number(currentUserData.balance || 0);
-    
-    if (balance < machine.price) { 
-        closeModal(); 
-        document.getElementById("insufficientText").innerHTML = 
+
+    if (balance < machine.price) {
+        closeModal();
+        document.getElementById("insufficientText").innerHTML =
         `You need <b>UGX ${machine.price.toLocaleString()}</b> but you only have <b>UGX ${balance.toLocaleString()}</b>`;
-        document.getElementById("insufficientModal").style.display = "flex"; 
-        return; 
+        document.getElementById("insufficientModal").style.display = "flex";
+        return;
     }
-    
-    const userMachines = currentUserData.machines ? Object.values(currentUserData.machines) : [];
-    const owned = userMachines.find(item => item.id === machine.id && item.status !== "COMPLETED");
+
+  const userMachines = currentUserData.machines || {};
+    const owned = Object.values(userMachines).find(item => item.id === machine.id && item.status!== "COMPLETED");
     if (owned) { closeModal(); showToast("Machine already active.", false); return; }
 
     try {
         const userRef = ref(db, "users/" + currentUser.uid);
         const newMachineKey = push(ref(db, `users/${currentUser.uid}/machines`)).key;
         const newActivityKey = push(ref(db, `users/${currentUser.uid}/activities`)).key;
+        const startTime = Date.now();
 
         const updates = {};
-        updates[`balance`] = balance - machine.price; // DEDUCT FROM MAIN BALANCE
+        updates[`balance`] = balance - machine.price; // IMMEDIATE DEBIT
         updates[`machines/${newMachineKey}`] = {
             id: machine.id, name: machine.name, icon: machine.icon, category: machine.category,
             amount: machine.price, dailyProfit: machine.dailyProfit, duration: machine.duration,
-            totalReturn: machine.totalReturn, purchasedAt: Date.now(), startDate: Date.now(),
-            remainingDays: machine.duration, progress: 0, totalEarned: 0, lastProfitDate: "", status: "RUNNING"
+            totalReturn: machine.totalReturn, purchasedAt: startTime, startDate: startTime,
+            nextClaimAt: startTime + 86400000, // FIRST CLAIM IN 24H
+            remainingDays: machine.duration, progress: 0, totalEarned: 0, status: "RUNNING"
         };
         updates[`activities/${newActivityKey}`] = {
             icon: "fa-solid fa-microchip", title: "Purchased " + machine.name,
             amount: "-UGX " + machine.price.toLocaleString(), time: new Date().toLocaleString()
         };
-        
+
         await update(userRef, updates);
         closeModal();
-        showToast("Investment activated successfully.");
+        showToast("Investment activated. First payout in 24 hours.");
     } catch (error) {
         console.error(error);
         closeModal();
@@ -412,43 +425,41 @@ window.confirmPurchase = async () => {
     }
 };
 
-/* DAILY PROFIT ENGINE FOR RTDB */
-async function runMachineEngine(){
-    if(!currentUser) return;
-    const userRef = ref(db,"users/" + currentUser.uid);
-    const snap = await get(userRef);
-    if(!snap.exists()) return;
-    const data = snap.val();
-    const machines = data.machines || {};
-    let profit = 0; let changed = false;
-    const today = new Date().toISOString().split("T")[0];
-    const updates = {};
+/* CLAIM PROFIT - MANUAL */
+window.claimProfit = async (machineKey) => {
+    if(!currentUser ||!currentUserData) return;
+    const machine = currentUserData.machines[machineKey];
+    if(!machine || machine.status!== "RUNNING") return;
 
-    Object.keys(machines).forEach(key => {
-        const machine = machines[key];
-        if(machine.status!== "RUNNING") return;
-        const daysPassed = Math.floor((Date.now() - machine.startDate) / 86400000);
-        machine.remainingDays = Math.max(machine.duration - daysPassed, 0);
-        machine.progress = Math.min(Math.floor((daysPassed / machine.duration) * 100), 100);
+    const now = Date.now();
+    if(now < machine.nextClaimAt){ showToast("Not ready to claim yet", false); return; }
 
-        if(machine.remainingDays <= 0){
-            machine.status = "COMPLETED";
-            changed = true;
-        }
-        if(machine.lastProfitDate!== today && machine.status === "RUNNING"){
-            profit += Number(machine.dailyProfit || 0);
-            machine.totalEarned = Number(machine.totalEarned || 0) + Number(machine.dailyProfit || 0);
-            machine.lastProfitDate = today;
-            changed = true;
-        }
-        updates[`machines/${key}`] = machine;
-    });
+    try{
+        const userRef = ref(db, "users/" + currentUser.uid);
+        const activityKey = push(ref(db, `users/${currentUser.uid}/activities`)).key;
+        const newNextClaim = machine.nextClaimAt + 86400000;
+        const daysPassed = Math.floor((now - machine.startDate) / 86400000);
+        const newRemaining = Math.max(machine.duration - daysPassed, 0);
 
-    if(!changed) return;
-    updates[`balance`] = Number(data.balance || 0) + profit;
-    updates[`todayProfit`] = Number(data.todayProfit || 0) + profit;
-    await update(userRef, updates);
-}
+        const updates = {};
+        updates[`balance`] = Number(currentUserData.balance) + machine.dailyProfit; // CREDIT ON CLAIM
+        updates[`machines/${machineKey}/totalEarned`] = Number(machine.totalEarned) + machine.dailyProfit;
+        updates[`machines/${machineKey}/nextClaimAt`] = newNextClaim;
+        updates[`machines/${machineKey}/remainingDays`] = newRemaining;
+        if(newRemaining <= 0) updates[`machines/${machineKey}/status`] = "COMPLETED";
+
+        updates[`activities/${activityKey}`] = {
+            icon: "fa-solid fa-coins", title: "Claimed from " + machine.name,
+            amount: "+UGX " + machine.dailyProfit.toLocaleString(), time: new Date().toLocaleString()
+        };
+
+        await update(userRef, updates);
+        showToast(`Claimed UGX ${machine.dailyProfit.toLocaleString()} successfully`);
+    }catch(e){
+        console.error(e);
+        showToast("Claim failed", false);
+    }
+};
 
 /* LOADING + EMPTY */
 function showLoading() {
