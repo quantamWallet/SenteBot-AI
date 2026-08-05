@@ -132,11 +132,27 @@
           </div>
         </div>
         <div class="input-group">
-          <label>Password</label>
-          <div class="input-wrap">
-            <input type="password" id="registerPassword" minlength="6" placeholder="Min 6 characters" required />
-          </div>
-        </div>
+  <label>Password</label>
+  <div class="input-wrap">
+    <input type="password" id="registerPassword" minlength="6" placeholder="Min 6 characters" required />
+    <i class="fa-solid fa-eye" id="toggleRegisterPassword"></i>
+  </div>
+</div>
+
+<div class="input-group">
+  <label>Confirm Password</label>
+  <div class="input-wrap">
+    <input type="password" id="registerConfirmPassword" placeholder="Re-enter password" required />
+    <i class="fa-solid fa-eye" id="toggleRegisterConfirm"></i>
+  </div>
+</div>
+
+<div class="input-group">
+  <label>Referral Code - Optional</label>
+  <div class="input-wrap">
+    <input type="text" id="referralInput" placeholder="SB7K9P2" style="text-transform:uppercase" />
+  </div>
+</div>
         <button type="submit" class="btn" id="registerBtn">Create SenteBot Account</button>
         <div id="registerMessage" class="message"></div>
       </form>
@@ -144,7 +160,7 @@
     </div>
   </div>
 
-  <script type="module">
+ <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getAuth,
@@ -158,13 +174,13 @@ import {
   ref,
   set,
   get,
-  child
+  update
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
   authDomain: "sentebot-7428b.firebaseapp.com",
-  databaseURL: "https://sentebot-7428b-default-rtdb.europe-west1.firebasedatabase.app", // <-- IMPORTANT
+  databaseURL: "https://sentebot-7428b-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "sentebot-7428b",
   storageBucket: "sentebot-7428b.firebasestorage.app",
   messagingSenderId: "24568208668",
@@ -174,14 +190,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
-
 const PHONE_SUFFIX = "@sentebot.app";
 
-/* Automatically redirect logged-in users */
+/* Auto redirect */
 onAuthStateChanged(auth, (user) => {
-    if (user) {
-        window.location.href = "dashboard.html";
-    }
+    if (user) { window.location.href = "dashboard.html"; }
 });
 
 /* Show/Hide Login Password */
@@ -189,13 +202,28 @@ const loginToggle = document.getElementById("toggleLoginPassword");
 const loginPassword = document.getElementById("loginPassword");
 if (loginToggle && loginPassword) {
     loginToggle.addEventListener("click", () => {
-        if (loginPassword.type === "password") {
-            loginPassword.type = "text";
-            loginToggle.classList.replace("fa-eye", "fa-eye-slash");
-        } else {
-            loginPassword.type = "password";
-            loginToggle.classList.replace("fa-eye-slash", "fa-eye");
-        }
+        loginPassword.type = loginPassword.type === "password" ? "text" : "password";
+        loginToggle.classList.toggle("fa-eye-slash");
+    });
+}
+
+/* Show/Hide Register Password - NEW */
+const regToggle = document.getElementById("toggleRegisterPassword");
+const regPassword = document.getElementById("registerPassword");
+if (regToggle && regPassword) {
+    regToggle.addEventListener("click", () => {
+        regPassword.type = regPassword.type === "password" ? "text" : "password";
+        regToggle.classList.toggle("fa-eye-slash");
+    });
+}
+
+/* Show/Hide Confirm Password - NEW */
+const regConfirmToggle = document.getElementById("toggleRegisterConfirm");
+const regConfirmPassword = document.getElementById("registerConfirmPassword");
+if (regConfirmToggle && regConfirmPassword) {
+    regConfirmToggle.addEventListener("click", () => {
+        regConfirmPassword.type = regConfirmPassword.type === "password" ? "text" : "password";
+        regConfirmToggle.classList.toggle("fa-eye-slash");
     });
 }
 
@@ -210,7 +238,7 @@ document.querySelectorAll('.tab').forEach(btn => {
   });
 });
 
-function showMessage(el, text, type) {
+   function showMessage(el, text, type) {
   el.textContent = text;
   el.className = 'message ' + type;
   el.style.display = 'block';
@@ -224,9 +252,11 @@ function setLoading(btn, loading) {
 
 function formatPhone(phone) { return `+256${phone}`; }
 function phoneToEmail(phone) { return `${formatPhone(phone)}${PHONE_SUFFIX}`; }
+function generateRefCode(){ return "SB" + Math.random().toString(36).substring(2,8).toUpperCase(); }
+
 document.querySelectorAll('.btn').forEach(b => b.dataset.text = b.textContent);
 
-/* REGISTER - RTDB */
+/* REGISTER - RTDB WITH CONFIRM PASSWORD + REFERRAL */
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const btn = document.getElementById('registerBtn');
@@ -234,47 +264,75 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
   const username = document.getElementById('registerUsername').value.trim();
   const phone = document.getElementById('registerPhone').value.trim();
   const password = document.getElementById('registerPassword').value;
+  const confirmPassword = document.getElementById('registerConfirmPassword').value;
+  const refInput = document.getElementById('referralInput').value.trim().toUpperCase();
   const msgEl = document.getElementById('registerMessage');
 
   if(!/^[0-9]{9}$/.test(phone)) {
     showMessage(msgEl, 'Enter 9 digits after +256', 'error');
     setLoading(btn, false); return;
   }
+  if(password !== confirmPassword){
+    showMessage(msgEl, 'Passwords do not match', 'error');
+    setLoading(btn, false); return;
+  }
+  if(password.length < 6){
+    showMessage(msgEl, 'Password must be at least 6 characters', 'error');
+    setLoading(btn, false); return;
+  }
 
   const email = phoneToEmail(phone);
   const fullPhone = formatPhone(phone);
+  const myReferralCode = generateRefCode();
 
   try {
     const phoneRef = ref(db, "phones/" + fullPhone);
     const phoneSnap = await get(phoneRef);
     if(phoneSnap.exists()) throw new Error("This phone number is already registered");
 
+    let referrerUid = "";
+    if(refInput !== ""){
+      const usersSnap = await get(ref(db,"users"));
+      usersSnap.forEach(child=>{
+        if(child.val().referralCode === refInput){
+          referrerUid = child.key;
+        }
+      });
+      if(referrerUid === "") throw new Error("Invalid referral code");
+    }
+
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     await updateProfile(user, { displayName: username });
     
     await set(ref(db, "users/" + user.uid), {
-    username,
-    phone: fullPhone,
-    email,
-    balance: 0,
-    todayProfit: 0,
-    referralEarnings: 0,
-    checkinDays: 0,
-    activeMachines: 0,
-
-   machines: {},
-activities: {},
-
-    createdAt: Date.now(),
-
-    status: "active",
-
-    referrer: "",
-    referralCode: "",
-    teamCount: 0
-});
+      username,
+      phone: fullPhone,
+      email,
+      balance: 0,
+      todayProfit: 0,
+      referralEarnings: 0,
+      totalEarnings: 0,
+      checkinDays: 0,
+      activeMachines: 0,
+      machines: {},
+      activities: {},
+      createdAt: Date.now(),
+      status: "active",
+      referrer: referrerUid,
+      referralCode: myReferralCode,
+      teamCount: 0
+    });
     await set(phoneRef, { uid: user.uid });
+
+    if(referrerUid !== ""){
+      const referrerRef = ref(db, "users/" + referrerUid);
+      const refSnap = await get(referrerRef);
+      const refData = refSnap.val();
+      await update(referrerRef, {
+        teamCount: Number(refData.teamCount || 0) + 1
+      });
+    }
 
     showMessage(msgEl, 'Account created successfully!', 'success');
     document.getElementById('registerForm').reset();
@@ -313,6 +371,6 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     setLoading(btn, false);
   }
 });
-  </script>
+</script>
 </body>
-  </html>
+</html>
