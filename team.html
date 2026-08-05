@@ -132,7 +132,7 @@ body{
 <div class="ref-header"><h3>INVITE FRIENDS & EARN</h3><span class="ref-code-badge">Level 1: 10%</span></div>
 <div class="ref-code-box">
   <span class="ref-code" id="refCodeDisplay">SBXXXX</span>
-  <button class="copy-btn" id="copyBtn">Copy</button>
+  <button class="copy-btn" id="copyBtn" type="button">Copy</button>
 </div>
 
 <div class="levels">
@@ -201,28 +201,43 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'), 2000);
 }
 
-// SINGLE COPY FUNCTION - WORKS EVERYWHERE
+// SINGLE COPY FUNCTION - FIXED FOR MOBILE
 async function copyReferralCode(){
-  const code = document.getElementById("refCodeDisplay").textContent.trim();
+  const codeEl = document.getElementById("refCodeDisplay");
+  const code = codeEl ? codeEl.textContent.trim() : "";
   if(!code || code === "SBXXXX"){ showToast("Code not loaded yet"); return; }
 
   try{
+    // Modern API
     if(navigator.clipboard && window.isSecureContext){
       await navigator.clipboard.writeText(code);
     }else{
+      // Fallback for http / older browsers
       const textarea = document.createElement("textarea");
       textarea.value = code;
-      textarea.style.position = "fixed"; textarea.style.left = "-9999px";
+      textarea.style.position = "fixed"; 
+      textarea.style.top = "0";
+      textarea.style.left = "-9999px";
+      textarea.setAttribute("readonly", "");
       document.body.appendChild(textarea);
-      textarea.focus(); textarea.select();
+      textarea.focus();
+      textarea.select();
+      textarea.setSelectionRange(0, 99999); // for mobile
       document.execCommand("copy");
-      textarea.remove();
+      document.body.removeChild(textarea);
     }
     showToast("Referral code copied!");
   }catch(err){
-    showToast("Copy failed");
+    console.error(err);
+    showToast("Copy failed. Long-press to copy manually");
   }
 }
+
+// Attach after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('copyBtn');
+  if(btn) btn.addEventListener('click', copyReferralCode);
+});
 
 onAuthStateChanged(auth,(user)=>{
   if(!user){window.location="index.html";return;}
