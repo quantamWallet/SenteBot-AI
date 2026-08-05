@@ -212,15 +212,22 @@ function maskPhone(phone){
 }
 
 onAuthStateChanged(auth,user=>{
-if(!user){window.location.replace("index.html");return;}
-onValue(ref(db,"users/"+user.uid),snapshot=>{
-if(!snapshot.exists()) return;
-const data=snapshot.val();
-document.getElementById("phone").textContent = maskPhone(data.phone); // MASKED
-document.getElementById("walletBalance").textContent="UGX " + Number(data.balance||0).toLocaleString(); // 1 LINE
-document.getElementById("totalEarnings").textContent = "UGX " + Number(data.referralEarnings || 0).toLocaleString(); // 1 LINE
-document.getElementById("refCode").textContent=data.referralCode||user.uid.substring(0,8);
+  if(!user){window.location.replace("index.html");return;}
+  onValue(ref(db,"users/"+user.uid),snapshot=>{
+    if(!snapshot.exists()) return;
+    const data=snapshot.val();
+    document.getElementById("phone").textContent = maskPhone(data.phone); // MASKED
+    document.getElementById("walletBalance").textContent="UGX " + Number(data.balance||0).toLocaleString(); // 1 LINE
+    document.getElementById("totalEarnings").textContent = "UGX " + Number(data.referralEarnings || 0).toLocaleString(); // 1 LINE
+    document.getElementById("refCode").textContent=data.referralCode||user.uid.substring(0,8);
 
+    /* ---------- FIX: ADMIN PANEL - ONLY FOR YOU ---------- */
+    if(user.uid === "AQ1kRn34wlSGu0MPQfvRLXfmbqA3" || data.isAdmin === true){
+        document.getElementById("adminPanelBtn").style.display = "flex";
+    }
+  }); // <-- was missing
+}); // <-- was missing
+  
 /* ---------- FIX: ADMIN PANEL - ONLY FOR YOU ---------- */
 if(user.uid === "AQ1kRn34wlSGu0MPQfvRLXfmbqA3" || data.isAdmin === true){
     document.getElementById("adminPanelBtn").style.display = "flex";
