@@ -48,9 +48,9 @@ body{
 .ref-code-badge{background:rgba(0,209,255,.1);border:1px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;}
 .ref-code-box{
   background:linear-gradient(180deg,#0B1324,#0E1629);border:1px solid var(--border);
-  border-radius:14px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;
+  border-radius:14px;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:10px;
 }
-.ref-code{font-size:17px;font-weight:800;color:var(--green);letter-spacing:1.2px;text-shadow:var(--glow-green);}
+.ref-code{font-size:20px;font-weight:800;color:var(--green);letter-spacing:2px;text-shadow:var(--glow-green);flex:1;text-align:center;}
 .copy-btn{
   background:linear-gradient(90deg,var(--cyan),var(--green));border:none;padding:10px 16px;
   border-radius:10px;color:#05121A;font-weight:800;font-size:13px;cursor:pointer;transition:.2s;
@@ -129,8 +129,11 @@ body{
 </div>
 
 <div class="card">
-<div class="ref-header"><h3>INVITE FRIENDS & EARN</h3><span class="ref-code-badge">Code: <span id="refCode">SBXXXX</span></span></div>
-<div class="ref-code-box"><span style="color:#94A3B8;font-size:13px;">Your Exclusive Referral Code</span><button class="copy-btn" onclick="copyRef()">Copy Code</button></div>
+<div class="ref-header"><h3>INVITE FRIENDS & EARN</h3><span class="ref-code-badge">Level 1: 10%</span></div>
+<div class="ref-code-box">
+  <span class="ref-code" id="refCodeDisplay">SBXXXX</span>
+  <button class="copy-btn" onclick="copyRef()">Copy</button>
+</div>
 
 <div class="levels">
 <div class="level-card"><h4>LEVEL 1</h4><div class="percent">10%</div><div class="value" id="level1Earn">UGX 0</div><div class="active" id="level1Count">0 Active</div></div>
@@ -146,7 +149,10 @@ body{
 <div class="stat-3"><div class="val" id="activeWeek">0</div><div class="lab">ACTIVE WEEK</div></div>
 </div>
 
-<div class="tabs"><button class="tab-btn active">Daily Milestones</button><button class="tab-btn">Weekly Milestones</button></div>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('daily', this)">Daily Milestones</button>
+  <button class="tab-btn" onclick="switchTab('weekly', this)">Weekly Milestones</button>
+</div>
 <div id="milestonesList"></div>
 
 <h3 style="margin:20px 0 10px;font-size:15px;font-weight:800;">TEAM DIRECTORY</h3>
@@ -175,9 +181,10 @@ import { getDatabase, ref, onValue, get, update } from "https://www.gstatic.com/
 
 const firebaseConfig={apiKey:"AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",authDomain:"sentebot-7428b.firebaseapp.com",databaseURL:"https://sentebot-7428b-default-rtdb.europe-west1.firebasedatabase.app",projectId:"sentebot-7428b",storageBucket:"sentebot-7428b.firebasestorage.app",messagingSenderId:"24568208668",appId:"1:24568208668:web:e01e4001149dfa93eeaed9"};
 const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getDatabase(app);
-let currentUser=null; let allUsers={};
+let currentUser=null; let allUsers={}; let currentTab = 'daily';
 
-const MILESTONES = [{count:3,reward:3000},{count:5,reward:6000},{count:10,reward:10000},{count:20,reward:20000}];
+const dailyMilestones = [{count:3,reward:3000},{count:5,reward:6000},{count:10,reward:10000},{count:20,reward:20000}];
+const weeklyMilestones = [{count:10,reward:15000},{count:20,reward:40000},{count:50,reward:120000},{count:100,reward:300000}];
 
 // TOAST FUNCTION
 function showToast(msg){
@@ -193,13 +200,15 @@ async function loadAll(){
 const snap = await get(ref(db,"users"));
 allUsers = snap.val() || {};
 loadTeamData();
-renderMilestones();
+renderMilestones(currentTab);
 loadDirectory(1);
 }
 
 function loadTeamData(){
 const me = allUsers[currentUser.uid] || {};
-document.getElementById("refCode").textContent = me.referralCode || currentUser.uid.substring(0,8).toUpperCase();
+const code = me.referralCode || currentUser.uid.substring(0,8).toUpperCase();
+document.getElementById("refCodeDisplay").textContent = code;
+document.getElementById("refCodeDisplay").dataset.code = code; // for copying
 document.getElementById("totalTeam").textContent = me.teamCount || 0;
 document.getElementById("refEarnings").textContent = "UGX "+Number(me.referralEarnings||0).toLocaleString();
 
@@ -216,14 +225,22 @@ document.getElementById("level2Count").textContent = `${l2.length} Active`;
 document.getElementById("level3Count").textContent = `${l3.length} Active`;
 }
 
-function renderMilestones(){
+function renderMilestones(type){
 const me = allUsers[currentUser.uid] || {};
 const teamCount = me.teamCount || 0;
+const milestones = type === 'weekly'? weeklyMilestones : dailyMilestones;
 const list = document.getElementById("milestonesList"); list.innerHTML="";
-MILESTONES.forEach(m=>{
+milestones.forEach(m=>{
   const progress = Math.min(100, (teamCount/m.count)*100);
   list.innerHTML += `<div class="milestone-card"><div class="milestone-top"><div class="milestone-left"><div class="badge">${m.count}</div><div><div class="title">${m.count} Active Team Members</div><div style="font-size:12px;color:#94A3B8;">Reward: UGX ${m.reward.toLocaleString()}</div></div></div><div class="reward">UGX ${m.reward.toLocaleString()}</div></div><div class="progress-bar"><div class="progress" style="width:${progress}%"></div></div><div style="font-size:11px;color:#94A3B8;margin-top:6px;">${teamCount} / ${m.count} (${progress.toFixed(0)}%)</div></div>`;
 });
+}
+
+window.switchTab = function(type, btn){
+  currentTab = type;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMilestones(type);
 }
 
 window.loadDirectory = function(level,e){
@@ -239,7 +256,15 @@ div.innerHTML="";
 list.forEach(uid=>{ const u = allUsers[uid]; div.innerHTML += `<div class="team-item"><div class="team-avatar">${u.username.charAt(0).toUpperCase()}</div><div><div style="font-weight:700;">${u.username}</div><div style="font-size:12px;color:#94A3B8;">${u.phone}</div></div></div>`; });
 }
 
-window.copyRef=()=>{navigator.clipboard.writeText(document.getElementById("refCode").textContent);showToast("Referral code copied!");}
+window.copyRef=async ()=>{
+  const code = document.getElementById("refCodeDisplay").dataset.code;
+  try{
+    await navigator.clipboard.writeText(code);
+    showToast("Referral code copied!");
+  }catch(e){
+    showToast("Failed to copy");
+  }
+}
 </script>
 </body>
-                                                              </html>
+  </html>
