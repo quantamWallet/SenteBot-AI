@@ -203,12 +203,15 @@ setTimeout(()=>{box.classList.remove("show");setTimeout(()=>{box.remove();},400)
 /* ---------- Load Profile ---------- */
 function maskPhone(phone){
   if(!phone) return "-";
-  // +2567XXXXXXX -> +2567*** *** 123
-  const clean = phone.replace(/\D/g,'');
-  if(clean.length >= 12){
-    return `+${clean.substring(0,3)}${clean.substring(3,4)}*** *** ${clean.substring(clean.length-3)}`;
+  const clean = phone.replace(/\D/g,''); // remove non-digits
+  // Format: +2567*** *** 789
+  if(clean.length >= 10){
+    const country = clean.length > 9 ? `+${clean.substring(0,3)}` : "";
+    const first = clean.substring(country?3:0, country?4:1);
+    const last3 = clean.substring(clean.length-3);
+    return `${country}${first}*** *** ${last3}`;
   }
-  return phone; // fallback
+  return phone; // fallback if too short
 }
 
 onAuthStateChanged(auth,user=>{
@@ -225,8 +228,8 @@ onAuthStateChanged(auth,user=>{
     if(user.uid === "AQ1kRn34wlSGu0MPQfvRLXfmbqA3" || data.isAdmin === true){
         document.getElementById("adminPanelBtn").style.display = "flex";
     }
-  }); // <-- was missing
-}); // <-- was missing
+  });
+});
   
 /* ---------- FIX: ADMIN PANEL - ONLY FOR YOU ---------- */
 if(user.uid === "AQ1kRn34wlSGu0MPQfvRLXfmbqA3" || data.isAdmin === true){
