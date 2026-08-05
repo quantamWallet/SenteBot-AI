@@ -106,7 +106,7 @@ body{
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;}
 .nav-item.active{color:var(--cyan);font-weight:700;}
 .nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;transition:.2s;}
-.nav-item.active .nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);}
+.nav-item.active.nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);}
 
 /* CENTERED TOAST */
 #toast{
@@ -159,7 +159,7 @@ body{
 <div class="directory-tabs">
 <button class="dir-tab active" data-level="1">Level 1 <span id="l1count">(0)</span></button>
 <button class="dir-tab" data-level="2">Level 2 <span id="l2count">(0)</span></button>
-<button class="dir-tab" data-level="3">Level 3 <span id="l3count">(0)</span></button>
+<div class="dir-tab" data-level="3">Level 3 <span id="l3count">(0)</span></div>
 </div>
 <div id="directoryList"><div class="directory-msg">Loading...</div></div>
 </div>
@@ -178,7 +178,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// YOUR CONFIG - ALREADY UPDATED
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
   authDomain: "sentebot-7428b.firebaseapp.com",
@@ -202,75 +201,29 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'), 2000);
 }
 
-// FIXED COPY BUTTON - WORKS ON ALL DEVICES
-function copyReferralCode(){
+// SINGLE COPY FUNCTION - WORKS EVERYWHERE
+async function copyReferralCode(){
   const code = document.getElementById("refCodeDisplay").textContent.trim();
-  if(code === "SBXXXX"){ showToast("Code not loaded yet"); return; }
-  
-document
-.getElementById("copyBtn")
-.addEventListener("click",copyReferralCode);
-  
-  const textarea = document.createElement("textarea");
-  textarea.value = code;
-  textarea.style.position = "fixed"; textarea.style.top = "0"; textarea.style.left = "-9999px";
-  textarea.setAttribute('readonly', '');
-  document.body.appendChild(textarea);
-  textarea.select();
-  textarea.setSelectionRange(0, 99999); // For mobile
-  
-  async function copyReferralCode(){
+  if(!code || code === "SBXXXX"){ showToast("Code not loaded yet"); return; }
 
-    const code = document
-        .getElementById("refCodeDisplay")
-        .textContent
-        .trim();
-
-    if(!code || code === "SBXXXX"){
-        showToast("Referral code not loaded");
-        return;
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(code);
+    }else{
+      const textarea = document.createElement("textarea");
+      textarea.value = code;
+      textarea.style.position = "fixed"; textarea.style.left = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.focus(); textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
     }
+    showToast("Referral code copied!");
+  }catch(err){
+    showToast("Copy failed");
+  }
+}
 
-    try{
-
-        if(navigator.clipboard){
-
-            await navigator.clipboard.writeText(code);
-
-        }else{
-
-            const textarea = document.createElement("textarea");
-            textarea.value = code;
-            textarea.style.position = "fixed";
-            textarea.style.left = "-9999px";
-
-            document.body.appendChild(textarea);
-
-            textarea.focus();
-            textarea.select();
-
-            document.execCommand("copy");
-
-            textarea.remove();
-
-        }
-
-        showToast("Referral code copied!");
-
-    }catch(err){
-
-        console.error(err);
-        showToast("Copy failed");
-
-    }
-
-    }
-
-// Wait for DOM to load before adding event
-document
-.getElementById("copyBtn")
-.addEventListener("click",copyReferralCode);
-  
 onAuthStateChanged(auth,(user)=>{
   if(!user){window.location="index.html";return;}
   currentUser=user;
@@ -284,7 +237,6 @@ onAuthStateChanged(auth,(user)=>{
 
 function loadTeamData(){
   const me = allUsers[currentUser.uid] || {};
-  // FIX: SHOW CODE EVEN IF NOT IN DB
   const code = me.referralCode || "SB" + currentUser.uid.substring(0,6).toUpperCase();
   document.getElementById("refCodeDisplay").textContent = code;
   document.getElementById("totalTeam").textContent = me.teamCount || 0;
@@ -302,9 +254,7 @@ function loadTeamData(){
   document.getElementById("level2Count").textContent = `${l2.length} Active`;
   document.getElementById("level3Count").textContent = `${l3.length} Active`;
 }
-console.log(
-document.getElementById("refCodeDisplay").textContent
-);
+
 function renderMilestones(type){
   const me = allUsers[currentUser.uid] || {};
   const teamCount = me.teamCount || 0;
@@ -315,6 +265,9 @@ function renderMilestones(type){
     list.innerHTML += `<div class="milestone-card"><div class="milestone-top"><div class="milestone-left"><div class="badge">${m.count}</div><div><div class="title">${m.count} Active Team Members</div><div style="font-size:12px;color:#94A3B8;">Reward: UGX ${m.reward.toLocaleString()}</div></div></div><div class="reward">UGX ${m.reward.toLocaleString()}</div></div><div class="progress-bar"><div class="progress" style="width:${progress}%"></div></div><div style="font-size:11px;color:#94A3B8;margin-top:6px;">${teamCount} / ${m.count} (${progress.toFixed(0)}%)</div></div>`;
   });
 }
+
+// EVENT LISTENERS - AFTER FUNCTIONS
+document.getElementById('copyBtn').addEventListener('click', copyReferralCode);
 
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click', (e)=>{
@@ -349,4 +302,4 @@ function loadDirectory(level){
 }
 </script>
 </body>
-</html>
+                                                               </html>
