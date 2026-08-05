@@ -106,7 +106,7 @@ body{
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;}
 .nav-item.active{color:var(--cyan);font-weight:700;}
 .nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;transition:.2s;}
-.nav-item.active.nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);}
+.nav-item.active .nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);}
 
 /* CENTERED TOAST */
 #toast{
@@ -132,7 +132,7 @@ body{
 <div class="ref-header"><h3>INVITE FRIENDS & EARN</h3><span class="ref-code-badge">Level 1: 10%</span></div>
 <div class="ref-code-box">
   <span class="ref-code" id="refCodeDisplay">SBXXXX</span>
-  <button class="copy-btn" id="copyBtn" onclick="copyReferralCode()">Copy</button>
+  <button class="copy-btn" id="copyBtn">Copy</button>
 </div>
 
 <div class="levels">
@@ -206,7 +206,11 @@ function showToast(msg){
 function copyReferralCode(){
   const code = document.getElementById("refCodeDisplay").textContent.trim();
   if(code === "SBXXXX"){ showToast("Code not loaded yet"); return; }
-
+  
+document
+.getElementById("copyBtn")
+.addEventListener("click",copyReferralCode);
+  
   const textarea = document.createElement("textarea");
   textarea.value = code;
   textarea.style.position = "fixed"; textarea.style.top = "0"; textarea.style.left = "-9999px";
@@ -215,19 +219,57 @@ function copyReferralCode(){
   textarea.select();
   textarea.setSelectionRange(0, 99999); // For mobile
   
-  try{
-    document.execCommand("copy");
-    showToast("Referral code copied!");
-  }catch(e){
-    showToast("Failed to copy");
-  }
-  document.body.removeChild(textarea);
-}
+  async function copyReferralCode(){
+
+    const code = document
+        .getElementById("refCodeDisplay")
+        .textContent
+        .trim();
+
+    if(!code || code === "SBXXXX"){
+        showToast("Referral code not loaded");
+        return;
+    }
+
+    try{
+
+        if(navigator.clipboard){
+
+            await navigator.clipboard.writeText(code);
+
+        }else{
+
+            const textarea = document.createElement("textarea");
+            textarea.value = code;
+            textarea.style.position = "fixed";
+            textarea.style.left = "-9999px";
+
+            document.body.appendChild(textarea);
+
+            textarea.focus();
+            textarea.select();
+
+            document.execCommand("copy");
+
+            textarea.remove();
+
+        }
+
+        showToast("Referral code copied!");
+
+    }catch(err){
+
+        console.error(err);
+        showToast("Copy failed");
+
+    }
+
+    }
 
 // Wait for DOM to load before adding event
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('copyBtn').onclick = copyReferralCode;
-});
+document
+.getElementById("copyBtn")
+.addEventListener("click",copyReferralCode);
   
 onAuthStateChanged(auth,(user)=>{
   if(!user){window.location="index.html";return;}
@@ -260,7 +302,9 @@ function loadTeamData(){
   document.getElementById("level2Count").textContent = `${l2.length} Active`;
   document.getElementById("level3Count").textContent = `${l3.length} Active`;
 }
-
+console.log(
+document.getElementById("refCodeDisplay").textContent
+);
 function renderMilestones(type){
   const me = allUsers[currentUser.uid] || {};
   const teamCount = me.teamCount || 0;
