@@ -64,15 +64,15 @@ body{
 }
 .level-card:hover{box-shadow:var(--glow-cyan);border-color:var(--cyan);}
 .level-card h4{font-size:12px;color:var(--muted);margin-bottom:6px;letter-spacing:.5px;}
-.level-card.percent{color:var(--cyan);font-weight:800;font-size:15px;}
-.level-card.value{font-size:15px;font-weight:800;margin:6px 0;}
-.level-card.active{font-size:11px;color:var(--muted);}
+.level-card .percent{color:var(--cyan);font-weight:800;font-size:15px;}
+.level-card .value{font-size:15px;font-weight:800;margin:6px 0;}
+.level-card .active{font-size:11px;color:var(--muted);}
 
 .stats-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
 .stat-3{background:rgba(0,209,255,.05);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center;transition:.3s;}
 .stat-3:hover{box-shadow:var(--glow-green);border-color:var(--green);}
-.stat-3.val{font-size:20px;font-weight:800;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.stat-3.lab{font-size:11px;color:var(--muted);margin-top:4px;}
+.stat-3 .val{font-size:20px;font-weight:800;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-3 .lab{font-size:11px;color:var(--muted);margin-top:4px;}
 
 .tabs{display:flex;gap:8px;margin-bottom:14px;}
 .tab-btn{flex:1;padding:10px;border:none;border-radius:12px;background:rgba(255,255,255,.04);color:var(--muted);font-weight:700;cursor:pointer;transition:.2s;}
@@ -106,7 +106,7 @@ body{
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;}
 .nav-item.active{color:var(--cyan);font-weight:700;}
 .nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;transition:.2s;}
-.nav-item.active.nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);}
+.nav-item.active .nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);}
 
 /* CENTERED TOAST */
 #toast{
@@ -132,7 +132,7 @@ body{
 <div class="ref-header"><h3>INVITE FRIENDS & EARN</h3><span class="ref-code-badge">Level 1: 10%</span></div>
 <div class="ref-code-box">
   <span class="ref-code" id="refCodeDisplay">SBXXXX</span>
-  <button class="copy-btn" onclick="copyRef()">Copy</button>
+  <button class="copy-btn" id="copyBtn">Copy</button>
 </div>
 
 <div class="levels">
@@ -150,18 +150,18 @@ body{
 </div>
 
 <div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('daily', this)">Daily Milestones</button>
-  <button class="tab-btn" onclick="switchTab('weekly', this)">Weekly Milestones</button>
+  <button class="tab-btn active" data-tab="daily">Daily Milestones</button>
+  <button class="tab-btn" data-tab="weekly">Weekly Milestones</button>
 </div>
 <div id="milestonesList"></div>
 
 <h3 style="margin:20px 0 10px;font-size:15px;font-weight:800;">TEAM DIRECTORY</h3>
 <div class="directory-tabs">
-<button class="dir-tab active" onclick="loadDirectory(1,event)">Level 1 <span id="l1count">(0)</span></button>
-<button class="dir-tab" onclick="loadDirectory(2,event)">Level 2 <span id="l2count">(0)</span></button>
-<button class="dir-tab" onclick="loadDirectory(3,event)">Level 3 <span id="l3count">(0)</span></button>
+<button class="dir-tab active" data-level="1">Level 1 <span id="l1count">(0)</span></button>
+<button class="dir-tab" data-level="2">Level 2 <span id="l2count">(0)</span></button>
+<button class="dir-tab" data-level="3">Level 3 <span id="l3count">(0)</span></button>
 </div>
-<div id="directoryList"><div class="directory-msg">No Level 1 direct referrals found. Share your code to build your team!</div></div>
+<div id="directoryList"><div class="directory-msg">Loading...</div></div>
 </div>
 
 <div class="bottom-nav">
@@ -173,11 +173,10 @@ body{
 </div>
 
 <div id="toast"></div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, onValue, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
@@ -188,9 +187,9 @@ const firebaseConfig = {
   messagingSenderId: "24568208668",
   appId: "1:24568208668:web:e01e4001149dfa93eeaed9"
 };
-  
+
 const app=initializeApp(firebaseConfig);const auth=getAuth(app);const db=getDatabase(app);
-let currentUser=null; let allUsers={}; let currentTab = 'daily';
+let currentUser=null; let allUsers={}; let currentTab = 'daily'; let currentLevel = 1;
 
 const dailyMilestones = [{count:3,reward:3000},{count:5,reward:6000},{count:10,reward:10000},{count:20,reward:20000}];
 const weeklyMilestones = [{count:10,reward:15000},{count:20,reward:40000},{count:50,reward:120000},{count:100,reward:300000}];
@@ -203,77 +202,97 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'), 2000);
 }
 
-onAuthStateChanged(auth,(user)=>{if(!user){window.location="index.html";return;}currentUser=user;loadAll();});
+// FIXED COPY BUTTON - works on iPhone
+document.getElementById('copyBtn').addEventListener('click', async ()=>{
+  const code = document.getElementById("refCodeDisplay").textContent;
+  try{
+    if(navigator.clipboard){
+      await navigator.clipboard.writeText(code);
+    }else{ // Fallback for old browsers
+      const textarea = document.createElement("textarea");
+      textarea.value = code; document.body.appendChild(textarea);
+      textarea.select(); document.execCommand("copy"); document.body.removeChild(textarea);
+    }
+    showToast("Referral code copied!");
+  }catch(e){ showToast("Failed to copy"); }
+});
 
-async function loadAll(){
-const snap = await get(ref(db,"users"));
-allUsers = snap.val() || {};
-loadTeamData();
-renderMilestones(currentTab);
-loadDirectory(1);
-}
+onAuthStateChanged(auth,(user)=>{
+  if(!user){window.location="index.html";return;}
+  currentUser=user;
+
+  // FIX 1: USE onValue FOR REALTIME SYNC
+  onValue(ref(db,"users"), (snapshot)=>{
+    allUsers = snapshot.val() || {};
+    loadTeamData();
+    renderMilestones(currentTab);
+    loadDirectory(currentLevel);
+  });
+});
 
 function loadTeamData(){
-const me = allUsers[currentUser.uid] || {};
-const code = me.referralCode || currentUser.uid.substring(0,8).toUpperCase();
-document.getElementById("refCodeDisplay").textContent = code;
-document.getElementById("refCodeDisplay").dataset.code = code; // for copying
-document.getElementById("totalTeam").textContent = me.teamCount || 0;
-document.getElementById("refEarnings").textContent = "UGX "+Number(me.referralEarnings||0).toLocaleString();
+  const me = allUsers[currentUser.uid] || {};
+  const code = me.referralCode || "SB" + currentUser.uid.substring(0,6).toUpperCase();
+  document.getElementById("refCodeDisplay").textContent = code;
+  document.getElementById("totalTeam").textContent = me.teamCount || 0;
+  document.getElementById("refEarnings").textContent = "UGX "+Number(me.referralEarnings||0).toLocaleString();
 
-let l1=[],l2=[],l3=[];
-Object.keys(allUsers).forEach(uid=>{ if(allUsers[uid].referrer === currentUser.uid){l1.push(uid);} });
-l1.forEach(uid=>{ Object.keys(allUsers).forEach(cid=>{ if(allUsers[cid].referrer === uid) l2.push(cid); }); });
-l2.forEach(uid=>{ Object.keys(allUsers).forEach(cid=>{ if(allUsers[cid].referrer === uid) l3.push(cid); }); });
+  let l1=[],l2=[],l3=[];
+  Object.keys(allUsers).forEach(uid=>{ if(allUsers[uid].referrer === currentUser.uid){l1.push(uid);} });
+  l1.forEach(uid=>{ Object.keys(allUsers).forEach(cid=>{ if(allUsers[cid].referrer === uid) l2.push(cid); }); });
+  l2.forEach(uid=>{ Object.keys(allUsers).forEach(cid=>{ if(allUsers[cid].referrer === uid) l3.push(cid); }); });
 
-document.getElementById("l1count").textContent = `(${l1.length})`;
-document.getElementById("l2count").textContent = `(${l2.length})`;
-document.getElementById("l3count").textContent = `(${l3.length})`;
-document.getElementById("level1Count").textContent = `${l1.length} Active`;
-document.getElementById("level2Count").textContent = `${l2.length} Active`;
-document.getElementById("level3Count").textContent = `${l3.length} Active`;
+  document.getElementById("l1count").textContent = `(${l1.length})`;
+  document.getElementById("l2count").textContent = `(${l2.length})`;
+  document.getElementById("l3count").textContent = `(${l3.length})`;
+  document.getElementById("level1Count").textContent = `${l1.length} Active`;
+  document.getElementById("level2Count").textContent = `${l2.length} Active`;
+  document.getElementById("level3Count").textContent = `${l3.length} Active`;
 }
 
 function renderMilestones(type){
-const me = allUsers[currentUser.uid] || {};
-const teamCount = me.teamCount || 0;
-const milestones = type === 'weekly'? weeklyMilestones : dailyMilestones;
-const list = document.getElementById("milestonesList"); list.innerHTML="";
-milestones.forEach(m=>{
-  const progress = Math.min(100, (teamCount/m.count)*100);
-  list.innerHTML += `<div class="milestone-card"><div class="milestone-top"><div class="milestone-left"><div class="badge">${m.count}</div><div><div class="title">${m.count} Active Team Members</div><div style="font-size:12px;color:#94A3B8;">Reward: UGX ${m.reward.toLocaleString()}</div></div></div><div class="reward">UGX ${m.reward.toLocaleString()}</div></div><div class="progress-bar"><div class="progress" style="width:${progress}%"></div></div><div style="font-size:11px;color:#94A3B8;margin-top:6px;">${teamCount} / ${m.count} (${progress.toFixed(0)}%)</div></div>`;
+  const me = allUsers[currentUser.uid] || {};
+  const teamCount = me.teamCount || 0;
+  const milestones = type === 'weekly'? weeklyMilestones : dailyMilestones;
+  const list = document.getElementById("milestonesList"); list.innerHTML="";
+  milestones.forEach(m=>{
+    const progress = Math.min(100, (teamCount/m.count)*100);
+    list.innerHTML += `<div class="milestone-card"><div class="milestone-top"><div class="milestone-left"><div class="badge">${m.count}</div><div><div class="title">${m.count} Active Team Members</div><div style="font-size:12px;color:#94A3B8;">Reward: UGX ${m.reward.toLocaleString()}</div></div></div><div class="reward">UGX ${m.reward.toLocaleString()}</div></div><div class="progress-bar"><div class="progress" style="width:${progress}%"></div></div><div style="font-size:11px;color:#94A3B8;margin-top:6px;">${teamCount} / ${m.count} (${progress.toFixed(0)}%)</div></div>`;
+  });
+}
+
+// EVENT LISTENERS
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', (e)=>{
+    currentTab = e.target.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+    renderMilestones(currentTab);
+  });
 });
-}
 
-window.switchTab = function(type, btn){
-  currentTab = type;
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderMilestones(type);
-}
+document.querySelectorAll('.dir-tab').forEach(btn=>{
+  btn.addEventListener('click', (e)=>{
+    currentLevel = parseInt(e.currentTarget.dataset.level);
+    document.querySelectorAll('.dir-tab').forEach(b=>b.classList.remove('active'));
+    e.currentTarget.classList.add('active');
+    loadDirectory(currentLevel);
+  });
+});
 
-window.loadDirectory = function(level,e){
-document.querySelectorAll(".dir-tab").forEach(b=>b.classList.remove("active"));
-e.target.classList.add("active");
-let list=[];
-if(level===1) list = Object.keys(allUsers).filter(uid=>allUsers[uid].referrer===currentUser.uid);
-if(level===2) list = Object.keys(allUsers).filter(uid=>allUsers[allUsers[uid].referrer]?.referrer===currentUser.uid);
-if(level===3) list = Object.keys(allUsers).filter(uid=>allUsers[allUsers[allUsers[uid].referrer]?.referrer]?.referrer===currentUser.uid);
-const div = document.getElementById("directoryList");
-if(list.length===0){div.innerHTML=`<div class="directory-msg">No Level ${level} direct referrals found. Share your code to build your team!</div>`;return;}
-div.innerHTML="";
-list.forEach(uid=>{ const u = allUsers[uid]; div.innerHTML += `<div class="team-item"><div class="team-avatar">${u.username.charAt(0).toUpperCase()}</div><div><div style="font-weight:700;">${u.username}</div><div style="font-size:12px;color:#94A3B8;">${u.phone}</div></div></div>`; });
-}
-
-window.copyRef=async ()=>{
-  const code = document.getElementById("refCodeDisplay").dataset.code;
-  try{
-    await navigator.clipboard.writeText(code);
-    showToast("Referral code copied!");
-  }catch(e){
-    showToast("Failed to copy");
-  }
+function loadDirectory(level){
+  let list=[];
+  if(level===1) list = Object.keys(allUsers).filter(uid=>allUsers[uid].referrer===currentUser.uid);
+  if(level===2) list = Object.keys(allUsers).filter(uid=>allUsers[allUsers[uid].referrer]?.referrer===currentUser.uid);
+  if(level===3) list = Object.keys(allUsers).filter(uid=>allUsers[allUsers[allUsers[uid].referrer]?.referrer]?.referrer===currentUser.uid);
+  const div = document.getElementById("directoryList");
+  if(list.length===0){div.innerHTML=`<div class="directory-msg">No Level ${level} direct referrals found. Share your code to build your team!</div>`;return;}
+  div.innerHTML="";
+  list.forEach(uid=>{
+    const u = allUsers[uid];
+    div.innerHTML += `<div class="team-item"><div class="team-avatar">${u.username.charAt(0).toUpperCase()}</div><div><div style="font-weight:700;">${u.username}</div><div style="font-size:12px;color:#94A3B8;">${u.phone}</div></div></div>`;
+  });
 }
 </script>
 </body>
-  </html>
+</html>
