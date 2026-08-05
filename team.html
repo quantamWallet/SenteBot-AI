@@ -24,8 +24,16 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 .ref-code-badge{background:rgba(0,209,255,.1);border:1px solid var(--border);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;}
 .ref-code-box{background:linear-gradient(180deg,#0B1324,#0E1629);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
 .ref-code{font-size:20px;font-weight:800;color:var(--green);letter-spacing:2px;text-shadow:var(--glow-green);flex:1;text-align:center;}
-.copy-btn{background:linear-gradient(90deg,var(--cyan),var(--green));border:none;padding:10px 14px;border-radius:10px;color:#05121A;font-weight:800;font-size:15px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;}
+.copy-btn{
+  background:linear-gradient(90deg,var(--cyan),var(--green));
+  border:none;padding:10px 14px;border-radius:10px;color:#05121A;
+  font-weight:800;font-size:15px;cursor:pointer;transition:.2s;
+  display:flex;align-items:center;justify-content:center;
+  position:relative; /* FIX: put button above the card border */
+  z-index:2;         /* FIX: makes it clickable */
+}
 .copy-btn:hover{filter:brightness(1.1);transform:scale(1.03);}
+  
 .levels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0;}
 .level-card{background:rgba(0,209,255,.05);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center;transition:.3s;}
 .level-card:hover{box-shadow:var(--glow-cyan);border-color:var(--cyan);}
@@ -149,14 +157,10 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'), 2000);
 }
 
-/* ---------- Copy Referral - SAME AS PROFILE ---------- */
+/* ---------- Copy Referral - EXACT FROM PROFILE ---------- */
 document.getElementById("copyReferral").onclick = async () => {
   const code = document.getElementById("refCodeDisplay").textContent.trim();
-
-  if(!code || code === "SBXXXX"){
-    showToast("Code not loaded yet");
-    return;
-  }
+  if(!code || code === "SBXXXX"){ showToast("Code not loaded yet"); return; }
 
   try{
     await navigator.clipboard.writeText(code);
@@ -165,18 +169,13 @@ document.getElementById("copyReferral").onclick = async () => {
     icon.className = "fa-solid fa-check";
     setTimeout(()=> icon.className = "fa-regular fa-copy", 1200);
   }catch{
-    // Fallback for old browsers / http
     const textArea = document.createElement("textarea");
     textArea.value = code;
     textArea.style.position = "fixed"; textArea.style.left = "-9999px";
     document.body.appendChild(textArea);
     textArea.select();
-    try {
-      document.execCommand('copy');
-      showToast("Referral code copied!");
-    } catch {
-      showToast("Long press to copy");
-    }
+    try { document.execCommand('copy'); showToast("Referral code copied!"); }
+    catch { showToast("Long press to copy"); }
     document.body.removeChild(textArea);
   }
 };
