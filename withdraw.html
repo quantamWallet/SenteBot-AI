@@ -201,41 +201,39 @@ window.requestWithdraw = async () => {
         const activityKey = push(ref(db, `users/${currentUser.uid}/activities`)).key;
 
         const updates = {};
-        // 1. User withdrawal history
-        updates[`users/${currentUser.uid}/withdrawals/${withdrawKey}`] = {
-            amount: amount,
-            phone: userPhone,
-            fee: fee,
-            total: totalDeduct,
-            method: "MOBILE_MONEY",
-            account: userPhone,
-            status: "PENDING",
-            createdAt: Date.now()
-        };
-        // 2. Admin queue - so admin can see all withdrawals
-        updates[`withdrawals/${withdrawKey}`] = {
-            uid: currentUser.uid,
-            phone: userPhone,
-            amount: amount,
-            fee: fee,
-            total: totalDeduct,
-            method: "MOBILE_MONEY",
-            account: userPhone,
-            status: "PENDING",
-            requestedAt: Date.now()
-        };
-        // 3. Activity log
-        updates[`users/${currentUser.uid}/activities/${activityKey}`] = {
-            icon: "fa-solid fa-arrow-up",
-            title: "Withdrawal Request",
-            amount: "-UGX " + amount.toLocaleString(),
-            time: new Date().toLocaleString()
-        };
+// 1. User withdrawal history - ALLOWED
+updates[`users/${currentUser.uid}/withdrawals/${withdrawKey}`] = {
+    amount: amount,
+    phone: userPhone,
+    fee: fee,
+    total: totalDeduct,
+    method: "MOBILE_MONEY",
+    account: userPhone,
+    status: "PENDING",
+    createdAt: Date.now()
+};
+// 2. Admin queue - ALLOWED for admin only, but user can create
+updates[`withdrawals/${withdrawKey}`] = {
+    uid: currentUser.uid,
+    phone: userPhone,
+    amount: amount,
+    fee: fee,
+    total: totalDeduct,
+    method: "MOBILE_MONEY",
+    account: userPhone,
+    status: "PENDING",
+    requestedAt: Date.now()
+};
+// 3. Activity log - ALLOWED
+updates[`users/${currentUser.uid}/activities/${activityKey}`] = {
+    icon: "fa-solid fa-arrow-up",
+    title: "Withdrawal Request",
+    amount: "-UGX " + amount.toLocaleString(),
+    time: new Date().toLocaleString()
+};
 
-        // NOTE: We do NOT deduct balance here because rule has .write: false
-        // Admin will deduct when approving
-
-        await update(ref(db), updates);
+// REMOVED: balance deduction. Do this in admin panel after approval
+await update(ref(db), updates);
         
         document.getElementById("withdrawAmount").value = "";
         showToast("Withdrawal request submitted", "success");
