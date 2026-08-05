@@ -12,116 +12,140 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;}
-:root{--bg:#070B14;--bg2:#101827;--card:#111827;--card2:#182235;--green:#22C55E;--green2:#16A34A;--text:#F8FAFC;--muted:#94A3B8;--border:rgba(255,255,255,.08);--shadow:0 18px 45px rgba(0,0,0,.45);}
-body{background:radial-gradient(circle at top,#14302a 0%,transparent 35%),linear-gradient(180deg,#08101E,#070B14);color:var(--text);min-height:100vh;padding-bottom:120px;}
-.container{max-width:520px;margin:auto;padding:18px;}
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
-.back-btn{width:46px;height:46px;border-radius:15px;background:rgba(255,255,255,.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:.25s;}
-.back-btn:active{transform:scale(.95);}
+:root{
+  --bg:#050A18;--card:#0E1629;--card2:#14243E;--green:#00E676;--cyan:#00D1FF;--gold:#FFD166;
+  --text:#F8FAFC;--muted:#94A3B8;--border:rgba(0,209,255,.15);
+  --glow-cyan:0 0 25px rgba(0,209,255,.25);
+  --glow-green:0 0 25px rgba(0,230,118,.25);
+}
+body{
+  background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),transparent 60%),
+             linear-gradient(180deg,#050A18,#070B14);
+  color:var(--text);min-height:100vh;padding-bottom:120px;
+}
+.container{max-width:540px;margin:auto;padding:18px;}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.back-btn{
+  width:46px;height:46px;border-radius:15px;background:rgba(0,209,255,.06);
+  border:1px solid var(--border);display:flex;align-items:center;justify-content:center;
+  font-size:18px;cursor:pointer;transition:.3s;backdrop-filter:blur(10px);
+}
+.back-btn:hover{box-shadow:var(--glow-cyan);border-color:var(--cyan);}
 .page-title{text-align:center;flex:1;}
-.page-title h2{font-size:20px;font-weight:800;}
+.page-title h2{font-size:22px;font-weight:800;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .page-title p{font-size:13px;color:var(--muted);margin-top:4px;}
 .header-right{width:46px;}
-.balance-card{background:linear-gradient(135deg,#182235,#111827);border-radius:24px;padding:22px;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:22px;position:relative;overflow:hidden;}
-.balance-card::before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:rgba(34,197,94,.10);top:-90px;right:-90px;}
-.balance-label{font-size:13px;color:#CBD5E1;}
-.balance-value{font-size:32px;font-weight:800;margin:10px 0;}
+
+/* FINTECH BALANCE CARD */
+.balance-card{
+  background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));
+  border-radius:24px;padding:24px;border:1px solid var(--border);
+  box-shadow:var(--glow-cyan);margin-bottom:24px;position:relative;overflow:hidden;backdrop-filter:blur(16px);
+}
+.balance-card::before{
+  content:"";position:absolute;inset:0;border-radius:24px;padding:1px;
+  background:linear-gradient(130deg,var(--cyan),transparent 40%,var(--green));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;opacity:.6;
+}
+.balance-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.balance-value{font-size:34px;font-weight:800;margin:10px 0;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .balance-info{display:flex;justify-content:space-between;margin-top:14px;font-size:13px;color:var(--muted);}
+
 .category-tabs{display:flex;gap:10px;overflow-x:auto;padding-bottom:5px;margin-bottom:24px;scrollbar-width:none;}
 .category-tabs::-webkit-scrollbar{display:none;}
-.category{padding:12px 18px;border-radius:30px;background:rgba(255,255,255,.05);border:1px solid var(--border);white-space:nowrap;font-size:14px;font-weight:700;cursor:pointer;transition:.25s;}
-.category.active{background:var(--green);color:#07111F;border:none;}
+.category{
+  padding:11px 18px;border-radius:30px;background:rgba(255,255,255,.04);
+  border:1px solid var(--border);white-space:nowrap;font-size:14px;font-weight:700;cursor:pointer;transition:.3s;
+}
+.category.active{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;border:none;box-shadow:var(--glow-cyan);}
+
+/* FINTECH MACHINE CARD */
 .machine-list{display:flex;flex-direction:column;gap:18px;}
-.machine-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:22px;padding:20px;box-shadow:var(--shadow);}
+.machine-card{
+  background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));
+  border:1px solid var(--border);border-radius:22px;padding:20px;
+  box-shadow:0 8px 30px rgba(0,0,0,.35);backdrop-filter:blur(16px);position:relative;overflow:hidden;transition:.3s;
+}
+.machine-card::before{
+  content:"";position:absolute;inset:0;border-radius:22px;padding:1px;
+  background:linear-gradient(135deg,var(--cyan),transparent 50%,var(--green));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:.4s;
+}
+.machine-card:hover::before{opacity:1;}
+.machine-card:hover{transform:translateY(-3px);box-shadow:var(--glow-cyan);}
+
 .machine-top{display:flex;align-items:center;gap:16px;margin-bottom:18px;}
-.machine-icon{width:62px;height:62px;border-radius:18px;background:rgba(34,197,94,.15);display:flex;align-items:center;justify-content:center;font-size:28px;color:#22C55E;}
+.machine-icon{
+  width:62px;height:62px;border-radius:18px;
+  background:linear-gradient(135deg,rgba(0,209,255,.2),rgba(0,230,118,.2));
+  display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--cyan);
+  border:1px solid var(--border);
+}
 .machine-name{font-size:18px;font-weight:800;}
 .machine-status{margin-top:5px;display:inline-block;padding:6px 12px;border-radius:30px;font-size:12px;font-weight:700;}
-.machine-status.available{background:rgba(34,197,94,.15);color:#22C55E;}
-.machine-status.active{background:rgba(59,130,246,.18);color:#3B82F6;}
+.machine-status.available{background:rgba(0,230,118,.15);color:var(--green);}
+.machine-status.active{background:rgba(0,209,255,.18);color:var(--cyan);}
+
 .machine-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:20px;}
 .machine-grid small{display:block;color:var(--muted);font-size:12px;margin-bottom:6px;}
 .machine-grid strong{font-size:15px;}
-.invest-btn{width:100%;height:52px;border:none;border-radius:16px;background:linear-gradient(135deg,#22C55E,#16A34A);color:#07111F;font-size:15px;font-weight:800;cursor:pointer;transition:.25s;}
-.invest-btn:active{transform:scale(.98);}
-.invest-btn:disabled{opacity:.6;cursor:default;}
-.modal{position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.75);display:none;justify-content:center;align-items:center;padding:20px;z-index:9999;backdrop-filter:blur(6px);}
-.modal-box{width:100%;max-width:360px;background:linear-gradient(180deg,#182235,#111827);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:26px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.45);}
-.modal-icon{width:72px;height:72px;margin:auto;border-radius:20px;background:rgba(34,197,94,.15);display:flex;align-items:center;justify-content:center;font-size:34px;color:#22C55E;margin-bottom:18px;}
+
+.invest-btn{
+  width:100%;height:52px;border:none;border-radius:16px;
+  background:linear-gradient(90deg,var(--cyan),var(--green));
+  color:#05121A;font-size:15px;font-weight:800;cursor:pointer;transition:.25s;
+}
+.invest-btn:hover{filter:brightness(1.1);transform:scale(1.01);}
+.invest-btn:disabled{opacity:.5;cursor:default;filter:grayscale(1);}
+
+.modal{position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.8);display:none;justify-content:center;align-items:center;padding:20px;z-index:9999;backdrop-filter:blur(10px);}
+.modal-box{
+  width:100%;max-width:380px;background:linear-gradient(180deg,#0E1629,#0B1324);
+  border:1px solid var(--border);border-radius:24px;padding:28px;text-align:center;
+  box-shadow:0 20px 60px rgba(0,209,255,.25);
+}
+.modal-icon{width:72px;height:72px;margin:auto;border-radius:20px;background:linear-gradient(135deg,var(--cyan),var(--green));display:flex;align-items:center;justify-content:center;font-size:34px;color:#05121A;margin-bottom:18px;}
 .modal-box h2{font-size:22px;margin-bottom:10px;}
 .modal-box p{color:#94A3B8;line-height:1.6;margin-bottom:24px;}
 .modal-buttons{display:flex;gap:12px;}
-.modal-buttons button{flex:1;height:50px;border:none;border-radius:14px;font-weight:700;font-size:15px;cursor:pointer;}
-.cancel-btn{background:#334155;color:white;}
-.confirm-btn{background:#22C55E;color:#07111F;}
-#toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:#22C55E;color:#fff;padding:14px 20px;border-radius:14px;font-weight:700;font-size:14px;display:none;z-index:10000;box-shadow:0 10px 30px rgba(0,0,0,.35);}
+.modal-buttons button{flex:1;height:50px;border:none;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer;transition:.2s;}
+.cancel-btn{background:#1E293B;color:white;}
+.cancel-btn:hover{background:#334155;}
+.confirm-btn{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;}
+.confirm-btn:hover{filter:brightness(1.1);}
+
+#toast{
+  position:fixed;left:50%;bottom:100px;transform:translateX(-50%);
+  background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;
+  padding:14px 24px;border-radius:14px;font-weight:800;font-size:14px;display:none;z-index:10000;
+  box-shadow:0 10px 30px rgba(0,209,255,.35);
+}
+
 .machine-progress{margin-top:16px;margin-bottom:16px;}
 .progress-top{display:flex;justify-content:space-between;font-size:12px;color:#94A3B8;margin-bottom:8px;}
-.progress-bar{height:10px;background:#1E293B;border-radius:30px;overflow:hidden;}
-.progress-fill{height:100%;background:linear-gradient(90deg,#22C55E,#16A34A);border-radius:30px;transition:.4s;}
+.progress-bar{height:10px;background:#0B1324;border-radius:30px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:30px;transition:.4s;box-shadow:0 0 10px rgba(0,209,255,.4);}
+
 .loading-box{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;}
-.loader{width:45px;height:45px;border:4px solid rgba(255,255,255,.15);border-top:4px solid #22C55E;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:18px;}
+.loader{width:45px;height:45px;border:4px solid rgba(0,209,255,.2);border-top:4px solid var(--cyan);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:18px;}
 @keyframes spin{100%{transform:rotate(360deg);}}
+
 .empty-state{text-align:center;padding:60px 20px;color:#94A3B8;}
 .empty-state h3{color:#fff;margin-bottom:10px;}
 .empty-state p{font-size:14px;line-height:1.6;}
+
 .bottom-nav{
-position:fixed;
-left:50%;
-bottom:18px;
-transform:translateX(-50%);
-width:calc(100% - 26px);
-max-width:520px;
-height:74px;
-background:rgba(13,20,34,.96);
-backdrop-filter:blur(20px);
-border:1px solid var(--border);
-border-radius:24px;
-display:flex;
-justify-content:space-around;
-align-items:center;
-box-shadow:0 15px 45px rgba(0,0,0,.45);
-z-index:999;
+position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:540px;height:74px;
+background:rgba(8,16,32,.9);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;
+display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 45px rgba(0,0,0,.45);z-index:999;
 }
-
-.nav-item{
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-gap:5px;
-flex:1;
-font-size:11px;
-color:var(--muted);
-cursor:pointer;
-transition:.25s;
-}
-
-.nav-icon{
-width:42px;
-height:42px;
-display:flex;
-align-items:center;
-justify-content:center;
-border-radius:14px;
-font-size:22px;
-}
-
-.nav-item.active{
-color:#22C55E;
-font-weight:700;
-}
-
-.nav-item.active .nav-icon{
-background:rgba(34,197,94,.18);
-color:#22C55E;
-box-shadow:0 0 18px rgba(34,197,94,.35);
-}
-
-.nav-item:active{
-transform:scale(.94);
-}
-
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;transition:.25s;}
+.nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;transition:.2s;}
+.nav-item.active{color:var(--cyan);font-weight:700;}
+.nav-item.active .nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);box-shadow:0 0 18px rgba(0,209,255,.35);}
 </style>
 </head>
 <body>
@@ -171,49 +195,18 @@ transform:scale(.94);
 </div>
 
 <div class="bottom-nav">
-
-    <div class="nav-item active" onclick="window.location='dashboard.html'">
-        <div class="nav-icon">
-            <i class="fa-solid fa-house"></i>
-        </div>
-        <span>Home</span>
-    </div>
-
-    <div class="nav-item" onclick="window.location='team.html'">
-        <div class="nav-icon">
-            <i class="fa-solid fa-users"></i>
-        </div>
-        <span>Team</span>
-    </div>
-
-    <div class="nav-item" onclick="window.location='machines.html'">
-        <div class="nav-icon">
-            <i class="fa-solid fa-microchip"></i>
-        </div>
-        <span>Machines</span>
-    </div>
-
-    <div class="nav-item" onclick="window.location='wallet.html'">
-        <div class="nav-icon">
-            <i class="fa-solid fa-wallet"></i>
-        </div>
-        <span>Wallet</span>
-    </div>
-
-    <div class="nav-item" onclick="window.location='profile.html'">
-        <div class="nav-icon">
-            <i class="fa-solid fa-user"></i>
-        </div>
-        <span>Profile</span>
-    </div>
-
+    <div class="nav-item" onclick="window.location='dashboard.html'"><div class="nav-icon"><i class="fa-solid fa-house"></i></div><span>Home</span></div>
+    <div class="nav-item" onclick="window.location='team.html'"><div class="nav-icon"><i class="fa-solid fa-users"></i></div><span>Team</span></div>
+    <div class="nav-item active"><div class="nav-icon"><i class="fa-solid fa-microchip"></i></div><span>Machines</span></div>
+    <div class="nav-item" onclick="window.location='wallet.html'"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></div>
+    <div class="nav-item" onclick="window.location='profile.html'"><div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
 </div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase, ref, onValue, get, update, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/* FIREBASE CONFIG - add databaseURL */
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
   authDomain: "sentebot-7428b.firebaseapp.com",
@@ -291,7 +284,7 @@ function renderMachines(data) {
 
         let status = "Available";
         let buttonText = '<i class="fa-solid fa-bolt"></i> Invest Now';
-        let buttonStyle = "background:linear-gradient(135deg,#22C55E,#16A34A);color:#07111F;";
+        let buttonStyle = "";
         let progressHtml = "";
 
         if (owned) {
@@ -302,7 +295,7 @@ function renderMachines(data) {
             buttonText = owned.status === "COMPLETED"
                ? '<i class="fa-solid fa-flag-checkered"></i> Completed'
                 : '<i class="fa-solid fa-coins"></i> Earning UGX ' + Number(plan.dailyProfit || 0).toLocaleString() + '/Day';
-            buttonStyle = "background:#334155;color:#fff;";
+            buttonStyle = "opacity:.5;filter:grayscale(1);";
             progressHtml = `
             <div class="machine-progress">
                 <div class="progress-top"><span>${remaining} Days Left</span><span>${progress}%</span></div>
@@ -361,7 +354,7 @@ document.querySelectorAll(".category").forEach(tab => {
 window.showToast = (message, success = true) => {
     const toast = document.getElementById("toast");
     toast.textContent = message;
-    toast.style.background = success? "#22C55E" : "#EF4444";
+    toast.style.background = success? "linear-gradient(90deg,#00D1FF,#00E676)" : "#EF4444";
     toast.style.display = "block";
     clearTimeout(window.toastTimer);
     window.toastTimer = setTimeout(() => { toast.style.display = "none"; }, 3000);
@@ -406,7 +399,8 @@ window.confirmPurchase = async () => {
         showToast("Purchase failed.", false);
     }
 };
-  /* DAILY PROFIT ENGINE FOR RTDB */
+
+/* DAILY PROFIT ENGINE FOR RTDB */
 async function runMachineEngine(){
     if(!currentUser) return;
     const userRef = ref(db,"users/" + currentUser.uid);
@@ -420,7 +414,7 @@ async function runMachineEngine(){
 
     Object.keys(machines).forEach(key => {
         const machine = machines[key];
-        if(machine.status !== "RUNNING") return;
+        if(machine.status!== "RUNNING") return;
         const daysPassed = Math.floor((Date.now() - machine.startDate) / 86400000);
         machine.remainingDays = Math.max(machine.duration - daysPassed, 0);
         machine.progress = Math.min(Math.floor((daysPassed / machine.duration) * 100), 100);
@@ -429,7 +423,7 @@ async function runMachineEngine(){
             machine.status = "COMPLETED";
             changed = true;
         }
-        if(machine.lastProfitDate !== today && machine.status === "RUNNING"){
+        if(machine.lastProfitDate!== today && machine.status === "RUNNING"){
             profit += Number(machine.dailyProfit || 0);
             machine.totalEarned = Number(machine.totalEarned || 0) + Number(machine.dailyProfit || 0);
             machine.lastProfitDate = today;
@@ -452,7 +446,7 @@ function showLoading() {
 function showEmpty() {
     document.getElementById("machineList").innerHTML = `
     <div class="empty-state">
-        <i class="fa-solid fa-microchip" style="font-size:60px;color:#22C55E;margin-bottom:20px;"></i>
+        <i class="fa-solid fa-microchip" style="font-size:60px;color:#00D1FF;margin-bottom:20px;"></i>
         <h3>No Investment Machines</h3>
         <p>New machines will appear here automatically.</p>
     </div>`;
