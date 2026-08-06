@@ -229,11 +229,11 @@ const email=phoneToEmail(phone);
 const phoneCheck = await get(ref(db,"phones/"+fullPhone));
 if(phoneCheck.exists()) throw Error("Phone already registered");
 
-let referrerUid="";
+let referrerCode=""; // CHANGED: save code not uid
 if(referralInput!==""){
   const refSnap = await get(ref(db,"referralCodes/"+referralInput));
   if(!refSnap.exists()) throw Error("Invalid referral code");
-  referrerUid=refSnap.val().uid;
+  referrerCode=referralInput; // just save the code
 }
 
 const credential = await createUserWithEmailAndPassword(auth, email, password);
@@ -241,21 +241,17 @@ const user=credential.user;
 await updateProfile(user,{displayName:username});
 const myReferralCode = generateRefCode();
 
+// CHANGED: removed teamCount update, changed referralClaimed to referralBonusPaid
 await set(ref(db,"users/"+user.uid),{
   username, phone:fullPhone, email, balance:0, todayProfit:0, referralEarnings:0,
   totalEarnings:0, checkinDays:0, activeMachines:0, teamCount:0, machines:{},
-  activities:{}, createdAt:Date.now(), status:"active", referrer:referrerUid,
-  referralCode:myReferralCode, referralClaimed:false, lastActive:Date.now()
+  activities:{}, createdAt:Date.now(), status:"active", referrer:referrerCode,
+  referralCode:myReferralCode, referralBonusPaid:false, lastActive:Date.now()
 });
 await set(ref(db,"phones/"+fullPhone),{ uid:user.uid });
 await set(ref(db,"referralCodes/"+myReferralCode),{ uid:user.uid, username, createdAt:Date.now() });
 
-if(referrerUid){
-  const refUser = ref(db,"users/"+referrerUid);
-  const snap = await get(refUser);
-  const old = snap.val()?.teamCount || 0;
-  await update(refUser,{ teamCount:Number(old)+1 });
-}
+// REMOVED: No teamCount update here. Will happen on deposit approve
 
 showMessage(msg,"Account created successfully! Redirecting in 2s...","success");
 document.getElementById("registerForm").reset();
@@ -294,22 +290,21 @@ setTimeout(()=>{ window.location.href="dashboard.html"; },1000);
   setLoading(btn,false);
 }
 });
-    // Block long press and right click
+
+// Block long press and right click
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('touchstart', e => {
-  if(e.touches.length > 1) e.preventDefault(); // block pinch
+  if(e.touches.length > 1) e.preventDefault();
 });
 document.addEventListener('touchend', e => {
   if(e.touches.length > 1) e.preventDefault();
 });
-
-// Block 500ms long press
 let touchTimer;
 document.addEventListener('touchstart', e => {
   touchTimer = setTimeout(() => e.preventDefault(), 500);
 });
 document.addEventListener('touchend', () => clearTimeout(touchTimer));
 document.addEventListener('touchmove', () => clearTimeout(touchTimer));
-</script>
+  </script>
 </body>
 </html>
