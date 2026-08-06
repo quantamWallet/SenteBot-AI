@@ -17,6 +17,23 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.10),tra
 .container{max-width:540px;margin:auto;padding:18px;}
 
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+  /* BLOCK CHROME TAP TO SEARCH + LONG PRESS */
+*{
+  -webkit-touch-callout: none; /* iOS long press menu */
+  -webkit-user-select: none;   /* Safari */
+   -khtml-user-select: none;   /* Konqueror */
+     -moz-user-select: none;   /* Firefox */
+      -ms-user-select: none;   /* IE/Edge */
+          user-select: none;   /* Standard */
+}
+
+/* Allow selection only in inputs */
+input, textarea{
+  -webkit-user-select: text;
+     -moz-user-select: text;
+      -ms-user-select: text;
+          user-select: text;
+}
 .back-btn{width:46px;height:46px;border-radius:15px;background:rgba(0,209,255,.06);border:1px solid rgba(0,209,255,.2);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;}
 .page-title{text-align:center;flex:1;}
 .page-title h2{font-size:22px;font-weight:800;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
@@ -64,6 +81,7 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.10),tra
 .nav-item.active.nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);box-shadow:0 0 18px rgba(0,209,255,.35);}
 </style>
 </head>
+  <meta name="google" content="notranslate">
 <body>
 
 <div id="toast" class="toast"></div>
@@ -204,6 +222,22 @@ function renderTransactions(){
 
 // Make showToast global for onclick
 window.showToast = showToast;
+  // Block long press and right click
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('touchstart', e => {
+  if(e.touches.length > 1) e.preventDefault(); // block pinch
+});
+document.addEventListener('touchend', e => {
+  if(e.touches.length > 1) e.preventDefault();
+});
+
+// Block 500ms long press
+let touchTimer;
+document.addEventListener('touchstart', e => {
+  touchTimer = setTimeout(() => e.preventDefault(), 500);
+});
+document.addEventListener('touchend', () => clearTimeout(touchTimer));
+document.addEventListener('touchmove', () => clearTimeout(touchTimer));
 </script>
 </body>
   </html>
