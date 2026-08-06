@@ -320,7 +320,9 @@ function loadUser() {
 function renderMachines() {
     const container = document.getElementById("machineList");
     if (!container) return;
-    if(machinePlans.length === 0){ showLoading(); return; }
+    if(machinePlans.length === 0){ showLoading();
+                     showEmpty();             
+                    return; }
 
     let plans = [...machinePlans];
     if (window.currentCategory!== "All") plans = plans.filter(m => m.category === window.currentCategory);
