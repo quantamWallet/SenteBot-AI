@@ -140,7 +140,11 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;transition:.25s;}
 .nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;transition:.2s;}
 .nav-item.active{color:var(--cyan);font-weight:700;}
-.nav-item.active.nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);box-shadow:0 0 18px rgba(0,209,255,.35);}
+.nav-item.active .nav-icon{
+    background:rgba(0,209,255,.15);
+    color:var(--cyan);
+    box-shadow:0 0 18px rgba(0,209,255,.35);
+}
 </style>
 </head>
   <meta name="google" content="notranslate">
@@ -252,7 +256,11 @@ onAuthStateChanged(auth, async (user) => {
     showLoading();
     await loadMachinePlans();
     loadUser();
-    setInterval(renderMachines, 1000);
+    let timer;
+
+if (!timer) {
+    timer = setInterval(renderMachines, 1000);
+}
 });
 
 /* LOAD MACHINES - FIXED: reads from both machines + machinesCatalog */
@@ -524,13 +532,6 @@ document.addEventListener('touchend', e => {
   if(e.touches.length > 1) e.preventDefault();
 });
 
-// Block 500ms long press
-let touchTimer;
-document.addEventListener('touchstart', e => {
-  touchTimer = setTimeout(() => e.preventDefault(), 500);
-});
-document.addEventListener('touchend', () => clearTimeout(touchTimer));
-document.addEventListener('touchmove', () => clearTimeout(touchTimer));
 </script>
 </body>
 </html>
