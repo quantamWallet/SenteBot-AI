@@ -85,7 +85,11 @@ input, textarea{
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;}
 .nav-item.active{color:var(--cyan);font-weight:700;}
 .nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;transition:.2s;}
-.nav-item.active.nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);}
+.nav-item.active .nav-icon{
+    background:rgba(0,209,255,.15);
+    color:var(--cyan);
+    box-shadow:0 0 18px rgba(0,209,255,.35);
+}
 #toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);background:linear-gradient(180deg,#0E1629,#0B1324);border:1px solid var(--border);color:var(--text);padding:14px 22px;border-radius:14px;font-weight:600;font-size:14px;z-index:10000;opacity:0;pointer-events:none;transition:.3s;box-shadow:0 10px 40px rgba(0,209,255,.25);backdrop-filter:blur(16px);}
 #toast.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
 .directory-msg{text-align:center;color:var(--muted);padding:20px;font-size:13px;}
@@ -260,25 +264,20 @@ document.querySelectorAll('.dir-tab').forEach(btn=>{
 });
 
 function loadDirectory(level){
-  if(user.referrer && !user.referralBonusPaid){
-  // Check if they have a PENDING deposit
-  const hasPending = Object.values(user.deposits || {}).some(d => d.status === 'PENDING');
-  if(hasPending) status = "Pending Deposit";
-  else status = "Registered";
-} else if(user.referralBonusPaid){
-  status = "Active - Bonus Paid";
-  }
+  
   let list=[];
   if(level===1) list = Object.keys(allUsers).filter(uid=>allUsers[uid].referrer===currentUser.uid);
   if(level===2) list = Object.keys(allUsers).filter(uid=>allUsers[allUsers[uid].referrer]?.referrer===currentUser.uid);
   if(level===3) list = Object.keys(allUsers).filter(uid=>allUsers[allUsers[allUsers[uid].referrer]?.referrer]?.referrer===currentUser.uid);
   const div = document.getElementById("directoryList");
-  if(list.length===0){div.innerHTML=`<div class="directory-msg">No Level ${level} direct referrals found. Share your code to build your team!</div>`;return;}
+  if(list.length===0){div.innerHTML=`<div class="directory-msg">No Level ${level} direct referrals found. Invite more people using your referral code to grow your network!</div>`;return;}
   div.innerHTML="";
   list.forEach(uid=>{
     const u = allUsers[uid] || {};
     const name = u.username || "User";
-    const phone = u.phone || "-";
+    const phone = u.phone
+    ? u.phone.substring(0,5) + "***" + u.phone.slice(-3)
+    : "-";
     div.innerHTML += `<div class="team-item"><div class="team-avatar">${name.charAt(0).toUpperCase()}</div><div><div style="font-weight:700;">${name}</div><div style="font-size:12px;color:#94A3B8;">${phone}</div></div></div>`;
   });
   }
@@ -291,13 +290,6 @@ document.addEventListener('touchend', e => {
   if(e.touches.length > 1) e.preventDefault();
 });
 
-// Block 500ms long press
-let touchTimer;
-document.addEventListener('touchstart', e => {
-  touchTimer = setTimeout(() => e.preventDefault(), 500);
-});
-document.addEventListener('touchend', () => clearTimeout(touchTimer));
-document.addEventListener('touchmove', () => clearTimeout(touchTimer));
 </script>
 </body>
 </html>           
