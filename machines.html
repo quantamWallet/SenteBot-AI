@@ -22,6 +22,24 @@ body{
 }
 .container{max-width:540px;margin:auto;padding:18px;}
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+  /* BLOCK CHROME TAP TO SEARCH + LONG PRESS */
+*{
+  -webkit-touch-callout: none; /* iOS long press menu */
+  -webkit-user-select: none;   /* Safari */
+   -khtml-user-select: none;   /* Konqueror */
+     -moz-user-select: none;   /* Firefox */
+      -ms-user-select: none;   /* IE/Edge */
+          user-select: none;   /* Standard */
+}
+
+/* Allow selection only in inputs */
+input, textarea{
+  -webkit-user-select: text;
+     -moz-user-select: text;
+      -ms-user-select: text;
+          user-select: text;
+}
+  
 .back-btn{
   width:46px;height:46px;border-radius:15px;background:rgba(0,209,255,.06);
   border:1px solid var(--border);display:flex;align-items:center;justify-content:center;
@@ -125,6 +143,7 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
 .nav-item.active.nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);box-shadow:0 0 18px rgba(0,209,255,.35);}
 </style>
 </head>
+  <meta name="google" content="notranslate">
 <body>
 
 <!-- PURCHASE MODAL -->
@@ -496,6 +515,22 @@ function showEmpty() {
         <p>New machines will appear here automatically.</p>
     </div>`;
 }
+  // Block long press and right click
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('touchstart', e => {
+  if(e.touches.length > 1) e.preventDefault(); // block pinch
+});
+document.addEventListener('touchend', e => {
+  if(e.touches.length > 1) e.preventDefault();
+});
+
+// Block 500ms long press
+let touchTimer;
+document.addEventListener('touchstart', e => {
+  touchTimer = setTimeout(() => e.preventDefault(), 500);
+});
+document.addEventListener('touchend', () => clearTimeout(touchTimer));
+document.addEventListener('touchmove', () => clearTimeout(touchTimer));
 </script>
 </body>
 </html>
