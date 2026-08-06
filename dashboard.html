@@ -17,6 +17,23 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 .container{max-width:520px;margin:auto;padding:16px;}
 
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+  /* BLOCK CHROME TAP TO SEARCH + LONG PRESS */
+*{
+  -webkit-touch-callout: none; /* iOS long press menu */
+  -webkit-user-select: none;   /* Safari */
+   -khtml-user-select: none;   /* Konqueror */
+     -moz-user-select: none;   /* Firefox */
+      -ms-user-select: none;   /* IE/Edge */
+          user-select: none;   /* Standard */
+}
+
+/* Allow selection only in inputs */
+input, textarea{
+  -webkit-user-select: text;
+     -moz-user-select: text;
+      -ms-user-select: text;
+          user-select: text;
+}
 .profile{display:flex;align-items:center;gap:12px;}
 .avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--green));display:flex;justify-content:center;align-items:center;font-size:20px;font-weight:800;color:var(--bg);}
 .profile h2{font-size:18px;font-weight:800;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
@@ -106,6 +123,7 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 .toast.error{background:#EF4444;color:#fff;}
 </style>
 </head>
+  <meta name="google" content="notranslate">
 <body>
 <div id="toast" class="toast"></div>
 <div class="container">
@@ -179,11 +197,7 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
     <div class="nav-item" onclick="window.location='wallet.html'"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></div>
     <div class="nav-item" onclick="window.location='profile.html'"><div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
 </div>
-  <head>
-<script src="js/restrict-google.js"></script> 
-<!-- Then your other scripts -->
-<script async src="https://www.googletagmanager.com/gtm.js?id=GTM-XXXX"></script> <!-- this will now be blocked -->
-  </head>
+  
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -358,6 +372,22 @@ window.applyPromo = async ()=>{
 };
 
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible" && currentUser){loadUser();}});
+  // Block long press and right click
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('touchstart', e => {
+  if(e.touches.length > 1) e.preventDefault(); // block pinch
+});
+document.addEventListener('touchend', e => {
+  if(e.touches.length > 1) e.preventDefault();
+});
+
+// Block 500ms long press
+let touchTimer;
+document.addEventListener('touchstart', e => {
+  touchTimer = setTimeout(() => e.preventDefault(), 500);
+});
+document.addEventListener('touchend', () => clearTimeout(touchTimer));
+document.addEventListener('touchmove', () => clearTimeout(touchTimer));
 </script>
 </body>
 </html>
