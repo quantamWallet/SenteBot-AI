@@ -240,20 +240,28 @@ await updateProfile(user,{displayName:username});
 const myReferralCode = generateRefCode();
 
 await set(ref(db,"users/"+user.uid),{
-  username, phone:fullPhone, email, balance:0, todayProfit:0, referralEarnings:0,
-  totalEarnings:0, checkinDays:0, activeMachines:0, teamCount:0, machines:{},
-  activities:{}, createdAt:Date.now(), status:"active", referrer:referrerUid,
-  referralCode:myReferralCode, referralClaimed:false, lastActive:Date.now()
+    username,
+    phone:fullPhone,
+    email,
+    balance:0,
+    todayProfit:0,
+    referralEarnings:0,
+    totalEarnings:0,
+    checkinDays:0,
+    activeMachines:0,
+    teamCount:0,
+    machines:{},
+    activities:{},
+    createdAt:Date.now(),
+    lastActive:Date.now(),
+    status:"active",
+
+    referrer:referrerUid,
+    referralCode:myReferralCode,
+    referralBonusPaid:false
 });
 await set(ref(db,"phones/"+fullPhone),{ uid:user.uid });
 await set(ref(db,"referralCodes/"+myReferralCode),{ uid:user.uid, username, createdAt:Date.now() });
-
-if(referrerUid){
-  const refUser = ref(db,"users/"+referrerUid);
-  const snap = await get(refUser);
-  const old = snap.val()?.teamCount || 0;
-  await update(refUser,{ teamCount:Number(old)+1 });
-}
 
 showMessage(msg,"Account created successfully! Redirecting in 2s...","success");
 document.getElementById("registerForm").reset();
