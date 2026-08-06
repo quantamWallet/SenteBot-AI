@@ -189,7 +189,9 @@ function loadWallet(){
         document.getElementById("todayProfit").textContent = "UGX " + Number(data.todayProfit || 0).toLocaleString();
         document.getElementById("referralEarnings").textContent = "UGX " + Number(data.referralEarnings || 0).toLocaleString();
 
-        const activities = data.activities ? Object.values(data.activities).reverse() : [];
+        const activities = data.activities
+    ? Object.values(data.activities).sort((a,b)=>(b.timestamp||0)-(a.timestamp||0))
+    : [];
         allTransactions = activities;
         renderTransactions();
     });
@@ -200,14 +202,16 @@ function renderTransactions(){
     let txs = allTransactions;
 
     if(currentFilter !== "All"){
-        txs = allTransactions.filter(tx => {
-            if(currentFilter === "Deposit") return tx.amount && tx.amount.includes("+") && tx.title.toLowerCase().includes("deposit");
-            if(currentFilter === "Withdraw") return tx.amount && tx.amount.includes("-");
-            if(currentFilter === "Profit") return tx.title.toLowerCase().includes("profit") || tx.title.toLowerCase().includes("bonus") || tx.title.toLowerCase().includes("promo");
-            return true;
-        });
-    }
+    txs = allTransactions.filter(tx => {
+        const title = (tx.title || "").toLowerCase();
 
+        if(currentFilter === "Deposit") return (tx.amount || "").includes("+") && title.includes("deposit");
+        if(currentFilter === "Withdraw") return (tx.amount || "").includes("-");
+        if(currentFilter === "Profit") return title.includes("profit") || title.includes("bonus") || title.includes("promo");
+
+        return true;
+    });
+  }
     if(txs.length === 0){
         container.innerHTML = `<div class="empty"><i class="fa-solid fa-receipt"></i><h3>No Transactions Yet</h3><p>Your deposit, withdrawal and profit history will appear here.</p></div>`;
         return;
@@ -223,7 +227,12 @@ function renderTransactions(){
             iconClass = "tx-withdraw";
             icon = "fa-solid fa-arrow-up";
             amountClass = "negative";
-        } else if(tx.title.toLowerCase().includes("deposit")){
+        } else const title = (tx.title || "").toLowerCase();
+
+if(title.includes("deposit")){
+    iconClass = "tx-deposit";
+    icon = "fa-solid fa-arrow-down";
+  }{
             iconClass = "tx-deposit";
             icon = "fa-solid fa-arrow-down";
         }
