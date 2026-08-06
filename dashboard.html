@@ -201,8 +201,10 @@ input, textarea{
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, onValue, update, get, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
+import {
+  ...
+  runTransaction
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
   authDomain: "sentebot-7428b.firebaseapp.com",
@@ -261,7 +263,11 @@ function loadUser(){
         const referral = Number(data.referralEarnings || 0);
         document.getElementById("referralEarnings").textContent = "UGX " + referral.toLocaleString();
 
-        const machines = data.machines ? Object.values(data.machines).filter(m => m.status === "RUNNING").length : 0;
+        const machines = data.machines
+  ? Object.values(data.machines).filter(
+      m => (m.status || "").toUpperCase() === "RUNNING"
+    ).length
+  : 0;
         document.getElementById("machineCount").textContent = machines;
         document.getElementById("machineStatus").textContent = machines + " Running";
 
@@ -282,7 +288,11 @@ function loadUser(){
 /* RENDER ACTIVE MACHINES */
 function renderMachines(data){
     const container = document.getElementById("activeMachines");
-    const machines = data.machines ? Object.values(data.machines) : [];
+    const machines = data.machines
+  ? Object.values(data.machines).filter(
+      m => (m.status || "").toUpperCase() === "RUNNING"
+    )
+  : [];
     if (machines.length === 0) {
         container.innerHTML=`<div style="text-align:center;color:var(--muted);padding:20px;">No Active Machines</div>`;
         return;
@@ -347,6 +357,8 @@ window.claimDaily = async ()=>{
     await update(userRef, updates);
     window.showToast("UGX 300 bonus claimed successfully!","success");
 };
+  const btn = document.getElementById("claimBtn");
+btn.disabled = true;
 
 /* PROMO CODE RTDB */
 window.applyPromo = async ()=>{
