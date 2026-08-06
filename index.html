@@ -12,6 +12,23 @@
       --green:#00E676;--cyan:#00D1FF;--green-dark:#16A34A;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    /* BLOCK CHROME TAP TO SEARCH + LONG PRESS */
+*{
+  -webkit-touch-callout: none; /* iOS long press menu */
+  -webkit-user-select: none;   /* Safari */
+   -khtml-user-select: none;   /* Konqueror */
+     -moz-user-select: none;   /* Firefox */
+      -ms-user-select: none;   /* IE/Edge */
+          user-select: none;   /* Standard */
+}
+
+/* Allow selection only in inputs */
+input, textarea{
+  -webkit-user-select: text;
+     -moz-user-select: text;
+      -ms-user-select: text;
+          user-select: text;
+}
     body {
       background: radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),transparent 60%),linear-gradient(180deg,#050A18,#070B14);
       min-height: 100vh; color: var(--text);
@@ -52,6 +69,7 @@
   </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
+  <meta name="google" content="notranslate">
 <body>
   <div class="wrap">
     <div class="brand">
@@ -276,6 +294,22 @@ setTimeout(()=>{ window.location.href="dashboard.html"; },1000);
   setLoading(btn,false);
 }
 });
+    // Block long press and right click
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('touchstart', e => {
+  if(e.touches.length > 1) e.preventDefault(); // block pinch
+});
+document.addEventListener('touchend', e => {
+  if(e.touches.length > 1) e.preventDefault();
+});
+
+// Block 500ms long press
+let touchTimer;
+document.addEventListener('touchstart', e => {
+  touchTimer = setTimeout(() => e.preventDefault(), 500);
+});
+document.addEventListener('touchend', () => clearTimeout(touchTimer));
+document.addEventListener('touchmove', () => clearTimeout(touchTimer));
 </script>
 </body>
 </html>
