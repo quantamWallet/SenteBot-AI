@@ -14,88 +14,88 @@
   --border:rgba(0,209,255,.15);--shadow:0 18px 45px rgba(0,0,0,.45);--glow-cyan:0 0 25px rgba(0,209,255,.25);
 }
 body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),transparent 60%),linear-gradient(180deg,#050A18,#070B14);color:var(--text);min-height:100vh;padding-bottom:120px;}
-.container{max-width:520px;margin:auto;padding:16px;} /* SMALLER */
+.container{max-width:520px;margin:auto;padding:16px;}
 
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;} /* SMALLER */
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
 .profile{display:flex;align-items:center;gap:12px;}
-.avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--green));display:flex;justify-content:center;align-items:center;font-size:20px;font-weight:800;color:var(--bg);} /* SMALLER */
-.profile h2{font-size:18px;font-weight:800;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;} /* SMALLER */
-.profile span{font-size:12px;color:var(--muted);} /* SMALLER */
+.avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--green));display:flex;justify-content:center;align-items:center;font-size:20px;font-weight:800;color:var(--bg);}
+.profile h2{font-size:18px;font-weight:800;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.profile span{font-size:12px;color:var(--muted);}
 .header-icons{display:flex;gap:10px;}
-.header-icons div{width:40px;height:40px;border-radius:12px;background:rgba(0,209,255,.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:.25s;} /* SMALLER */
+.header-icons div{width:40px;height:40px;border-radius:12px;background:rgba(0,209,255,.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:.25s;}
 .header-icons div:hover{box-shadow:var(--glow-cyan);}
 
-/* FINTECH WALLET CARD - SMALLER */
-.wallet{background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));border-radius:24px;padding:20px;box-shadow:var(--shadow);border:1px solid var(--border);position:relative;overflow:hidden;} /* SMALLER */
-.wallet::before{content:"";position:absolute;inset:0;border-radius:24px;padding:1px;background:linear-gradient(130deg,var(--cyan),transparent 40%,var(--green));-webkit-mask:linear-gradient(#fff 0 0),-webkit-mask-image:linear-gradient(#000 0 0);-webkit-mask-composite:xor;-webkit-mask-size:100% 100%,-webkit-mask-size:100% 100%;}
+/* WALLET CARD */
+.wallet{background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));border-radius:24px;padding:20px;box-shadow:var(--shadow);border:1px solid var(--border);}
 .wallet small{color:#CBD5E1;font-size:12px;text-transform:uppercase;letter-spacing:.5px;}
-.wallet h1{font-size:28px;margin:8px 0;font-weight:800;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;} /* SMALLER + 1 LINE */
-.wallet-profit{display:flex;align-items:center;gap:6px;color:var(--green);font-weight:700;margin-top:4px;font-size:13px;} /* SMALLER */
-.wallet-actions{display:flex;gap:12px;margin-top:24px;}
-.wallet-actions button{flex:1;height:52px;border:none;border-radius:16px;font-size:15px;font-weight:800;cursor:pointer;transition:.25s;}
-.deposit-btn{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;}
-.withdraw-btn{background:rgba(255,255,255,.06);border:1px solid var(--border);color:white;}
+.wallet h1{font-size:28px;margin:8px 0;font-weight:800;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;}
+.wallet-profit{display:flex;align-items:center;gap:6px;color:var(--green);font-weight:700;margin-top:4px;font-size:13px;}
 
-.section-title{display:flex;justify-content:space-between;align-items:center;margin:22px 0 12px;} /* SMALLER */
-.section-title h3{font-size:16px;font-weight:800;} /* SMALLER */
-.section-title span{font-size:12px;color:var(--muted);} /* SMALLER */
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:22px 0 12px;}
+.section-title h3{font-size:16px;font-weight:800;}
+.section-title span{font-size:12px;color:var(--muted);}
 
-.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;} /* SMALLER */
-.stat-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:18px;padding:14px;box-shadow:var(--shadow);transition:.3s;backdrop-filter:blur(14px);} /* SMALLER */
-.stat-card:hover{border-color:var(--cyan);box-shadow:var(--glow-cyan);}
-.stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px;} /* SMALLER */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
+.stat-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:18px;padding:14px;box-shadow:var(--shadow);}
+.stat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px;}
 .green{background:rgba(0,230,118,.15);color:var(--green);}
 .blue{background:rgba(0,209,255,.15);color:var(--cyan);}
 .orange{background:rgba(249,115,22,.15);color:#F97316;}
 .purple{background:rgba(168,85,247,.15);color:#A855F7;}
-.stat-title{font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;} /* SMALLER */
-.stat-value{font-size:18px;font-weight:800;white-space:nowrap;} /* SMALLER + 1 LINE */
-.stat-small{margin-top:4px;font-size:11px;color:var(--green);} /* SMALLER */
+.stat-title{font-size:12px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;}
+.stat-value{font-size:18px;font-weight:800;white-space:nowrap;}
+.stat-small{margin-top:4px;font-size:11px;color:var(--green);}
 
-.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;} /* SMALLER */
-.quick-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:18px;padding:14px 8px;text-align:center;transition:.3s;cursor:pointer;backdrop-filter:blur(14px);} /* SMALLER */
-.quick-card:hover{border-color:var(--cyan);box-shadow:var(--glow-cyan);}
-.quick-icon{width:50px;height:50px;margin:auto;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;background:linear-gradient(135deg,rgba(0,209,255,.2),rgba(0,230,118,.2));} /* SMALLER */
-.quick-card h4{font-size:13px;font-weight:800;} /* SMALLER */
-.quick-card p{margin-top:4px;font-size:10px;color:var(--muted);} /* SMALLER */
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;}
+.quick-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:18px;padding:14px 8px;text-align:center;transition:.3s;cursor:pointer;}
+.quick-icon{width:50px;height:50px;margin:auto;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px;background:linear-gradient(135deg,rgba(0,209,255,.2),rgba(0,230,118,.2));}
+.quick-card h4{font-size:13px;font-weight:800;}
+.quick-card p{margin-top:4px;font-size:10px;color:var(--muted);}
 
-.card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:18px;padding:16px;box-shadow:var(--shadow);margin-bottom:16px;backdrop-filter:blur(14px);} /* SMALLER */
-.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;} /* SMALLER */
-.card-header h3{font-size:15px;font-weight:800;} /* SMALLER */
+/* SCROLLABLE BIG CARD - NEW */
+.scroll-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:18px;padding:16px;box-shadow:var(--shadow);margin-bottom:16px;}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.card-header h3{font-size:15px;font-weight:800;}
+.scroll-list{max-height:280px; overflow-y:auto; padding-right:4px;} /* SCROLLABLE */
+.scroll-list::-webkit-scrollbar{width:4px;}
+.scroll-list::-webkit-scrollbar-thumb{background:var(--cyan);border-radius:10px;}
 
-.machine-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:12px;} /* SMALLER */
-.machine-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;} /* SMALLER */
-.machine-name{font-size:14px;font-weight:800;} /* SMALLER */
-.machine-status{padding:5px 10px;border-radius:30px;font-size:11px;font-weight:700;background:rgba(0,230,118,.15);color:var(--green);} /* SMALLER */
-.machine-info{display:flex;justify-content:space-between;margin:10px 0;} /* SMALLER */
-.machine-label{font-size:11px;color:var(--muted);} /* SMALLER */
-.machine-value{font-weight:800;font-size:14px;white-space:nowrap;} /* SMALLER + 1 LINE */
-.machine-btn{margin-top:12px;width:100%;height:44px;border:none;border-radius:12px;background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;font-weight:800;font-size:14px;cursor:pointer;} /* SMALLER */
+.machine-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:12px;}
+.machine-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.machine-name{font-size:14px;font-weight:800;}
+.machine-status{padding:5px 10px;border-radius:30px;font-size:11px;font-weight:700;background:rgba(0,230,118,.15);color:var(--green);}
+.machine-info{display:flex;justify-content:space-between;margin:10px 0;}
+.machine-label{font-size:11px;color:var(--muted);}
+.machine-value{font-weight:800;font-size:14px;white-space:nowrap;}
+.machine-btn{margin-top:12px;width:100%;height:44px;border:none;border-radius:12px;background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;font-weight:800;font-size:14px;cursor:pointer;}
 
 /* IMPROVED CHECKIN CARD */
-.checkin-card{background:linear-gradient(135deg,rgba(0,209,255,.15),rgba(0,230,118,.15));border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow);backdrop-filter:blur(14px);} /* SMALLER */
+.checkin-card{background:linear-gradient(135deg,rgba(0,209,255,.15),rgba(0,230,118,.15));border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:16px;}
 .checkin-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.checkin-title{font-size:16px;font-weight:800;} /* SMALLER */
-.checkin-days{color:var(--green);font-size:13px;font-weight:800;background:rgba(0,230,118,.2);padding:4px 10px;border-radius:20px;} /* SMALLER */
-.checkin-text{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px;} /* SMALLER */
-.claim-btn{width:100%;height:48px;border:none;border-radius:14px;background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;font-size:14px;font-weight:800;cursor:pointer;transition:.2s;} /* SMALLER */
-.claim-btn:active{transform:scale(.97);}
+.checkin-title{font-size:16px;font-weight:800;}
+.checkin-days{color:var(--green);font-size:13px;font-weight:800;background:rgba(0,230,118,.2);padding:4px 10px;border-radius:20px;}
+.checkin-text{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px;}
+.claim-btn{width:100%;height:48px;border:none;border-radius:14px;background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;font-size:14px;font-weight:800;cursor:pointer;transition:.2s;}
+.claim-btn:disabled{opacity:.5;filter:grayscale(1);cursor:not-allowed;}
 
 /* IMPROVED PROMO CARD */
-.promo-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow);backdrop-filter:blur(14px);} /* SMALLER */
-.promo-card h3{font-size:16px;margin-bottom:6px;font-weight:800;} /* SMALLER */
-.promo-card p{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5;} /* SMALLER */
+.promo-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:16px;}
+.promo-card h3{font-size:16px;margin-bottom:6px;font-weight:800;}
+.promo-card p{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5;}
 .promo-box{display:flex;gap:8px;}
-.promo-box input{flex:1;height:48px;background:#0B1324;border:1px solid var(--border);border-radius:12px;padding:0 14px;color:#fff;font-size:13px;outline:none;} /* SMALLER */
-.promo-box button{padding:0 18px;border:none;border-radius:12px;background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;font-weight:800;cursor:pointer;font-size:13px;} /* SMALLER */
+.promo-box input{flex:1;height:48px;background:#0B1324;border:1px solid var(--border);border-radius:12px;padding:0 14px;color:#fff;font-size:13px;outline:none;}
+.promo-box button{padding:0 18px;border:none;border-radius:12px;background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;font-weight:800;cursor:pointer;font-size:13px;}
 
-.activity-item{display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;} /* SMALLER */
-.activity-icon{width:42px;height:42px;border-radius:12px;display:flex;justify-content:center;align-items:center;background:rgba(0,209,255,.15);font-size:20px;color:var(--cyan);} /* SMALLER */
-.activity-amount{font-size:14px;font-weight:800;color:var(--green);white-space:nowrap;} /* SMALLER + 1 LINE */
+.activity-item{display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:16px;margin-bottom:10px;}
+.activity-icon{width:42px;height:42px;border-radius:12px;display:flex;justify-content:center;align-items:center;background:rgba(0,209,255,.15);font-size:20px;color:var(--cyan);flex-shrink:0;}
+.activity-details{flex:1;}
+.activity-title{font-size:14px;font-weight:700;}
+.activity-time{font-size:11px;color:var(--muted);}
+.activity-amount{font-size:14px;font-weight:800;color:var(--green);white-space:nowrap;}
 
 /* BOTTOM NAV - UNTOUCHED */
 .bottom-nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:540px;height:74px;background:rgba(8,16,32,.95);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:20px;display:flex;align-items:center;justify-content:space-around;z-index:999;}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;transition:.25s;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;}
 .nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;}
 .nav-item.active{color:var(--cyan);font-weight:700;}
 .nav-item.active .nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);box-shadow:0 0 18px rgba(0,209,255,.35);}
@@ -147,15 +147,16 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
     <div class="quick-card" onclick="window.location='wallet.html'"><div class="quick-icon"><i class="fa-solid fa-credit-card"></i></div><h4>Wallet</h4><p>History</p></div>
 </div>
 
-<div class="card">
+<!-- BIG SCROLLABLE CARD FOR MACHINES -->
+<div class="scroll-card">
     <div class="card-header"><h3><i class="fa-solid fa-microchip"></i> Active Machines</h3><span id="machineStatus">0 Running</span></div>
-    <div id="activeMachines"></div>
+    <div class="scroll-list" id="activeMachines"></div>
 </div>
 
 <div class="checkin-card">
     <div class="checkin-top"><div class="checkin-title"><i class="fa-solid fa-gift"></i> Daily Check-in</div><div class="checkin-days" id="checkinDays">Day 0</div></div>
-    <div class="checkin-text">Check in every day to receive your daily investment reward and build your attendance streak.</div>
-    <button class="claim-btn" onclick="claimDaily()">Claim Today's Bonus</button>
+    <div class="checkin-text">Check in every 24hrs to receive UGX 300 bonus and build your attendance streak.</div>
+    <button class="claim-btn" id="claimBtn" onclick="claimDaily()">Claim Today's Bonus</button>
 </div>
 
 <div class="promo-card">
@@ -164,9 +165,10 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
     <div class="promo-box"><input id="promoInput" type="text" placeholder="Enter promo code"><button onclick="applyPromo()">Apply</button></div>
 </div>
 
-<div class="card">
+<!-- BIG SCROLLABLE CARD FOR ACTIVITIES -->
+<div class="scroll-card">
     <div class="card-header"><h3><i class="fa-solid fa-list"></i> Recent Activities</h3><span id="activityCount">Latest</span></div>
-    <div class="activity-list" id="recentActivities"></div>
+    <div class="scroll-list" id="recentActivities"></div>
 </div>
 </div>
 
@@ -176,13 +178,12 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
     <div class="nav-item" onclick="window.location='machines.html'"><div class="nav-icon"><i class="fa-solid fa-microchip"></i></div><span>Machines</span></div>
     <div class="nav-item" onclick="window.location='wallet.html'"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></div>
     <div class="nav-item" onclick="window.location='profile.html'"><div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
-                                                                                          </div>
-                                                                                          <script type="module">
+</div>
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, onValue, update, get, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, onValue, update, get, push, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-/* FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
   authDomain: "sentebot-7428b.firebaseapp.com",
@@ -198,7 +199,7 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 let currentUser = null;
 
-/* BLOCK ZOOM PERMANENTLY */
+/* BLOCK ZOOM */
 let lastTouchEnd = 0;
 document.addEventListener('touchend', function (event) {
   const now = Date.now();
@@ -206,7 +207,6 @@ document.addEventListener('touchend', function (event) {
   lastTouchEnd = now;
 }, { passive: false });
 
-/* GREETING - NEW FORMAT: "Good afternoon "username" */
 function setGreeting(name){
   const hour = new Date().getHours();
   let greeting = "Good Evening";
@@ -215,14 +215,12 @@ function setGreeting(name){
   document.getElementById("greetingTime").textContent = "Welcome back";
 }
 
-/* AUTH */
 onAuthStateChanged(auth,(user)=>{
     if(!user){window.location.href="index.html";return;}
     currentUser = user;
     loadUser();
 });
 
-/* REALTIME USER DATA FROM RTDB - NO LOGIC CHANGED */
 function loadUser(){
     const userRef = ref(db,"users/" + currentUser.uid);
     onValue(userRef,(snapshot)=>{
@@ -230,19 +228,19 @@ function loadUser(){
         const data = snapshot.val();
 
         const username = data.username || "Investor";
-        setGreeting(username); // NEW
+        setGreeting(username);
         document.getElementById("avatarLetter").textContent = username.charAt(0).toUpperCase();
 
         const balance = Number(data.balance || 0);
-        document.getElementById("walletBalance").textContent = "UGX " + balance.toLocaleString(); // 1 LINE
-        document.getElementById("portfolioValue").textContent = "UGX " + balance.toLocaleString(); // 1 LINE
+        document.getElementById("walletBalance").textContent = "UGX " + balance.toLocaleString();
+        document.getElementById("portfolioValue").textContent = "UGX " + balance.toLocaleString();
 
         const todayProfit = Number(data.todayProfit || 0);
         document.getElementById("todayProfit").textContent = "Today's Profit: UGX " + todayProfit.toLocaleString();
-        document.getElementById("earningsToday").textContent = "UGX " + todayProfit.toLocaleString(); // 1 LINE
+        document.getElementById("earningsToday").textContent = "UGX " + todayProfit.toLocaleString();
 
         const referral = Number(data.referralEarnings || 0);
-        document.getElementById("referralEarnings").textContent = "UGX " + referral.toLocaleString(); // 1 LINE
+        document.getElementById("referralEarnings").textContent = "UGX " + referral.toLocaleString();
 
         const machines = data.machines ? Object.values(data.machines).filter(m => m.status === "RUNNING").length : 0;
         document.getElementById("machineCount").textContent = machines;
@@ -250,6 +248,12 @@ function loadUser(){
 
         const days = Number(data.checkinDays || 0);
         document.getElementById("checkinDays").textContent = "Day " + days;
+        
+        // Check if claimed today
+        const lastClaim = data.lastCheckin || 0;
+        const canClaim = (Date.now() - lastClaim) > 24 * 60 * 60 * 1000;
+        document.getElementById("claimBtn").disabled = !canClaim;
+        document.getElementById("claimBtn").textContent = canClaim ? "Claim Today's Bonus" : "Claimed Today";
 
         renderActivities(data);
         renderMachines(data);
@@ -261,7 +265,7 @@ function renderMachines(data){
     const container = document.getElementById("activeMachines");
     const machines = data.machines ? Object.values(data.machines) : [];
     if (machines.length === 0) {
-        container.innerHTML=`<div class="machine-card"><div class="machine-top"><div class="machine-name">No Active Machines</div><div class="machine-status">INACTIVE</div></div><div class="machine-info"><div class="machine-label">Status</div><div class="machine-value">No machines running</div></div></div>`;
+        container.innerHTML=`<div style="text-align:center;color:var(--muted);padding:20px;">No Active Machines</div>`;
         return;
     }
     container.innerHTML="";
@@ -270,17 +274,22 @@ function renderMachines(data){
     });
 }
 
-/* RENDER RECENT ACTIVITIES */
+/* RENDER RECENT ACTIVITIES - FIXED ICONS */
 function renderActivities(data){
     const list = document.getElementById("recentActivities");
     const activities = data.activities ? Object.values(data.activities).reverse() : [];
     if(!Array.isArray(activities) || activities.length===0){
-        list.innerHTML=`<div class="activity-item"><div class="activity-icon"><i class="fa-solid fa-list"></i></div><div class="activity-details"><div class="activity-title">No recent activities</div><div class="activity-time">Start by making a transaction</div></div></div>`;
+        list.innerHTML=`<div style="text-align:center;color:var(--muted);padding:20px;">No recent activities</div>`;
         return;
     }
     list.innerHTML="";
-    activities.slice(0,10).forEach(item=>{
-        list.innerHTML += `<div class="activity-item"><div class="activity-icon">${item.icon || "💰"}</div><div class="activity-details"><div class="activity-title">${item.title || "Transaction"}</div><div class="activity-time">${item.time || "Just now"}</div></div><div class="activity-amount">${item.amount || ""}</div></div>`;
+    activities.slice(0,20).forEach(item=>{
+        // Fix: if icon is text like "fa-solid", convert to <i> tag
+        let iconHTML = item.icon || "💰";
+        if(typeof iconHTML === 'string' && iconHTML.includes('fa-')){
+            iconHTML = `<i class="${iconHTML}"></i>`;
+        }
+        list.innerHTML += `<div class="activity-item"><div class="activity-icon">${iconHTML}</div><div class="activity-details"><div class="activity-title">${item.title || "Transaction"}</div><div class="activity-time">${item.time || "Just now"}</div></div><div class="activity-amount">${item.amount || ""}</div></div>`;
     });
     document.getElementById("activityCount").textContent = activities.length + " Records";
 }
@@ -294,21 +303,30 @@ window.showToast = (message,type="success")=>{
     window.toastTimer=setTimeout(()=>{toast.classList.remove("show");},3000);
 }
 
-/* DAILY CHECK-IN RTDB */
+/* DAILY CHECK-IN RTDB - 300UGX ONCE PER 24HRS */
 window.claimDaily = async ()=>{
     if(!currentUser){window.showToast("Please login first","error");return;}
     const userRef = ref(db,"users/" + currentUser.uid);
     const snap = await get(userRef);
     if(!snap.exists()) return;
     const data = snap.val();
+    
+    const lastClaim = data.lastCheckin || 0;
+    if((Date.now() - lastClaim) < 24 * 60 * 60 * 1000){
+        window.showToast("You already claimed today. Come back tomorrow","error");
+        return;
+    }
+    
     const updates = {};
-    updates[`balance`] = Number(data.balance || 0) + 500;
-    updates[`todayProfit`] = Number(data.todayProfit || 0) + 500;
+    updates[`balance`] = Number(data.balance || 0) + 300; // 300 UGX
+    updates[`todayProfit`] = Number(data.todayProfit || 0) + 300;
     updates[`checkinDays`] = Number(data.checkinDays || 0) + 1;
+    updates[`lastCheckin`] = Date.now(); // save timestamp to block spam
+    
     const actKey = push(ref(db,`users/${currentUser.uid}/activities`)).key;
-    updates[`activities/${actKey}`] = {icon:"🎁", title:"Daily Check-in Bonus", amount:"+UGX 500", time:new Date().toLocaleString()};
+    updates[`activities/${actKey}`] = {icon:"fa-solid fa-gift", title:"Daily Check-in Bonus", amount:"+UGX 300", time:new Date().toLocaleString()};
     await update(userRef, updates);
-    window.showToast("Daily bonus claimed successfully!","success");
+    window.showToast("UGX 300 bonus claimed successfully!","success");
 };
 
 /* PROMO CODE RTDB */
@@ -325,7 +343,7 @@ window.applyPromo = async ()=>{
         updates[`balance`] = Number(data.balance || 0) + 500;
         updates[`todayProfit`] = Number(data.todayProfit || 0) + 500;
         const actKey = push(ref(db,`users/${currentUser.uid}/activities`)).key;
-        updates[`activities/${actKey}`] = {icon:"🎟", title:"Promo Code: WELCOME500", amount:"+UGX 500", time:new Date().toLocaleString()};
+        updates[`activities/${actKey}`] = {icon:"fa-solid fa-ticket", title:"Promo Code: WELCOME500", amount:"+UGX 500", time:new Date().toLocaleString()};
         await update(userRef, updates);
         input.value="";
         window.showToast("Promo redeemed successfully!","success");
