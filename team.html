@@ -260,6 +260,14 @@ document.querySelectorAll('.dir-tab').forEach(btn=>{
 });
 
 function loadDirectory(level){
+  if(user.referrer && !user.referralBonusPaid){
+  // Check if they have a PENDING deposit
+  const hasPending = Object.values(user.deposits || {}).some(d => d.status === 'PENDING');
+  if(hasPending) status = "Pending Deposit";
+  else status = "Registered";
+} else if(user.referralBonusPaid){
+  status = "Active - Bonus Paid";
+  }
   let list=[];
   if(level===1) list = Object.keys(allUsers).filter(uid=>allUsers[uid].referrer===currentUser.uid);
   if(level===2) list = Object.keys(allUsers).filter(uid=>allUsers[allUsers[uid].referrer]?.referrer===currentUser.uid);
