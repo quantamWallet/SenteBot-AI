@@ -10,7 +10,23 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 :root{--bg:#070B14;--bg2:#101827;--card:#111827;--card2:#182235;--green:#22C55E;--green2:#16A34A;--cyan:#00D1FF;--text:#F8FAFC;--muted:#94A3B8;--border:rgba(255,255,255,.08);--shadow:0 18px 45px rgba(0,0,0,.45);--glow:0 0 20px rgba(34,197,94,.15);}
+/* BLOCK CHROME TAP TO SEARCH + LONG PRESS */
+*{
+  -webkit-touch-callout: none; /* iOS long press menu */
+  -webkit-user-select: none;   /* Safari */
+   -khtml-user-select: none;   /* Konqueror */
+     -moz-user-select: none;   /* Firefox */
+      -ms-user-select: none;   /* IE/Edge */
+          user-select: none;   /* Standard */
+}
 
+/* Allow selection only in inputs */
+input, textarea{
+  -webkit-user-select: text;
+     -moz-user-select: text;
+      -ms-user-select: text;
+          user-select: text;
+  }
 body{background:radial-gradient(circle at top,#14302a 0%,transparent 35%),linear-gradient(180deg,#08101E,#070B14);color:var(--text);min-height:100vh;padding-bottom:120px;}
 .container{max-width:520px;margin:auto;padding:16px;} /* REDUCED PADDING */
 
@@ -96,6 +112,7 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
 .nav-item.active .nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);box-shadow:0 0 18px rgba(0,209,255,.35);}
 </style>
 </head>
+  <meta name="google" content="notranslate">
 <body>
 
 <div class="bottom-nav" id="bottomNav">
@@ -313,7 +330,22 @@ document.querySelector(".social-card:nth-child(2)").onclick = () => {
 document.querySelector(".social-card:nth-child(3)").onclick = () => {
     window.open("https://t.me/+Zo2lA6xifhQ2Y2Y0", "_blank");
 };
+// Block long press and right click
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('touchstart', e => {
+  if(e.touches.length > 1) e.preventDefault(); // block pinch
+});
+document.addEventListener('touchend', e => {
+  if(e.touches.length > 1) e.preventDefault();
+});
 
+// Block 500ms long press
+let touchTimer;
+document.addEventListener('touchstart', e => {
+  touchTimer = setTimeout(() => e.preventDefault(), 500);
+});
+document.addEventListener('touchend', () => clearTimeout(touchTimer));
+document.addEventListener('touchmove', () => clearTimeout(touchTimer));
   </script>
 
 <style>
