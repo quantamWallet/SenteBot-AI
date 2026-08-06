@@ -130,6 +130,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 let currentUser = null;
+    let processing = false;
 let currentUserData = null;
 let userPhone = "";
 
@@ -166,7 +167,8 @@ function loadUser(){
         document.getElementById("withdrawBtn").disabled = false;
     });
 }
-
+if(processing) return;
+processing = true;
 window.requestWithdraw = async () => {
     if(!currentUser || !currentUserData) return;
     
@@ -178,7 +180,7 @@ window.requestWithdraw = async () => {
 
     if(!userPhone){ showToast("No phone number registered", "error"); return; }
     if(amount < minWithdraw){ showToast("Minimum withdrawal is UGX 10,000", "error"); return; }
-    if(totalDeduct > balance){ showToast("Insufficient balance", "error"); return; }
+    if(balance < totalDeduct){ showToast("Insufficient balance", "error"); return; }
 
     try{
         const btn = document.getElementById("withdrawBtn");
@@ -204,18 +206,27 @@ window.requestWithdraw = async () => {
         };
         // 4. Activity log
         updates[`users/${currentUser.uid}/activities/${activityKey}`] = {
-            icon: "fa-solid fa-arrow-up", title: "Withdrawal Request",
-            amount: "-UGX " + totalDeduct.toLocaleString(), time: new Date().toLocaleString()
-        };
+    type: "withdraw",
+    status: "PENDING",
+    icon: "fa-solid fa-arrow-up",
+    title: "Withdrawal Request",
+    amount: "-UGX " + totalDeduct.toLocaleString(),
+    fee: fee,
+    phone: userPhone,
+    time: new Date().toLocaleString(),
+    createdAt: Date.now()
+};
 
         await update(ref(db), updates);
+        document.getElementById("withdrawAmount").value = "";
         
         showToast("Withdrawal request submitted", "success");
-        setTimeout(() => { window.location.href = "transactions.html"; }, 1200); // REDIRECT
+        setTimeout(() => { window.location.href = "wallet.html"; }, 1200); // REDIRECT
         
     } catch(error){
         console.error(error);
         showToast("Withdrawal failed: " + error.message, "error");
+        processing = false;
         document.getElementById("withdrawBtn").disabled = false;
         document.getElementById("withdrawBtn").innerHTML = `<i class="fa-solid fa-arrow-up"></i> Request Withdrawal`;
     }
