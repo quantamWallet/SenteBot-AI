@@ -153,7 +153,6 @@ display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 4
 <div class="social-card"><i class="fa-brands fa-telegram community"></i><p>COMMUNITY</p></div>
 </div>
 </div>
-
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -200,18 +199,12 @@ setTimeout(()=>{box.classList.add("show");},100);
 setTimeout(()=>{box.classList.remove("show");setTimeout(()=>{box.remove();},400);},3000);
 }
 
-/* ---------- Phone Mask ---------- */
+/* ---------- Phone Mask - SAME AS WITHDRAWAL PAGE ---------- */
 function maskPhone(phone){
-  if(!phone) return "-";
-  const clean = phone.replace(/\D/g,''); // remove non-digits
-  // +256700123456 -> +2567*** *** 456
-  if(clean.length >= 10){
-    const country = clean.length > 9 ? `+${clean.substring(0,3)}` : "";
-    const first = clean.substring(country?3:0, country?4:1);
-    const last3 = clean.substring(clean.length-3);
-    return `${country}${first}*** *** ${last3}`;
-  }
-  return phone; 
+    if(!phone) return "-";
+    const str = phone.toString();
+    if(str.length < 7) return str;
+    return str.substring(0, 5) + "***" + str.substring(str.length - 3);
 }
 
 /* ---------- Load Profile ---------- */
@@ -230,7 +223,7 @@ onAuthStateChanged(auth,user=>{
         document.getElementById("adminPanelBtn").style.display = "flex";
     }
   });
-}); // <- this was missing + duplicates removed
+});
   
 /* ---------- ADMIN PANEL CLICK ---------- */
 document.getElementById("adminPanelBtn").onclick = () => {
@@ -262,7 +255,7 @@ document.getElementById("changePasswordBtn").onclick=()=>{passwordModal.classLis
 document.getElementById("cancelPassword").onclick=()=>{passwordModal.classList.remove("active");};
 document.getElementById("savePassword").onclick=async()=>{
 const oldPass=document.getElementById("oldPassword").value;
-const newPass=document.getElementById("newPassword")..value;
+const newPass=document.getElementById("newPassword").value;
 const user=auth.currentUser;
 if(!oldPass||!newPass){notify("Fill all fields.","error");return;}
 try{
@@ -336,7 +329,7 @@ document.querySelector(".social-card:nth-child(3)").onclick = () => {
 .modal-buttons{display:flex;gap:12px;margin-top:10px;}
 .modal-buttons button{flex:1;padding:13px;border:none;border-radius:12px;font-weight:700;cursor:pointer;}
 .modal-buttons button:first-child{background:#374151;color:#fff;}
-.modal-buttons button:last-child{background:#22C55E;color:#fff;}
+  .modal-buttons button:last-child{background:#22C55E;color:#fff;}
 </style>
 </body>
 </html>
