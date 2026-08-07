@@ -65,8 +65,9 @@ input, textarea{
 .filter-tab.active{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;border:none;box-shadow:var(--glow-cyan);}
 
 /* Transactions container card */
-.transactions-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:18px;padding:12px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;flex:1}
-.tx-list{overflow:auto;padding-right:6px}
+/* keep the card slightly shorter so it doesn't get hidden under the fixed bottom-nav */
+.transactions-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:18px;padding:12px;margin-bottom:110px;box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;flex:1}
+.tx-list{overflow:auto;padding-right:6px;padding-bottom:110px}
 
 /* TRANSACTION LIST - AMOUNT IN 1 LINE */
 .tx-card{background:linear-gradient(180deg,rgba(0,0,0,.06),rgba(255,255,255,.02));border-radius:12px;padding:12px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border:1px solid transparent;}
