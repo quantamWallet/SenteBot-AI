@@ -35,11 +35,11 @@ input, textarea{
           user-select: text;
 }
 .profile{display:flex;align-items:center;gap:12px;}
-.avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--green));display:flex;justify-content:center;align-items:center;font-size:20px;font-weight:800;color:var(--bg);}
+.avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--green));display:flex;justify-content:center;align-items:center;font-size:20px;font-weight:800;color:#fff;}
 .profile h2{font-size:18px;font-weight:800;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .profile span{font-size:12px;color:var(--muted);}
 .header-icons{display:flex;gap:10px;}
-.header-icons div{width:40px;height:40px;border-radius:12px;background:rgba(0,209,255,.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:.25s;}
+.header-icons div{width:40px;height:40px;border-radius:12px;background:rgba(0,209,255,.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:.2s;}
 .header-icons div:hover{box-shadow:var(--glow-cyan);}
 
 /* WALLET CARD */
@@ -84,7 +84,7 @@ input, textarea{
 .machine-info{display:flex;justify-content:space-between;margin:10px 0;}
 .machine-label{font-size:11px;color:var(--muted);}
 .machine-value{font-weight:800;font-size:14px;white-space:nowrap;}
-.machine-btn{margin-top:12px;width:100%;height:44px;border:none;border-radius:12px;background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;font-weight:800;font-size:14px;cursor:pointer;}
+.machine-btn{margin-top:12px;width:100%;height:44px;border:none;border-radius:12px;background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;font-weight:800;font-size:14px;cursor:pointer;transition:.2s;}
 
 /* IMPROVED CHECKIN CARD */
 .checkin-card{background:linear-gradient(135deg,rgba(0,209,255,.15),rgba(0,230,118,.15));border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:16px;}
@@ -111,7 +111,7 @@ input, textarea{
 .activity-amount{font-size:14px;font-weight:800;color:var(--green);white-space:nowrap;}
 
 /* BOTTOM NAV - UNTOUCHED */
-.bottom-nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:540px;height:74px;background:rgba(8,16,32,.95);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:20px;display:flex;align-items:center;justify-content:space-around;z-index:999;}
+.bottom-nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:540px;height:74px;background:rgba(8,16,32,.95);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;display:flex;align-items:center;justify-content:space-around;z-index:999;}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;}
 .nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;}
 .nav-item.active{color:var(--cyan);font-weight:700;}
@@ -149,10 +149,10 @@ input, textarea{
 
 <div class="section-title"><h3>Portfolio Overview</h3><span>Live Data</span></div>
 <div class="stats-grid">
-    <div class="stat-card"><div class="stat-icon green"><i class="fa-solid fa-wallet"></i></div><div class="stat-title">Portfolio</div><div class="stat-value" id="portfolioValue">UGX 0</div><div class="stat-small">2.5% increase</div></div>
-    <div class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-chart-line"></i></div><div class="stat-title">Today's Earnings</div><div class="stat-value" id="earningsToday">UGX 0</div><div class="stat-small">Real-time</div></div>
-    <div class="stat-card"><div class="stat-icon orange"><i class="fa-solid fa-users"></i></div><div class="stat-title">Referral Earnings</div><div class="stat-value" id="referralEarnings">UGX 0</div><div class="stat-small">Active refs</div></div>
-    <div class="stat-card"><div class="stat-icon purple"><i class="fa-solid fa-microchip"></i></div><div class="stat-title">Active Machines</div><div class="stat-value" id="machineCount">0</div><div class="stat-small">Running</div></div>
+    <div class="stat-card"><div class="stat-icon green"><i class="fa-solid fa-wallet"></i></div><div class="stat-title">Portfolio</div><div class="stat-value" id="portfolioValue">UGX 0</div></div>
+    <div class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-chart-line"></i></div><div class="stat-title">Today's Earnings</div><div class="stat-value" id="earningsToday">UGX 0</div></div>
+    <div class="stat-card"><div class="stat-icon orange"><i class="fa-solid fa-users"></i></div><div class="stat-title">Referral Earnings</div><div class="stat-value" id="referralEarnings">UGX 0</div></div>
+    <div class="stat-card"><div class="stat-icon purple"><i class="fa-solid fa-microchip"></i></div><div class="stat-title">Active Machines</div><div class="stat-value" id="machineCount">0</div></div>
 </div>
 
 <div class="section-title"><h3>Quick Actions</h3><span>One Tap Access</span></div>
@@ -202,9 +202,14 @@ input, textarea{
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-  ...
-  runTransaction
+  getDatabase,
+  ref,
+  onValue,
+  get,
+  update,
+  push
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
   authDomain: "sentebot-7428b.firebaseapp.com",
@@ -219,6 +224,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 let currentUser = null;
+let userListener = null; // Store listener reference
 
 /* BLOCK ZOOM */
 let lastTouchEnd = 0;
@@ -243,8 +249,15 @@ onAuthStateChanged(auth,(user)=>{
 });
 
 function loadUser(){
+    if(!currentUser) return;
+    
     const userRef = ref(db,"users/" + currentUser.uid);
-    onValue(userRef,(snapshot)=>{
+    
+    // Unsubscribe from previous listener if it exists
+    if(userListener) userListener();
+    
+    // Set up real-time listener with error handling
+    userListener = onValue(userRef,(snapshot)=>{
         if(!snapshot.exists()) return;
         const data = snapshot.val();
 
@@ -282,6 +295,10 @@ function loadUser(){
 
         renderActivities(data);
         renderMachines(data);
+    }, (error) => {
+        console.error("Database error:", error);
+        // Retry after 5 seconds on error
+        setTimeout(loadUser, 5000);
     });
 }
 
@@ -299,7 +316,7 @@ function renderMachines(data){
     }
     container.innerHTML="";
     machines.forEach(machine=>{
-        container.innerHTML += `<div class="machine-card"><div class="machine-top"><div class="machine-name">${machine.name || "Investment Machine"}</div><div class="machine-status">${machine.status || "INACTIVE"}</div></div><div class="machine-info"><div class="machine-label">Total Earnings</div><div class="machine-value">${machine.earnings || "UGX 0"}</div></div><button class="machine-btn" onclick="window.location='machines.html'">View Details</button></div>`;
+        container.innerHTML += `<div class="machine-card"><div class="machine-top"><div class="machine-name">${machine.name || "Investment Machine"}</div><div class="machine-status">${machine.status || "IDLE"}</div></div><div class="machine-info"><div><div class="machine-label">HASHRATE</div><div class="machine-value">${machine.hashrate || "N/A"}</div></div><div><div class="machine-label">PROFIT</div><div class="machine-value">${machine.profit || "UGX 0"}</div></div></div></div>`;
     });
 }
 
@@ -318,7 +335,7 @@ function renderActivities(data){
         if(typeof iconHTML === 'string' && iconHTML.includes('fa-')){
             iconHTML = `<i class="${iconHTML}"></i>`;
         }
-        list.innerHTML += `<div class="activity-item"><div class="activity-icon">${iconHTML}</div><div class="activity-details"><div class="activity-title">${item.title || "Transaction"}</div><div class="activity-time">${item.time || "Just now"}</div></div><div class="activity-amount">${item.amount || ""}</div></div>`;
+        list.innerHTML += `<div class="activity-item"><div class="activity-icon">${iconHTML}</div><div class="activity-details"><div class="activity-title">${item.title || "Transaction"}</div><div class="activity-time">${item.time || new Date().toLocaleString()}</div></div><div class="activity-amount">${item.amount || "UGX 0"}</div></div>`;
     });
     document.getElementById("activityCount").textContent = activities.length + " Records";
 }
@@ -357,8 +374,6 @@ window.claimDaily = async ()=>{
     await update(userRef, updates);
     window.showToast("UGX 300 bonus claimed successfully!","success");
 };
-  const btn = document.getElementById("claimBtn");
-btn.disabled = true;
 
 /* PROMO CODE RTDB */
 window.applyPromo = async ()=>{
@@ -383,8 +398,21 @@ window.applyPromo = async ()=>{
     window.showToast("Invalid promo code","error");
 };
 
-document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible" && currentUser){loadUser();}});
-  // Block long press and right click
+// Periodic refresh every 30 seconds when page is visible
+setInterval(() => {
+    if(currentUser && document.visibilityState === "visible") {
+        loadUser();
+    }
+}, 30000);
+
+// Refresh when page becomes visible after being hidden
+document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible" && currentUser){
+        loadUser();
+    }
+});
+
+// Block long press and right click
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('touchstart', e => {
   if(e.touches.length > 1) e.preventDefault(); // block pinch
