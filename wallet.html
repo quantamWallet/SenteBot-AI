@@ -278,4 +278,34 @@ function renderTransactions(){
 // simple escape to avoid breaking layout if data contains html
 function escapeHtml(str){
   return String(str).replace(/[&<>"']/g, function(s){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s];
+  });
+}
+
+// Filter tab behavior
+document.querySelectorAll(".filter-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+        document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        currentFilter = tab.dataset.filter;
+        renderTransactions();
+    });
+});
+
+// Block long press and right click
+document.addEventListener('contextmenu', e => e.preventDefault());
+// Prevent multi-touch pinch
+document.addEventListener('touchstart', e => { if(e.touches && e.touches.length > 1) e.preventDefault(); }, {passive:false});
+
+// Block 500ms long press (simplified)
+let touchTimer;
+document.addEventListener('touchstart', e => {
+  if(e.touches && e.touches.length === 1){
+    touchTimer = setTimeout(()=>{}, 500);
+  }
+});
+document.addEventListener('touchend', () => clearTimeout(touchTimer));
+document.addEventListener('touchmove', () => clearTimeout(touchTimer));
+</script>
+</body>
+</html>
