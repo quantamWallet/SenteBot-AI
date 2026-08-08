@@ -477,13 +477,32 @@ window.confirmPurchase = async () => {
     }
 };
 
-/* CLAIM PROFIT */
+/* =========================================================
+   CLAIM MACHINE PROFIT
+   Writes profit to:
+   1. users/{uid}/balance
+   2. users/{uid}/todayProfit
+   3. machine totalEarned
+   4. activity history
+========================================================= */
+
 window.claimProfit = async (machineKey) => {
-    if (!currentUser) return;
+    if (!currentUser) {
+        showToast("Please login first.", false);
+        return;
+    }
 
     try {
-        // Get the latest user data directly from Firebase
-        const userRef = ref(db, `users/${currentUser.uid}`);
+
+        /* -----------------------------------------
+           GET LATEST USER DATA
+        ----------------------------------------- */
+
+        const userRef = ref(
+            db,
+            `users/${currentUser.uid}`
+        );
+
         const snap = await get(userRef);
 
         if (!snap.exists()) {
@@ -492,48 +511,57 @@ window.claimProfit = async (machineKey) => {
         }
 
         const userData = snap.val();
-        const machine = userData.machines?.[machineKey];
 
-        if (!machine || machine.status !== "RUNNING") {
+        /* -----------------------------------------
+           GET MACHINE
+        ----------------------------------------- */
+
+        const machine =
+            userData.machines?.[machineKey];
+
+        if (!machine) {
+            showToast("Machine not found.", false);
+            return;
+        }
+
+        if (
+            String(machine.status || "")
+                .toUpperCase() !== "RUNNING"
+        ) {
             showToast("Machine is not active.", false);
             return;
         }
 
+        /* -----------------------------------------
+           CHECK CLAIM TIME
+        ----------------------------------------- */
+
         const now = Date.now();
 
-        // Check whether the machine is ready
-        if (now < Number(machine.nextClaimAt || 0)) {
-            showToast("Not ready to claim yet", false);
+        const nextClaimAt =
+            Number(machine.nextClaimAt || 0);
+
+        if (now < nextClaimAt) {
+            showToast("Not ready to claim yet.", false);
             return;
         }
 
-        const profit = Number(machine.dailyProfit || 0);
+        /* -----------------------------------------
+           PROFIT
+        ----------------------------------------- */
+
+        const profit =
+            Number(machine.dailyProfit || 0);
 
         if (!Number.isFinite(profit) || profit <= 0) {
             showToast("Invalid machine profit.", false);
             return;
         }
 
-        // Calculate next claim
-        const newNextClaim =
-            Number(machine.nextClaimAt) + 86400000;
+        /* -----------------------------------------
+           CURRENT VALUES
+        ----------------------------------------- */
 
-        // Calculate remaining days
-        const daysPassed = Math.floor(
-            (now - Number(machine.startDate)) / 86400000
-        );
-
-        const newRemaining = Math.max(
-            Number(machine.duration) - daysPassed,
-            0
-        );
-
-        // Generate activity key
-        const activityKey = push(
-            ref(db, `users/${currentUser.uid}/activities`)
-        ).key;
-
-        // Current Firebase values
         const currentBalance =
             Number(userData.balance || 0);
 
@@ -543,135 +571,286 @@ window.claimProfit = async (machineKey) => {
         const currentTotalEarned =
             Number(machine.totalEarned || 0);
 
-        // New values
-        const newBalance =
-            currentBalance + profit;
+        /* -----------------------------------------
+           NEXT CLAIM
+        ----------------------------------------- */
 
-        const newTodayProfit =
-            currentTodayProfit + profit;
+        const newNextClaim =
+            nextClaimAt + 86400000;
 
-        const newTotalEarned =
-            currentTotalEarned + profit;
+        /* -----------------------------------------
+           CALCULATE REMAINING DAYS
+        ----------------------------------------- */
 
-        // Multi-location Firebase update
+        const startDate =
+            Number(machine.startDate || now);
+
+        const duration =
+            Number(machine.duration || 0);
+
+        const daysPassed =
+            Math.floor(
+                (now - startDate) / 86400000
+            );
+
+        const newRemaining =
+            Math.max(
+                duration - daysPassed,
+                0
+            );
+
+        /* -----------------------------------------
+           ACTIVITY KEY
+        ----------------------------------------- */
+
+        const activityRef =
+            push(
+                ref(
+                    db,
+                    `users/${currentUser.uid}/activities`
+                )
+            );
+
+        const activityKey =
+            activityRef.key;
+
+        /* -----------------------------------------
+           FIREBASE MULTI-PATH UPDATE
+        ----------------------------------------- */
+
         const updates = {};
 
         /*
-         * 1. WALLET BALANCE
-         * users/{uid}/balance
+         * MAIN WALLET BALANCE
          */
-        updates[`users/${currentUser.uid}/balance`] =
-            newBalance;
+        updates[
+            `users/${currentUser.uid}/balance`
+        ] =
+            currentBalance + profit;
 
         /*
-         * 2. TODAY'S PROFIT
+         * TODAY'S PROFIT
+         *
+         * THIS IS THE IMPORTANT FIELD.
+         *
+         * Dashboard and wallet both read:
          * users/{uid}/todayProfit
          */
-        updates[`users/${currentUser.uid}/todayProfit`] =
-            newTodayProfit;
+        updates[
+            `users/${currentUser.uid}/todayProfit`
+        ] =
+            currentTodayProfit + profit;
 
         /*
-         * 3. MACHINE TOTAL EARNED
+         * MACHINE TOTAL EARNED
          */
         updates[
             `users/${currentUser.uid}/machines/${machineKey}/totalEarned`
-        ] = newTotalEarned;
+        ] =
+            currentTotalEarned + profit;
 
         /*
-         * 4. NEXT CLAIM TIME
+         * NEXT CLAIM TIME
          */
         updates[
             `users/${currentUser.uid}/machines/${machineKey}/nextClaimAt`
-        ] = newNextClaim;
+        ] =
+            newNextClaim;
 
         /*
-         * 5. REMAINING DAYS
+         * REMAINING DAYS
          */
         updates[
             `users/${currentUser.uid}/machines/${machineKey}/remainingDays`
-        ] = newRemaining;
+        ] =
+            newRemaining;
 
         /*
-         * 6. COMPLETE MACHINE IF FINISHED
+         * COMPLETE MACHINE IF FINISHED
          */
         if (newRemaining <= 0) {
+
             updates[
                 `users/${currentUser.uid}/machines/${machineKey}/status`
             ] = "COMPLETED";
         }
 
         /*
-         * 7. RECORD ACTIVITY
+         * ACTIVITY RECORD
          */
-        updates[
-            `users/${currentUser.uid}/activities/${activityKey}`
-        ] = {
-            icon: "fa-solid fa-coins",
-            title: "Claimed from " + machine.name,
-            amount: "+UGX " + profit.toLocaleString(),
-            time: new Date().toLocaleString(),
-            timestamp: now
-        };
+        if (activityKey) {
 
-        // Debug information
-        console.log("========== MACHINE CLAIM ==========");
-        console.log("UID:", currentUser.uid);
-        console.log("Machine:", machine.name);
-        console.log("Machine key:", machineKey);
-        console.log("Machine profit:", profit);
+            updates[
+                `users/${currentUser.uid}/activities/${activityKey}`
+            ] = {
+
+                icon: "fa-solid fa-coins",
+
+                title:
+                    "Claimed from " +
+                    (machine.name || "Investment Machine"),
+
+                amount:
+                    "+UGX " +
+                    profit.toLocaleString(),
+
+                time:
+                    new Date().toLocaleString(),
+
+                timestamp:
+                    now
+            };
+        }
+
+        /* -----------------------------------------
+           DEBUG
+        ----------------------------------------- */
 
         console.log(
-            "Previous balance:",
+            "========== MACHINE CLAIM =========="
+        );
+
+        console.log(
+            "UID:",
+            currentUser.uid
+        );
+
+        console.log(
+            "Machine:",
+            machine.name
+        );
+
+        console.log(
+            "Machine Key:",
+            machineKey
+        );
+
+        console.log(
+            "Profit:",
+            profit
+        );
+
+        console.log(
+            "Previous Balance:",
             currentBalance
         );
 
         console.log(
-            "New balance:",
-            newBalance
+            "New Balance:",
+            currentBalance + profit
         );
 
         console.log(
-            "Previous todayProfit:",
+            "Previous Today Profit:",
             currentTodayProfit
         );
 
         console.log(
-            "New todayProfit:",
-            newTodayProfit
+            "New Today Profit:",
+            currentTodayProfit + profit
         );
 
         console.log(
-            "Balance Firebase path:",
+            "Balance Firebase Path:",
             `users/${currentUser.uid}/balance`
         );
 
         console.log(
-            "Today profit Firebase path:",
+            "Today Profit Firebase Path:",
             `users/${currentUser.uid}/todayProfit`
         );
 
-        console.log("Updates being written:", updates);
-        console.log("==================================");
+        console.log(
+            "Updates:",
+            updates
+        );
 
-        /*
-         * WRITE EVERYTHING ONCE
-         */
-        await update(ref(db), updates);
+        console.log(
+            "=================================="
+        );
 
-        /*
-         * Update local data
-         */
+        /* -----------------------------------------
+           WRITE ONCE
+           
+           IMPORTANT:
+           Do NOT call update() twice.
+        ----------------------------------------- */
+
+        await update(
+            ref(db),
+            updates
+        );
+
+        /* -----------------------------------------
+           VERIFY BALANCE
+        ----------------------------------------- */
+
+        const balanceVerify =
+            await get(
+                ref(
+                    db,
+                    `users/${currentUser.uid}/balance`
+                )
+            );
+
+        /* -----------------------------------------
+           VERIFY TODAY PROFIT
+        ----------------------------------------- */
+
+        const todayProfitVerify =
+            await get(
+                ref(
+                    db,
+                    `users/${currentUser.uid}/todayProfit`
+                )
+            );
+
+        console.log(
+            "========== CLAIM VERIFIED =========="
+        );
+
+        console.log(
+            "Firebase Balance:",
+            balanceVerify.val()
+        );
+
+        console.log(
+            "Firebase Today Profit:",
+            todayProfitVerify.val()
+        );
+
+        console.log(
+            "===================================="
+        );
+
+        /* -----------------------------------------
+           UPDATE LOCAL DATA
+        ----------------------------------------- */
+
         currentUserData = {
             ...userData,
-            balance: newBalance,
-            todayProfit: newTodayProfit,
+
+            balance:
+                currentBalance + profit,
+
+            todayProfit:
+                currentTodayProfit + profit,
+
             machines: {
                 ...(userData.machines || {}),
+
                 [machineKey]: {
                     ...machine,
-                    totalEarned: newTotalEarned,
-                    nextClaimAt: newNextClaim,
-                    remainingDays: newRemaining,
+
+                    totalEarned:
+                        currentTotalEarned + profit,
+
+                    nextClaimAt:
+                        newNextClaim,
+
+                    remainingDays:
+                        newRemaining,
+
                     status:
                         newRemaining <= 0
                             ? "COMPLETED"
@@ -680,31 +859,21 @@ window.claimProfit = async (machineKey) => {
             }
         };
 
-        /*
-         * Verify BOTH Firebase values
-         */
-        const verifyUserSnap = await get(userRef);
-
-        if (verifyUserSnap.exists()) {
-            const verifyData = verifyUserSnap.val();
-
-            console.log(
-                "VERIFY Firebase balance AFTER CLAIM:",
-                verifyData.balance
-            );
-
-            console.log(
-                "VERIFY Firebase todayProfit AFTER CLAIM:",
-                verifyData.todayProfit
-            );
-        }
+        /* -----------------------------------------
+           SUCCESS
+        ----------------------------------------- */
 
         showToast(
             `Claimed UGX ${profit.toLocaleString()} successfully`
         );
 
     } catch (error) {
-        console.error("CLAIM ERROR:", error);
+
+        console.error(
+            "CLAIM ERROR:",
+            error
+        );
+
         showToast(
             "Claim failed: " + error.message,
             false
