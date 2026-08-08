@@ -35,7 +35,7 @@ input, textarea{
           user-select: text;
 }
 .profile{display:flex;align-items:center;gap:12px;}
-.avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--green));display:flex;justify-content:center;align-items:center;font-size:20px;font-weight:800;color:#fff;}
+.avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--green));display:flex;justify-content:center;align-items:center;font-size:20px;font-weight:800;color:#050A18;}
 .profile h2{font-size:18px;font-weight:800;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .profile span{font-size:12px;color:var(--muted);}
 .header-icons{display:flex;gap:10px;}
@@ -85,6 +85,7 @@ input, textarea{
 .machine-label{font-size:11px;color:var(--muted);}
 .machine-value{font-weight:800;font-size:14px;white-space:nowrap;}
 .machine-btn{margin-top:12px;width:100%;height:44px;border:none;border-radius:12px;background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;font-weight:800;font-size:14px;cursor:pointer;transition:.2s;}
+.machine-btn:hover{opacity:.85;}
 
 /* IMPROVED CHECKIN CARD */
 .checkin-card{background:linear-gradient(135deg,rgba(0,209,255,.15),rgba(0,230,118,.15));border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:16px;}
@@ -111,7 +112,7 @@ input, textarea{
 .activity-amount{font-size:14px;font-weight:800;color:var(--green);white-space:nowrap;}
 
 /* BOTTOM NAV - UNTOUCHED */
-.bottom-nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:540px;height:74px;background:rgba(8,16,32,.95);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;display:flex;align-items:center;justify-content:space-around;z-index:999;}
+.bottom-nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:540px;height:74px;background:rgba(8,16,32,.95);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:20px;display:flex;padding:0 8px;box-shadow:var(--shadow);}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;}
 .nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;}
 .nav-item.active{color:var(--cyan);font-weight:700;}
@@ -224,7 +225,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 let currentUser = null;
-let userListener = null; // Store listener reference
+let userListener = null;
 
 /* BLOCK ZOOM */
 let lastTouchEnd = 0;
@@ -253,10 +254,8 @@ function loadUser(){
     
     const userRef = ref(db,"users/" + currentUser.uid);
     
-    // Unsubscribe from previous listener if it exists
     if(userListener) userListener();
     
-    // Set up real-time listener with error handling
     userListener = onValue(userRef,(snapshot)=>{
         if(!snapshot.exists()) return;
         const data = snapshot.val();
@@ -276,155 +275,214 @@ function loadUser(){
         const referral = Number(data.referralEarnings || 0);
         document.getElementById("referralEarnings").textContent = "UGX " + referral.toLocaleString();
 
-        const machines = data.machines
-  ? Object.values(data.machines).filter(
-      m => (m.status || "").toUpperCase() === "RUNNING"
-    ).length
-  : 0;
+        const machines = data.machines ? Object.values(data.machines).filter(m => (m.status || "").toUpperCase() === "RUNNING").length : 0;
         document.getElementById("machineCount").textContent = machines;
-        document.getElementById("machineStatus").textContent = machines + " Running";
 
         const days = Number(data.checkinDays || 0);
         document.getElementById("checkinDays").textContent = "Day " + days;
         
-        // Check if claimed today
         const lastClaim = data.lastCheckin || 0;
         const canClaim = (Date.now() - lastClaim) > 24 * 60 * 60 * 1000;
         document.getElementById("claimBtn").disabled = !canClaim;
         document.getElementById("claimBtn").textContent = canClaim ? "Claim Today's Bonus" : "Claimed Today";
 
         renderActivities(data);
-        renderMachines(data);
+        renderMachines(data.machines || {});
     }, (error) => {
         console.error("Database error:", error);
-        // Retry after 5 seconds on error
         setTimeout(loadUser, 5000);
     });
 }
 
-/* RENDER ACTIVE MACHINES */
-function renderMachines(data){
+/* RENDER ACTIVE MACHINES - COMPLETELY REWRITTEN FOR PROPER UPDATES */
+function renderMachines(machinesData){
     const container = document.getElementById("activeMachines");
-    const machines = data.machines
-  ? Object.values(data.machines).filter(
-      m => (m.status || "").toUpperCase() === "RUNNING"
-    )
-  : [];
-    if (machines.length === 0) {
-        container.innerHTML=`<div style="text-align:center;color:var(--muted);padding:20px;">No Active Machines</div>`;
+    
+    if(!machinesData || Object.keys(machinesData).length === 0){
+        container.innerHTML = `<div style="text-align:center;color:var(--muted);padding:20px;">No Active Machines</div>`;
+        document.getElementById("machineStatus").textContent = "0 Running";
         return;
     }
-    container.innerHTML="";
-    machines.forEach(machine=>{
-        container.innerHTML += `<div class="machine-card"><div class="machine-top"><div class="machine-name">${machine.name || "Investment Machine"}</div><div class="machine-status">${machine.status || "IDLE"}</div></div><div class="machine-info"><div><div class="machine-label">HASHRATE</div><div class="machine-value">${machine.hashrate || "N/A"}</div></div><div><div class="machine-label">PROFIT</div><div class="machine-value">${machine.profit || "UGX 0"}</div></div></div></div>`;
+
+    const activeMachines = Object.values(machinesData).filter(m => m && (m.status || "").toUpperCase() === "RUNNING");
+    
+    if(activeMachines.length === 0){
+        container.innerHTML = `<div style="text-align:center;color:var(--muted);padding:20px;">No Active Machines</div>`;
+        document.getElementById("machineStatus").textContent = "0 Running";
+        return;
+    }
+
+    document.getElementById("machineStatus").textContent = activeMachines.length + " Running";
+    container.innerHTML = "";
+
+    activeMachines.forEach(machine => {
+        const hashrate = machine.hashrate || "N/A";
+        const profit = machine.profit || "UGX 0";
+        const status = (machine.status || "RUNNING").toUpperCase();
+        const name = machine.name || "Investment Machine";
+
+        const html = `
+            <div class="machine-card">
+                <div class="machine-top">
+                    <div class="machine-name">${name}</div>
+                    <div class="machine-status">${status}</div>
+                </div>
+                <div class="machine-info">
+                    <div>
+                        <div class="machine-label">HASHRATE</div>
+                        <div class="machine-value">${hashrate}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="machine-label">PROFIT</div>
+                        <div class="machine-value">${profit}</div>
+                    </div>
+                </div>
+                <button class="machine-btn" onclick="window.location='machines.html'">View Details</button>
+            </div>
+        `;
+        container.innerHTML += html;
     });
 }
 
-/* RENDER RECENT ACTIVITIES - FIXED ICONS */
+/* RENDER RECENT ACTIVITIES */
 function renderActivities(data){
     const list = document.getElementById("recentActivities");
     const activities = data.activities ? Object.values(data.activities).reverse() : [];
-    if(!Array.isArray(activities) || activities.length===0){
-        list.innerHTML=`<div style="text-align:center;color:var(--muted);padding:20px;">No recent activities</div>`;
+    
+    if(!Array.isArray(activities) || activities.length === 0){
+        list.innerHTML = `<div style="text-align:center;color:var(--muted);padding:20px;">No recent activities</div>`;
         return;
     }
-    list.innerHTML="";
-    activities.slice(0,20).forEach(item=>{
-        // Fix: if icon is text like "fa-solid", convert to <i> tag
+    
+    list.innerHTML = "";
+    activities.slice(0,20).forEach(item => {
         let iconHTML = item.icon || "💰";
         if(typeof iconHTML === 'string' && iconHTML.includes('fa-')){
             iconHTML = `<i class="${iconHTML}"></i>`;
         }
-        list.innerHTML += `<div class="activity-item"><div class="activity-icon">${iconHTML}</div><div class="activity-details"><div class="activity-title">${item.title || "Transaction"}</div><div class="activity-time">${item.time || new Date().toLocaleString()}</div></div><div class="activity-amount">${item.amount || "UGX 0"}</div></div>`;
+        
+        const time = item.time || new Date().toLocaleString();
+        const title = item.title || "Transaction";
+        const amount = item.amount || "+UGX 0";
+
+        list.innerHTML += `
+            <div class="activity-item">
+                <div class="activity-icon">${iconHTML}</div>
+                <div class="activity-details">
+                    <div class="activity-title">${title}</div>
+                    <div class="activity-time">${time}</div>
+                </div>
+                <div class="activity-amount">${amount}</div>
+            </div>
+        `;
     });
+    
     document.getElementById("activityCount").textContent = activities.length + " Records";
 }
 
 /* TOAST */
-window.showToast = (message,type="success")=>{
-    const toast=document.getElementById("toast");
-    toast.textContent=message;
-    toast.className="toast " + type + " show";
+window.showToast = (message, type = "success") => {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.className = "toast " + type + " show";
     clearTimeout(window.toastTimer);
-    window.toastTimer=setTimeout(()=>{toast.classList.remove("show");},3000);
-}
+    window.toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 3000);
+};
 
-/* DAILY CHECK-IN RTDB - 300UGX ONCE PER 24HRS */
-window.claimDaily = async ()=>{
-    if(!currentUser){window.showToast("Please login first","error");return;}
-    const userRef = ref(db,"users/" + currentUser.uid);
+/* DAILY CHECK-IN */
+window.claimDaily = async () => {
+    if(!currentUser){
+        window.showToast("Please login first", "error");
+        return;
+    }
+    
+    const userRef = ref(db, "users/" + currentUser.uid);
     const snap = await get(userRef);
     if(!snap.exists()) return;
     const data = snap.val();
     
     const lastClaim = data.lastCheckin || 0;
     if((Date.now() - lastClaim) < 24 * 60 * 60 * 1000){
-        window.showToast("You already claimed today. Come back tomorrow","error");
+        window.showToast("You already claimed today. Come back tomorrow", "error");
         return;
     }
     
     const updates = {};
-    updates[`balance`] = Number(data.balance || 0) + 300; // 300 UGX
+    updates[`balance`] = Number(data.balance || 0) + 300;
     updates[`todayProfit`] = Number(data.todayProfit || 0) + 300;
     updates[`checkinDays`] = Number(data.checkinDays || 0) + 1;
-    updates[`lastCheckin`] = Date.now(); // save timestamp to block spam
+    updates[`lastCheckin`] = Date.now();
     
-    const actKey = push(ref(db,`users/${currentUser.uid}/activities`)).key;
-    updates[`activities/${actKey}`] = {icon:"fa-solid fa-gift", title:"Daily Check-in Bonus", amount:"+UGX 300", time:new Date().toLocaleString()};
+    const actKey = push(ref(db, `users/${currentUser.uid}/activities`)).key;
+    updates[`activities/${actKey}`] = {
+        icon: "fa-solid fa-gift",
+        title: "Daily Check-in Bonus",
+        amount: "+UGX 300",
+        time: new Date().toLocaleString()
+    };
+    
     await update(userRef, updates);
-    window.showToast("UGX 300 bonus claimed successfully!","success");
+    window.showToast("UGX 300 bonus claimed successfully!", "success");
 };
 
-/* PROMO CODE RTDB */
-window.applyPromo = async ()=>{
+/* PROMO CODE */
+window.applyPromo = async () => {
     const input = document.getElementById("promoInput");
     const code = input.value.trim().toUpperCase();
-    if(code===""){window.showToast("Enter a promo code","error");return;}
-    if(code==="WELCOME500"){
-        const userRef = ref(db,"users/" + currentUser.uid);
+    
+    if(code === ""){
+        window.showToast("Enter a promo code", "error");
+        return;
+    }
+    
+    if(code === "WELCOME500"){
+        const userRef = ref(db, "users/" + currentUser.uid);
         const snap = await get(userRef);
         if(!snap.exists()) return;
         const data = snap.val();
+        
         const updates = {};
         updates[`balance`] = Number(data.balance || 0) + 500;
         updates[`todayProfit`] = Number(data.todayProfit || 0) + 500;
-        const actKey = push(ref(db,`users/${currentUser.uid}/activities`)).key;
-        updates[`activities/${actKey}`] = {icon:"fa-solid fa-ticket", title:"Promo Code: WELCOME500", amount:"+UGX 500", time:new Date().toLocaleString()};
+        
+        const actKey = push(ref(db, `users/${currentUser.uid}/activities`)).key;
+        updates[`activities/${actKey}`] = {
+            icon: "fa-solid fa-ticket",
+            title: "Promo Code: WELCOME500",
+            amount: "+UGX 500",
+            time: new Date().toLocaleString()
+        };
+        
         await update(userRef, updates);
-        input.value="";
-        window.showToast("Promo redeemed successfully!","success");
+        input.value = "";
+        window.showToast("Promo redeemed successfully!", "success");
         return;
     }
-    window.showToast("Invalid promo code","error");
+    
+    window.showToast("Invalid promo code", "error");
 };
 
-// Periodic refresh every 30 seconds when page is visible
-setInterval(() => {
-    if(currentUser && document.visibilityState === "visible") {
-        loadUser();
-    }
-}, 30000);
-
-// Refresh when page becomes visible after being hidden
-document.addEventListener("visibilitychange",()=>{
-    if(document.visibilityState==="visible" && currentUser){
+/* Page visibility handling */
+document.addEventListener("visibilitychange", () => {
+    if(document.visibilityState === "visible" && currentUser){
         loadUser();
     }
 });
 
-// Block long press and right click
+/* Block long press and right click */
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('touchstart', e => {
-  if(e.touches.length > 1) e.preventDefault(); // block pinch
+    if(e.touches.length > 1) e.preventDefault();
 });
 document.addEventListener('touchend', e => {
-  if(e.touches.length > 1) e.preventDefault();
+    if(e.touches.length > 1) e.preventDefault();
 });
 
-// Block 500ms long press
 let touchTimer;
 document.addEventListener('touchstart', e => {
-  touchTimer = setTimeout(() => e.preventDefault(), 500);
+    touchTimer = setTimeout(() => e.preventDefault(), 500);
 });
 document.addEventListener('touchend', () => clearTimeout(touchTimer));
 document.addEventListener('touchmove', () => clearTimeout(touchTimer));
