@@ -9,7 +9,7 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
-:root{--bg:#050A18;--card:#0E1629;--card2:#14243E;--green:#00E676;--cyan:#00D1FF;--red:#EF4444;--text:#F8FAFC;--muted:#94A3B8;--border:rgba(0,209,255,.15);--glow-cyan:0 0 25px rgba(0,209,255,.25);--glow-red:0 0 25px rgba(239,68,68,.25);}
+:root{--bg:#050A18;--card:#0E1629;--card2:#14243E;--green:#00E676;--cyan:#00D1FF;--red:#EF4444;--text:#F8FAFC;--muted:#94A3B8;--border:rgba(0,209,255,.15);--glow-cyan:0 0 25px rgba(0,209,255,.25);}
 body{background:radial-gradient(1200px 600px at 50% -20%,rgba(239,68,68,.10),transparent 60%),linear-gradient(180deg,#050A18,#070B14);color:var(--text);min-height:100vh;padding-bottom:120px;}
 .container{max-width:540px;margin:auto;padding:18px;}
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
@@ -30,10 +30,10 @@ input, textarea{
       -ms-user-select: text;
           user-select: text;
 }
-.back-btn{width:46px;height:46px;border-radius:15px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;}
+.back-btn{width:46px;height:46px;border-radius:15px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer}
 .page-title{text-align:center;flex:1;}
 .page-title h2{font-size:22px;font-weight:800;background:linear-gradient(90deg,#fff,var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.balance-card{background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));border-radius:28px;padding:24px;border:1px solid var(--border);box-shadow:var(--glow-cyan);margin-bottom:20px;backdrop-filter:blur(16px);}
+.balance-card{background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));border-radius:28px;padding:24px;border:1px solid var(--border);box-shadow:var(--glow-cyan);margin-bottom:20px;}
 .balance-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
 .balance-value{font-size:32px;font-weight:800;margin:10px 0;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .form-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:24px;padding:24px;margin-bottom:18px;backdrop-filter:blur(16px);}
@@ -48,15 +48,15 @@ input, textarea{
 .info-box{background:rgba(0,209,255,.08);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:20px;}
 .info-box p{font-size:13px;color:var(--muted);line-height:1.6;}
 .info-box strong{color:var(--cyan);}
-.withdraw-btn{width:100%;height:56px;border:none;border-radius:18px;background:linear-gradient(90deg,var(--red),#DC2626);color:#fff;font-size:16px;font-weight:800;cursor:pointer;transition:.3s;box-shadow:var(--glow-red);}
+.withdraw-btn{width:100%;height:56px;border:none;border-radius:18px;background:linear-gradient(90deg,var(--red),#DC2626);color:#fff;font-size:16px;font-weight:800;cursor:pointer;transition:.3s;box-shadow:0 6px 18px rgba(220,38,38,.12);}
 .withdraw-btn:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(1);}
 .withdraw-btn:active{transform:scale(.98);}
-.bottom-nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:540px;height:74px;background:rgba(8,16,32,.95);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:24px;display:flex;justify-content:space-around;align-items:center;box-shadow:0 15px 45px rgba(0,0,0,.45);z-index:999;}
+.bottom-nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:540px;height:74px;background:rgba(8,16,32,.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.03);border-radius:20px;display:flex;align-items:center;padding:10px;gap:8px;}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;}
 .nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;}
 .nav-item.active{color:var(--cyan);font-weight:700;}
 .nav-item.active .nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);box-shadow:0 0 18px rgba(0,209,255,.35);}
-.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);padding:14px 24px;border-radius:14px;font-weight:800;font-size:14px;display:none;z-index:10000;box-shadow:0 10px 30px rgba(0,0,0,.35);}
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);padding:14px 24px;border-radius:14px;font-weight:800;font-size:14px;display:none;z-index:10000;box-shadow:0 10px 30px rgba(0,0,0,.6);}
 .toast.success{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;}
 .toast.error{background:var(--red);color:#fff;}
 .loading-box{display:flex;justify-content:center;padding:20px;}
@@ -93,6 +93,12 @@ input, textarea{
             <input type="number" id="withdrawAmount" class="form-input" placeholder="Enter amount" min="10000">
         </div>
 
+        <div class="form-group">
+            <div class="form-label">Confirm Password</div>
+            <input type="password" id="withdrawPassword" class="form-input" placeholder="Enter your password to confirm">
+            <div class="phone-note">Enter your account password to confirm this withdrawal.</div>
+        </div>
+
         <div class="info-box">
             <p><strong>Note:</strong> Minimum withdrawal is UGX 10,000. Processing takes 5-30 minutes. Fees: 1%</p>
         </div>
@@ -113,7 +119,7 @@ input, textarea{
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase, ref, onValue, update, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
@@ -130,7 +136,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 let currentUser = null;
-    let processing = false;
+let processing = false;
 let currentUserData = null;
 let userPhone = "";
 
@@ -164,29 +170,47 @@ function loadUser(){
         userPhone = currentUserData.phone || "";
         document.getElementById("walletBalance").textContent = "UGX " + balance.toLocaleString();
         document.getElementById("phoneDisplay").innerHTML = `<i class="fa-solid fa-phone"></i><span>${maskPhone(userPhone)}</span>`;
-        document.getElementById("withdrawBtn").disabled = false;
+        // enable withdraw button only if user has phone and balance is available; input listener will handle amount min
+        if(userPhone) document.getElementById("withdrawBtn").disabled = false;
     });
 }
-if(processing) return;
-processing = true;
+
 window.requestWithdraw = async () => {
-    if(!currentUser || !currentUserData) return;
-    
+    if(processing) return;
+    processing = true;
+    if(!currentUser || !currentUserData){ showToast("User not loaded", "error"); processing = false; return; }
+
     const amount = Number(document.getElementById("withdrawAmount").value);
+    const password = document.getElementById("withdrawPassword").value || "";
     const balance = Number(currentUserData.balance || 0);
     const minWithdraw = 10000;
     const fee = Math.ceil(amount * 0.01);
     const totalDeduct = amount + fee;
 
-    if(!userPhone){ showToast("No phone number registered", "error"); return; }
-    if(amount < minWithdraw){ showToast("Minimum withdrawal is UGX 10,000", "error"); return; }
-    if(balance < totalDeduct){ showToast("Insufficient balance", "error"); return; }
+    if(!userPhone){ showToast("No phone number registered", "error"); processing = false; return; }
+    if(!password){ showToast("Enter password to confirm", "error"); processing = false; return; }
+    if(amount < minWithdraw){ showToast("Minimum withdrawal is UGX 10,000", "error"); processing = false; return; }
+    if(balance < totalDeduct){ showToast("Insufficient balance", "error"); processing = false; return; }
+
+    const btn = document.getElementById("withdrawBtn");
+    btn.disabled = true;
+    const originalBtnHTML = btn.innerHTML;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
+
+    // Reauthenticate user with password before proceeding
+    try{
+        const credential = EmailAuthProvider.credential(currentUser.email, password);
+        await reauthenticateWithCredential(currentUser, credential);
+    } catch(err){
+        console.error('Reauth failed', err);
+        showToast("Incorrect password", "error");
+        processing = false;
+        btn.disabled = false;
+        btn.innerHTML = originalBtnHTML;
+        return;
+    }
 
     try{
-        const btn = document.getElementById("withdrawBtn");
-        btn.disabled = true;
-        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
-
         const withdrawKey = push(ref(db, `users/${currentUser.uid}/withdrawals`)).key;
         const activityKey = push(ref(db, `users/${currentUser.uid}/activities`)).key;
 
@@ -206,52 +230,55 @@ window.requestWithdraw = async () => {
         };
         // 4. Activity log
         updates[`users/${currentUser.uid}/activities/${activityKey}`] = {
-    type: "withdraw",
-    status: "PENDING",
-    icon: "fa-solid fa-arrow-up",
-    title: "Withdrawal Request",
-    amount: "-UGX " + totalDeduct.toLocaleString(),
-    fee: fee,
-    phone: userPhone,
-    time: new Date().toLocaleString(),
-    createdAt: Date.now()
-};
+            type: "withdraw",
+            status: "PENDING",
+            icon: "fa-solid fa-arrow-up",
+            title: "Withdrawal Request",
+            amount: "-UGX " + totalDeduct.toLocaleString(),
+            fee: fee,
+            phone: userPhone,
+            time: new Date().toLocaleString(),
+            createdAt: Date.now()
+        };
 
         await update(ref(db), updates);
         document.getElementById("withdrawAmount").value = "";
-        
+        document.getElementById("withdrawPassword").value = "";
+
         showToast("Withdrawal request submitted", "success");
         setTimeout(() => { window.location.href = "wallet.html"; }, 1200); // REDIRECT
-        
     } catch(error){
         console.error(error);
-        showToast("Withdrawal failed: " + error.message, "error");
+        showToast("Withdrawal failed: " + (error.message || error), "error");
         processing = false;
-        document.getElementById("withdrawBtn").disabled = false;
-        document.getElementById("withdrawBtn").innerHTML = `<i class="fa-solid fa-arrow-up"></i> Request Withdrawal`;
+        btn.disabled = false;
+        btn.innerHTML = originalBtnHTML;
     }
 };
 
+
 document.getElementById("withdrawAmount").addEventListener("input", (e) => {
     const val = Number(e.target.value);
-    document.getElementById("withdrawBtn").disabled = val < 10000;
+    // don't enable unless user has phone and enters valid amount
+    const hasPhone = Boolean(userPhone);
+    document.getElementById("withdrawBtn").disabled = !(hasPhone && val >= 10000);
 });
     // Block long press and right click
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('touchstart', e => {
-  if(e.touches.length > 1) e.preventDefault(); // block pinch
-});
-document.addEventListener('touchend', e => {
-  if(e.touches.length > 1) e.preventDefault();
-});
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('touchstart', e => {
+      if(e.touches.length > 1) e.preventDefault(); // block pinch
+    });
+    document.addEventListener('touchend', e => {
+      if(e.touches.length > 1) e.preventDefault();
+    });
 
-// Block 500ms long press
-let touchTimer;
-document.addEventListener('touchstart', e => {
-  touchTimer = setTimeout(() => e.preventDefault(), 500);
-});
-document.addEventListener('touchend', () => clearTimeout(touchTimer));
-document.addEventListener('touchmove', () => clearTimeout(touchTimer));
+    // Block 500ms long press
+    let touchTimer;
+    document.addEventListener('touchstart', e => {
+      touchTimer = setTimeout(() => e.preventDefault(), 500);
+    });
+    document.addEventListener('touchend', () => clearTimeout(touchTimer));
+    document.addEventListener('touchmove', () => clearTimeout(touchTimer));
 </script>
 </body>
   </html>
