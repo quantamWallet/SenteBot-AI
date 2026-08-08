@@ -479,28 +479,44 @@ window.confirmPurchase = async () => {
 
 /* CLAIM PROFIT */
 window.claimProfit = async (machineKey) => {
-    if (!currentUser || !currentUserData) return;
-
-    const machine = currentUserData.machines[machineKey];
-
-    if (!machine || machine.status !== "RUNNING") return;
-
-    const now = Date.now();
-
-    if (now < machine.nextClaimAt) {
-        showToast("Not ready to claim yet", false);
-        return;
-    }
+    if (!currentUser) return;
 
     try {
-        const newNextClaim = machine.nextClaimAt + 86400000;
+        // Get the latest user data directly from Firebase
+        const userRef = ref(db, `users/${currentUser.uid}`);
+        const snap = await get(userRef);
+
+        if (!snap.exists()) {
+            showToast("User data not found.", false);
+            return;
+        }
+
+        const userData = snap.val();
+        const machine = userData.machines?.[machineKey];
+
+        if (!machine || machine.status !== "RUNNING") {
+            showToast("Machine is not active.", false);
+            return;
+        }
+
+        const now = Date.now();
+
+        if (now < Number(machine.nextClaimAt || 0)) {
+            showToast("Not ready to claim yet", false);
+            return;
+        }
+
+        const profit = Number(machine.dailyProfit || 0);
+
+        const newNextClaim =
+            Number(machine.nextClaimAt) + 86400000;
 
         const daysPassed = Math.floor(
-            (now - machine.startDate) / 86400000
+            (now - Number(machine.startDate)) / 86400000
         );
 
         const newRemaining = Math.max(
-            machine.duration - daysPassed,
+            Number(machine.duration) - daysPassed,
             0
         );
 
@@ -508,76 +524,69 @@ window.claimProfit = async (machineKey) => {
             ref(db, `users/${currentUser.uid}/activities`)
         ).key;
 
+        const currentBalance =
+            Number(userData.balance || 0);
+
+        const currentTodayProfit =
+            Number(userData.todayProfit || 0);
+
+        const currentTotalEarned =
+            Number(machine.totalEarned || 0);
+
         const updates = {};
 
-        // Add profit to wallet balance
+        // Wallet balance
         updates[`users/${currentUser.uid}/balance`] =
-            Number(currentUserData.balance || 0) +
-            Number(machine.dailyProfit || 0);
+            currentBalance + profit;
 
-        // Add profit to today's earnings
+        // TODAY'S EARNINGS
         updates[`users/${currentUser.uid}/todayProfit`] =
-            Number(currentUserData.todayProfit || 0) +
-            Number(machine.dailyProfit || 0);
+            currentTodayProfit + profit;
 
-        // Update machine total earned
+        // Machine total earnings
         updates[`users/${currentUser.uid}/machines/${machineKey}/totalEarned`] =
-            Number(machine.totalEarned || 0) +
-            Number(machine.dailyProfit || 0);
+            currentTotalEarned + profit;
 
-        // Schedule next claim
+        // Next claim
         updates[`users/${currentUser.uid}/machines/${machineKey}/nextClaimAt`] =
             newNextClaim;
 
-        // Update remaining days
+        // Remaining days
         updates[`users/${currentUser.uid}/machines/${machineKey}/remainingDays`] =
             newRemaining;
 
-        // Complete machine when duration ends
+        // Complete machine
         if (newRemaining <= 0) {
             updates[`users/${currentUser.uid}/machines/${machineKey}/status`] =
                 "COMPLETED";
         }
 
-        // Record activity
+        // Activity
         updates[`users/${currentUser.uid}/activities/${activityKey}`] = {
             icon: "fa-solid fa-coins",
             title: "Claimed from " + machine.name,
-            amount: "+UGX " + Number(machine.dailyProfit || 0).toLocaleString(),
+            amount: "+UGX " + profit.toLocaleString(),
             time: new Date().toLocaleString()
         };
 
-  await update(ref(db), updates);
+        await update(ref(db), updates);
 
-// Verify what Firebase actually saved
-const verifySnap = await get(
-    ref(db, `users/${currentUser.uid}`)
-);
+        // Update local data too
+        currentUserData = {
+            ...userData,
+            balance: currentBalance + profit,
+            todayProfit: currentTodayProfit + profit
+        };
 
-if (verifySnap.exists()) {
-    const verifyData = verifySnap.val();
+        showToast(
+            `Claimed UGX ${profit.toLocaleString()} successfully`
+        );
 
-    console.log("AFTER CLAIM - Firebase user data:", verifyData);
-    console.log(
-        "AFTER CLAIM - todayProfit:",
-        verifyData.todayProfit
-    );
-    console.log(
-        "AFTER CLAIM - balance:",
-        verifyData.balance
-    );
-}
-
-showToast(
-    `Claimed UGX ${Number(machine.dailyProfit || 0).toLocaleString()} successfully`
-);
-
-    } catch (e) {
-        console.error(e);
-        showToast("Claim failed: " + e.message, false);
+    } catch (error) {
+        console.error("CLAIM ERROR:", error);
+        showToast("Claim failed: " + error.message, false);
     }
 };
-
 /* LOADING + EMPTY */
 function showLoading() {
     document.getElementById("machineList").innerHTML = `
