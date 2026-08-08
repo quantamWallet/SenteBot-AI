@@ -271,9 +271,16 @@ function loadUser(){
         document.getElementById("portfolioValue").textContent = "UGX " + balance.toLocaleString();
 
         const todayProfit = Number(data.todayProfit || 0);
-        document.getElementById("todayProfit").textContent = "Today's Profit: UGX " + todayProfit.toLocaleString();
-        document.getElementById("earningsToday").textContent = "UGX " + todayProfit.toLocaleString();
 
+console.log("DASHBOARD Firebase data:", data);
+console.log("DASHBOARD todayProfit:", data.todayProfit);
+console.log("DASHBOARD todayProfit converted:", todayProfit);
+
+document.getElementById("todayProfit").textContent =
+    "Today's Profit: UGX " + todayProfit.toLocaleString();
+
+document.getElementById("earningsToday").textContent =
+    "UGX " + todayProfit.toLocaleString();
         const referral = Number(data.referralEarnings || 0);
         document.getElementById("referralEarnings").textContent = "UGX " + referral.toLocaleString();
 
