@@ -304,22 +304,64 @@ function loadUser(){
 }
 
 /* RENDER ACTIVE MACHINES */
-function renderMachines(data){
+function renderMachines(data) {
     const container = document.getElementById("activeMachines");
-    const machines = data.machines
-  ? Object.values(data.machines).filter(
-      m => (m.status || "").toUpperCase() === "RUNNING"
-    )
-  : [];
-    if (machines.length === 0) {
-        container.innerHTML=`<div style="text-align:center;color:var(--muted);padding:20px;">No Active Machines</div>`;
+
+    if (!container) {
+        console.error("Element #activeMachines not found");
         return;
     }
-    container.innerHTML="";
-    machines.forEach(machine=>{
-        container.innerHTML += `<div class="machine-card"><div class="machine-top"><div class="machine-name">${machine.name || "Investment Machine"}</div><div class="machine-status">${machine.status || "RUNNING"}</div></div><div class="machine-info"><div><div class="machine-label">HASHRATE</div><div class="machine-value">${machine.hashrate || "N/A"}</div></div><div style="text-align:right;"><div class="machine-label">PROFIT</div><div class="machine-value">${machine.profit || "UGX 0"}</div></div></div><button class="machine-btn" onclick="window.location='machines.html'">View Details</button></div>`;
-    });
-}
+
+    const machines = data?.machines
+        ? Object.values(data.machines).filter(machine =>
+            String(machine?.status || "").trim().toUpperCase() === "RUNNING"
+        )
+        : [];
+
+    if (machines.length === 0) {
+        container.innerHTML = `
+            <div style="text-align:center;color:var(--muted);padding:20px;">
+                No Active Machines
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = machines.map(machine => `
+        <div class="machine-card">
+            <div class="machine-top">
+                <div class="machine-name">
+                    ${machine.name || "Investment Machine"}
+                </div>
+
+                <div class="machine-status">
+                    ${machine.status || "RUNNING"}
+                </div>
+            </div>
+
+            <div class="machine-info">
+                <div>
+                    <div class="machine-label">HASHRATE</div>
+                    <div class="machine-value">
+                        ${machine.hashrate || "N/A"}
+                    </div>
+                </div>
+
+                <div style="text-align:right;">
+                    <div class="machine-label">PROFIT</div>
+                    <div class="machine-value">
+                        ${machine.profit || "UGX 0"}
+                    </div>
+                </div>
+            </div>
+
+            <button class="machine-btn"
+                onclick="window.location.href='machines.html'">
+                View Details
+            </button>
+        </div>
+    `).join("");
+    }
 
 /* RENDER RECENT ACTIVITIES - FIXED ICONS */
 function renderActivities(data){
