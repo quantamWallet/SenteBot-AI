@@ -569,6 +569,20 @@ window.claimProfit = async (machineKey) => {
             time: new Date().toLocaleString()
         };
 
+      console.log("========== MACHINE CLAIM ==========");
+console.log("UID:", currentUser.uid);
+console.log("Machine:", machine.name);
+console.log("Machine profit:", profit);
+console.log("Previous todayProfit:", currentTodayProfit);
+console.log("New todayProfit:", currentTodayProfit + profit);
+console.log(
+    "Firebase path:",
+    `users/${currentUser.uid}/todayProfit`
+);
+console.log("Updates being written:", updates);
+console.log("==================================");
+
+await update(ref(db), updates);
         await update(ref(db), updates);
 
         // Update local data too
@@ -578,6 +592,15 @@ window.claimProfit = async (machineKey) => {
             todayProfit: currentTodayProfit + profit
         };
 
+      const verifySnap = await get(
+    ref(db, `users/${currentUser.uid}/todayProfit`)
+);
+
+console.log(
+    "VERIFY Firebase todayProfit AFTER CLAIM:",
+    verifySnap.val()
+);
+      
         showToast(
             `Claimed UGX ${profit.toLocaleString()} successfully`
         );
