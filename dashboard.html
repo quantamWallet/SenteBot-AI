@@ -249,66 +249,252 @@ onAuthStateChanged(auth,(user)=>{
     loadUser();
 });
 
-function loadUser(){
-    if(!currentUser) return;
-    
-    const userRef = ref(db,"users/" + currentUser.uid);
-    
+function loadUser() {
+    if (!currentUser) return;
+
+    const userRef = ref(db, "users/" + currentUser.uid);
+
     // Unsubscribe from previous listener if it exists
-    if(userListener) userListener();
-    
-    // Set up real-time listener with error handling
-    userListener = onValue(userRef,(snapshot)=>{
-        if(!snapshot.exists()) return;
-        const data = snapshot.val();
+    if (typeof userListener === "function") {
+        userListener();
+        userListener = null;
+    }
 
-        const username = data.username || "Investor";
-        setGreeting(username);
-        document.getElementById("avatarLetter").textContent = username.charAt(0).toUpperCase();
+    // Real-time Firebase listener
+    userListener = onValue(
+        userRef,
+        (snapshot) => {
 
-        const balance = Number(data.balance || 0);
-        document.getElementById("walletBalance").textContent = "UGX " + balance.toLocaleString();
-        document.getElementById("portfolioValue").textContent = "UGX " + balance.toLocaleString();
+            if (!snapshot.exists()) {
+                console.warn("No user data found for:", currentUser.uid);
+                return;
+            }
 
-        const todayProfit = Number(data.todayProfit || 0);
+            const data = snapshot.val();
 
-console.log("DASHBOARD Firebase data:", data);
-console.log("DASHBOARD todayProfit:", data.todayProfit);
-console.log("DASHBOARD todayProfit converted:", todayProfit);
+            console.log("DASHBOARD Firebase user data:", data);
+            console.log(
+                "DASHBOARD Firebase todayProfit:",
+                data.todayProfit
+            );
 
-document.getElementById("todayProfit").textContent =
-    "Today's Profit: UGX " + todayProfit.toLocaleString();
+            /* =========================
+               USER / GREETING
+            ========================= */
 
-document.getElementById("earningsToday").textContent =
-    "UGX " + todayProfit.toLocaleString();
-        const referral = Number(data.referralEarnings || 0);
-        document.getElementById("referralEarnings").textContent = "UGX " + referral.toLocaleString();
+            const username = data.username || "Investor";
 
-        const machines = data.machines
-  ? Object.values(data.machines).filter(
-      m => (m.status || "").toUpperCase() === "RUNNING"
-    ).length
-  : 0;
-        document.getElementById("machineCount").textContent = machines;
-        document.getElementById("machineStatus").textContent = machines + " Running";
+            setGreeting(username);
 
-        const days = Number(data.checkinDays || 0);
-        document.getElementById("checkinDays").textContent = "Day " + days;
-        
-        // Check if claimed today
-        const lastClaim = data.lastCheckin || 0;
-        const canClaim = (Date.now() - lastClaim) > 24 * 60 * 60 * 1000;
-        document.getElementById("claimBtn").disabled = !canClaim;
-        document.getElementById("claimBtn").textContent = canClaim ? "Claim Today's Bonus" : "Claimed Today";
+            const avatarLetter =
+                document.getElementById("avatarLetter");
 
-        renderActivities(data);
-        renderMachines(data);
-    }, (error) => {
-        console.error("Database error:", error);
-        // Retry after 5 seconds on error
-        setTimeout(loadUser, 5000);
-    });
-}
+            if (avatarLetter) {
+                avatarLetter.textContent =
+                    username.charAt(0).toUpperCase();
+            }
+
+
+            /* =========================
+               WALLET BALANCE
+            ========================= */
+
+            const balance =
+                Number(data.balance || 0);
+
+            const walletBalance =
+                document.getElementById("walletBalance");
+
+            if (walletBalance) {
+                walletBalance.textContent =
+                    "UGX " + balance.toLocaleString();
+            }
+
+            const portfolioValue =
+                document.getElementById("portfolioValue");
+
+            if (portfolioValue) {
+                portfolioValue.textContent =
+                    "UGX " + balance.toLocaleString();
+            }
+
+
+            /* =========================
+               TODAY'S MACHINE PROFITS
+               
+               machines.html writes here:
+               
+               users/{uid}/todayProfit
+               
+               So dashboard reads the
+               EXACT SAME Firebase field.
+            ========================= */
+
+            let todayProfit = 0;
+
+            if (
+                data.todayProfit !== undefined &&
+                data.todayProfit !== null &&
+                data.todayProfit !== ""
+            ) {
+                todayProfit = Number(data.todayProfit);
+            }
+
+            // Prevent NaN from appearing on dashboard
+            if (!Number.isFinite(todayProfit)) {
+                todayProfit = 0;
+            }
+
+            console.log(
+                "DASHBOARD todayProfit value:",
+                todayProfit
+            );
+
+            /* Main Today's Profit display */
+            const todayProfitElement =
+                document.getElementById("todayProfit");
+
+            if (todayProfitElement) {
+                todayProfitElement.textContent =
+                    "Today's Profit: UGX " +
+                    todayProfit.toLocaleString();
+            }
+
+            /* Earnings Today card */
+            const earningsTodayElement =
+                document.getElementById("earningsToday");
+
+            if (earningsTodayElement) {
+                earningsTodayElement.textContent =
+                    "UGX " +
+                    todayProfit.toLocaleString();
+            }
+
+
+            /* =========================
+               REFERRAL EARNINGS
+            ========================= */
+
+            let referral =
+                Number(data.referralEarnings || 0);
+
+            if (!Number.isFinite(referral)) {
+                referral = 0;
+            }
+
+            const referralElement =
+                document.getElementById("referralEarnings");
+
+            if (referralElement) {
+                referralElement.textContent =
+                    "UGX " +
+                    referral.toLocaleString();
+            }
+
+
+            /* =========================
+               ACTIVE MACHINES
+            ========================= */
+
+            const machines = data.machines
+                ? Object.values(data.machines)
+                    .filter(
+                        (machine) =>
+                            (machine.status || "")
+                                .toUpperCase() === "RUNNING"
+                    )
+                    .length
+                : 0;
+
+            const machineCount =
+                document.getElementById("machineCount");
+
+            if (machineCount) {
+                machineCount.textContent = machines;
+            }
+
+            const machineStatus =
+                document.getElementById("machineStatus");
+
+            if (machineStatus) {
+                machineStatus.textContent =
+                    machines + " Running";
+            }
+
+
+            /* =========================
+               CHECK-IN DAYS
+            ========================= */
+
+            const days =
+                Number(data.checkinDays || 0);
+
+            const checkinDays =
+                document.getElementById("checkinDays");
+
+            if (checkinDays) {
+                checkinDays.textContent =
+                    "Day " + days;
+            }
+
+
+            /* =========================
+               DAILY CHECK-IN CLAIM
+            ========================= */
+
+            const lastClaim =
+                Number(data.lastCheckin || 0);
+
+            const twentyFourHours =
+                24 * 60 * 60 * 1000;
+
+            const canClaim =
+                !lastClaim ||
+                (Date.now() - lastClaim) >= twentyFourHours;
+
+            const claimBtn =
+                document.getElementById("claimBtn");
+
+            if (claimBtn) {
+                claimBtn.disabled = !canClaim;
+
+                claimBtn.textContent =
+                    canClaim
+                        ? "Claim Today's Bonus"
+                        : "Claimed Today";
+            }
+
+
+            /* =========================
+               ACTIVITIES
+            ========================= */
+
+            renderActivities(data);
+
+
+            /* =========================
+               MACHINES
+            ========================= */
+
+            renderMachines(data);
+        },
+
+        (error) => {
+
+            console.error(
+                "DASHBOARD Firebase database error:",
+                error
+            );
+
+            // Retry after 5 seconds
+            setTimeout(() => {
+                if (currentUser) {
+                    loadUser();
+                }
+            }, 5000);
+        }
+    );
+  }
 
 /* RENDER ACTIVE MACHINES */
 function renderMachines(data) {
