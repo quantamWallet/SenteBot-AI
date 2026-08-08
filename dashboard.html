@@ -329,6 +329,7 @@ function renderMachines(data) {
 
     container.innerHTML = machines.map(machine => `
         <div class="machine-card">
+
             <div class="machine-top">
                 <div class="machine-name">
                     ${machine.name || "Investment Machine"}
@@ -340,25 +341,28 @@ function renderMachines(data) {
             </div>
 
             <div class="machine-info">
+
                 <div>
-                    <div class="machine-label">HASHRATE</div>
+                    <div class="machine-label">DAILY PROFIT</div>
                     <div class="machine-value">
-                        ${machine.hashrate || "N/A"}
+                        UGX ${Number(machine.dailyProfit || 0).toLocaleString()}
                     </div>
                 </div>
 
                 <div style="text-align:right;">
-                    <div class="machine-label">PROFIT</div>
+                    <div class="machine-label">TOTAL EARNED</div>
                     <div class="machine-value">
-                        ${machine.profit || "UGX 0"}
+                        UGX ${Number(machine.totalEarned || 0).toLocaleString()}
                     </div>
                 </div>
+
             </div>
 
             <button class="machine-btn"
                 onclick="window.location.href='machines.html'">
                 View Details
             </button>
+
         </div>
     `).join("");
     }
