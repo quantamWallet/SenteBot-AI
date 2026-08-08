@@ -479,34 +479,81 @@ window.confirmPurchase = async () => {
 
 /* CLAIM PROFIT */
 window.claimProfit = async (machineKey) => {
-    if(!currentUser ||!currentUserData) return;
+    if (!currentUser || !currentUserData) return;
+
     const machine = currentUserData.machines[machineKey];
-    if(!machine || machine.status!== "RUNNING") return;
+
+    if (!machine || machine.status !== "RUNNING") return;
 
     const now = Date.now();
-    if(now < machine.nextClaimAt){ showToast("Not ready to claim yet", false); return; }
 
-    try{
+    if (now < machine.nextClaimAt) {
+        showToast("Not ready to claim yet", false);
+        return;
+    }
+
+    try {
         const newNextClaim = machine.nextClaimAt + 86400000;
-        const daysPassed = Math.floor((now - machine.startDate) / 86400000);
-        const newRemaining = Math.max(machine.duration - daysPassed, 0);
-        const activityKey = push(ref(db, `users/${currentUser.uid}/activities`)).key;
+
+        const daysPassed = Math.floor(
+            (now - machine.startDate) / 86400000
+        );
+
+        const newRemaining = Math.max(
+            machine.duration - daysPassed,
+            0
+        );
+
+        const activityKey = push(
+            ref(db, `users/${currentUser.uid}/activities`)
+        ).key;
 
         const updates = {};
-        updates[`users/${currentUser.uid}/balance`] = Number(currentUserData.balance) + machine.dailyProfit;
-        updates[`users/${currentUser.uid}/machines/${machineKey}/totalEarned`] = Number(machine.totalEarned) + machine.dailyProfit;
-        updates[`users/${currentUser.uid}/machines/${machineKey}/nextClaimAt`] = newNextClaim;
-        updates[`users/${currentUser.uid}/machines/${machineKey}/remainingDays`] = newRemaining;
-        if(newRemaining <= 0) updates[`users/${currentUser.uid}/machines/${machineKey}/status`] = "COMPLETED";
 
+        // Add profit to wallet balance
+        updates[`users/${currentUser.uid}/balance`] =
+            Number(currentUserData.balance || 0) +
+            Number(machine.dailyProfit || 0);
+
+        // Add profit to today's earnings
+        updates[`users/${currentUser.uid}/todayProfit`] =
+            Number(currentUserData.todayProfit || 0) +
+            Number(machine.dailyProfit || 0);
+
+        // Update machine total earned
+        updates[`users/${currentUser.uid}/machines/${machineKey}/totalEarned`] =
+            Number(machine.totalEarned || 0) +
+            Number(machine.dailyProfit || 0);
+
+        // Schedule next claim
+        updates[`users/${currentUser.uid}/machines/${machineKey}/nextClaimAt`] =
+            newNextClaim;
+
+        // Update remaining days
+        updates[`users/${currentUser.uid}/machines/${machineKey}/remainingDays`] =
+            newRemaining;
+
+        // Complete machine when duration ends
+        if (newRemaining <= 0) {
+            updates[`users/${currentUser.uid}/machines/${machineKey}/status`] =
+                "COMPLETED";
+        }
+
+        // Record activity
         updates[`users/${currentUser.uid}/activities/${activityKey}`] = {
-            icon: "fa-solid fa-coins", title: "Claimed from " + machine.name,
-            amount: "+UGX " + machine.dailyProfit.toLocaleString(), time: new Date().toLocaleString()
+            icon: "fa-solid fa-coins",
+            title: "Claimed from " + machine.name,
+            amount: "+UGX " + Number(machine.dailyProfit || 0).toLocaleString(),
+            time: new Date().toLocaleString()
         };
 
         await update(ref(db), updates);
-        showToast(`Claimed UGX ${machine.dailyProfit.toLocaleString()} successfully`);
-    }catch(e){
+
+        showToast(
+            `Claimed UGX ${Number(machine.dailyProfit || 0).toLocaleString()} successfully`
+        );
+
+    } catch (e) {
         console.error(e);
         showToast("Claim failed: " + e.message, false);
     }
