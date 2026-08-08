@@ -547,11 +547,30 @@ window.claimProfit = async (machineKey) => {
             time: new Date().toLocaleString()
         };
 
-        await update(ref(db), updates);
+  await update(ref(db), updates);
 
-        showToast(
-            `Claimed UGX ${Number(machine.dailyProfit || 0).toLocaleString()} successfully`
-        );
+// Verify what Firebase actually saved
+const verifySnap = await get(
+    ref(db, `users/${currentUser.uid}`)
+);
+
+if (verifySnap.exists()) {
+    const verifyData = verifySnap.val();
+
+    console.log("AFTER CLAIM - Firebase user data:", verifyData);
+    console.log(
+        "AFTER CLAIM - todayProfit:",
+        verifyData.todayProfit
+    );
+    console.log(
+        "AFTER CLAIM - balance:",
+        verifyData.balance
+    );
+}
+
+showToast(
+    `Claimed UGX ${Number(machine.dailyProfit || 0).toLocaleString()} successfully`
+);
 
     } catch (e) {
         console.error(e);
