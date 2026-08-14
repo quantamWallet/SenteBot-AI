@@ -1842,11 +1842,15 @@ function renderMachines() {
                     );
 
                 countdownHtml = `
-                    <div class="countdown">
-                        <i class="fa-solid fa-clock"></i>
-                        Next Claim: ${hours}h ${mins}m ${secs}s
-                    </div>
-                `;
+    <div
+        class="countdown"
+        data-machine-key="${ownedKey}"
+        data-next-claim="${nextClaimTime}"
+    >
+        <i class="fa-solid fa-clock"></i>
+        Next Claim: ${hours}h ${mins}m ${secs}s
+    </div>
+`;
 
                 buttonText =
                     '<i class="fa-solid fa-hourglass"></i> Claimed';
