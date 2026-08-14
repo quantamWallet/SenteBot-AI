@@ -1384,153 +1384,677 @@ window.showToast = (message, success = true) => {
 
 /* AUTH */
 onAuthStateChanged(auth, async (user) => {
-    if (!user) { window.location.href = "index.html"; return; }
+    if (!user) {
+        window.location.href = "index.html";
+        return;
+    }
+
     currentUser = user;
+
     showLoading();
+
     await loadMachinePlans();
     loadUser();
-    let timer;
-
-if (!timer) {
-    timer = setInterval(renderMachines, 1000);
-}
 });
-
+    
 /* LOAD MACHINES - FIXED: reads from both machines + machinesCatalog */
+let machinePlansLoaded = false;
+let userLoaded = false;
+
 async function loadMachinePlans() {
+
     const machinesRef = ref(db, "machines");
-    const catalogRef = ref(db, "machinesCatalog"); // ADD THIS
+    const catalogRef = ref(db, "machinesCatalog");
+
+    let machinesData = {};
+    let catalogData = {};
+
+    const rebuildPlans = () => {
+
+        const combined = {};
+
+        Object.entries(machinesData).forEach(([id, data]) => {
+
+            if (
+                data &&
+                data.price != null &&
+                data.name &&
+                data.dailyProfit != null
+            ) {
+                combined[id] = {
+                    id,
+                    ...data
+                };
+            }
+        });
+
+        Object.entries(catalogData).forEach(([id, data]) => {
+
+            if (
+                data &&
+                data.price != null &&
+                data.name &&
+                data.dailyProfit != null
+            ) {
+
+                if (!combined[id]) {
+                    combined[id] = {
+                        id,
+                        ...data
+                    };
+                }
+            }
+        });
+
+        machinePlans = Object.values(combined);
+
+        machinePlans.sort(
+            (a, b) =>
+                Number(a.price || 0) -
+                Number(b.price || 0)
+        );
+
+        machinePlansLoaded = true;
+
+        renderMachines();
+    };
+
+    /*
+    =====================================================
+    MACHINES LISTENER
+    =====================================================
+    */
 
     onValue(machinesRef, (snapshot) => {
-        machinePlans = [];
-        if(snapshot.exists()){
-            snapshot.forEach(child => {
-                const data = child.val();
-                // Only add if it has required fields
-                if(data.price && data.name && data.dailyProfit) {
-                    machinePlans.push({ id: child.key,...data });
-                }
-            });
-        }
-        loadCatalog(); // load catalog too
+
+        machinesData = snapshot.exists()
+            ? snapshot.val()
+            : {};
+
+        rebuildPlans();
     });
 
-    function loadCatalog(){
-        onValue(catalogRef, (snapshot) => {
-            if(snapshot.exists()){
-                snapshot.forEach(child => {
-                    const data = child.val();
-                    if(data.price && data.name && data.dailyProfit) {
-                        // avoid duplicates
-                        if(!machinePlans.find(m => m.id === child.key)){
-                            machinePlans.push({ id: child.key,...data });
-                        }
-                    }
-                });
-            }
-            machinePlans.sort((a,b) => Number(a.price) - Number(b.price));
-            renderMachines();
-        });
-    }
-}
+    /*
+    =====================================================
+    CATALOG LISTENER
+    =====================================================
+    */
 
+    onValue(catalogRef, (snapshot) => {
+
+        catalogData = snapshot.exists()
+            ? snapshot.val()
+            : {};
+
+        rebuildPlans();
+    });
+        }
+    
 /* LOAD USER */
 function loadUser() {
-    const userRef = ref(db, "users/" + currentUser.uid);
+
+    const userRef = ref(
+        db,
+        `users/${currentUser.uid}`
+    );
+
     onValue(userRef, (snapshot) => {
-        if (!snapshot.exists()) return;
+
+        if (!snapshot.exists()) {
+            showToast("User data not found.", false);
+            return;
+        }
+
         currentUserData = snapshot.val();
-        const balance = Number(currentUserData.balance || 0);
-        const machines = currentUserData.machines? Object.values(currentUserData.machines) : [];
-        const activeMachines = machines.filter(m => m.status === "RUNNING").length;
-        document.getElementById("userBalance").textContent = "UGX " + balance.toLocaleString();
-        document.getElementById("machineCount").textContent = activeMachines + " Active";
+
+        const balance =
+            Number(currentUserData.balance || 0);
+
+        const machines =
+            currentUserData.machines
+                ? Object.values(currentUserData.machines)
+                : [];
+
+        const activeMachines =
+            machines.filter(
+                m =>
+                    String(m.status || "")
+                        .toUpperCase() === "RUNNING"
+            ).length;
+
+        document.getElementById("userBalance").textContent =
+            "UGX " +
+            balance.toLocaleString();
+
+        document.getElementById("machineCount").textContent =
+            activeMachines +
+            " Active";
+
+        userLoaded = true;
+
         renderMachines();
     });
 }
 
-/* RENDER MACHINES WITH COUNTDOWN + CLAIM */
+/* =========================================================
+   RENDER MACHINES
+   - Does NOT use innerHTML +=
+   - Builds HTML once
+   - Realtime Firebase updates can safely call this
+========================================================= */
+
 function renderMachines() {
+
     const container = document.getElementById("machineList");
+
     if (!container) return;
-    if(machinePlans.length === 0){ showLoading();
-                     showEmpty();             
-                    return; }
+
+    /*
+    =====================================================
+    WAIT UNTIL MACHINE PLANS ARE LOADED
+    =====================================================
+    */
+
+    if (!machinePlansLoaded) {
+        return;
+    }
+
+    /*
+    =====================================================
+    WAIT UNTIL USER DATA IS LOADED
+    =====================================================
+    */
+
+    if (!currentUserData) {
+        return;
+    }
+
+    /*
+    =====================================================
+    NO MACHINES
+    =====================================================
+    */
+
+    if (!Array.isArray(machinePlans) || machinePlans.length === 0) {
+        showEmpty();
+        return;
+    }
+
+    /*
+    =====================================================
+    CATEGORY FILTER
+    =====================================================
+    */
 
     let plans = [...machinePlans];
-    if (window.currentCategory!== "All") plans = plans.filter(m => m.category === window.currentCategory);
-    if(plans.length === 0){ showEmpty(); return; }
 
-    const purchased = currentUserData?.machines || {};
-    container.innerHTML = "";
+    if (window.currentCategory !== "All") {
+
+        plans = plans.filter(
+            machine =>
+                machine.category === window.currentCategory
+        );
+    }
+
+    if (plans.length === 0) {
+        showEmpty();
+        return;
+    }
+
+    /*
+    =====================================================
+    USER MACHINES
+    =====================================================
+    */
+
+    const purchased =
+        currentUserData.machines || {};
+
+    /*
+    =====================================================
+    BUILD HTML IN MEMORY
+    =====================================================
+    */
+
+    let html = "";
 
     plans.forEach(plan => {
-        const ownedKey = Object.keys(purchased).find(k => purchased[k].id === plan.id && purchased[k].status!== "COMPLETED");
-        const owned = ownedKey? purchased[ownedKey] : null;
+
+        /*
+        -------------------------------------------------
+        FIND ACTIVE MACHINE
+        -------------------------------------------------
+        */
+
+        const ownedKey =
+            Object.keys(purchased).find(key => {
+
+                const machine = purchased[key];
+
+                return (
+                    machine &&
+                    machine.id === plan.id &&
+                    String(machine.status || "")
+                        .toUpperCase() !== "COMPLETED"
+                );
+
+            });
+
+        const owned =
+            ownedKey
+                ? purchased[ownedKey]
+                : null;
+
+        /*
+        -------------------------------------------------
+        DEFAULT STATE
+        -------------------------------------------------
+        */
 
         let status = "Available";
-        let buttonText = '<i class="fa-solid fa-bolt"></i> Invest Now';
-        let buttonClass = "invest-btn";
+
+        let buttonText =
+            '<i class="fa-solid fa-bolt"></i> Invest Now';
+
+        let buttonClass =
+            "invest-btn";
+
         let buttonDisabled = false;
+
         let progressHtml = "";
+
         let countdownHtml = "";
 
-        if (owned) {
-            const now = Date.now();
-            const nextClaimTime = owned.nextClaimAt || (owned.startDate + 86400000);
-            const timeLeft = nextClaimTime - now;
-            const elapsed = Math.floor((now - owned.startDate) / 86400000);
-            const remaining = Math.max(plan.duration - elapsed, 0);
-            const progress = Math.min(Math.floor((elapsed / plan.duration) * 100), 100);
+        /*
+        =================================================
+        OWNED MACHINE
+        =================================================
+        */
 
-            if(owned.status === "COMPLETED"){
+        if (owned) {
+
+            const now = Date.now();
+
+            /*
+            ------------------------------------------------
+            NEXT CLAIM
+            ------------------------------------------------
+            */
+
+            const startDate =
+                Number(
+                    owned.startDate ||
+                    owned.purchasedAt ||
+                    now
+                );
+
+            const nextClaimTime =
+                Number(
+                    owned.nextClaimAt ||
+                    (startDate + 86400000)
+                );
+
+            const timeLeft =
+                nextClaimTime - now;
+
+            /*
+            ------------------------------------------------
+            DURATION
+            ------------------------------------------------
+            */
+
+            const duration =
+                Math.max(
+                    Number(
+                        owned.duration ||
+                        plan.duration ||
+                        0
+                    ),
+                    0
+                );
+
+            /*
+            ------------------------------------------------
+            CLAIM COUNT
+            ------------------------------------------------
+            */
+
+            const claimCount =
+                Math.max(
+                    Number(
+                        owned.claimCount || 0
+                    ),
+                    0
+                );
+
+            /*
+            ------------------------------------------------
+            REMAINING DAYS
+
+            Prefer claimCount because this represents
+            actual payouts rather than browser time.
+            ------------------------------------------------
+            */
+
+            const remaining =
+                Math.max(
+                    duration - claimCount,
+                    0
+                );
+
+            /*
+            ------------------------------------------------
+            PROGRESS
+            ------------------------------------------------
+            */
+
+            const progress =
+                duration > 0
+                    ? Math.min(
+                        Math.floor(
+                            (claimCount / duration) * 100
+                        ),
+                        100
+                    )
+                    : 0;
+
+            /*
+            =================================================
+            COMPLETED
+            =================================================
+            */
+
+            if (
+                String(owned.status || "")
+                    .toUpperCase() === "COMPLETED" ||
+                claimCount >= duration
+            ) {
+
                 status = "COMPLETED";
-                buttonText = '<i class="fa-solid fa-flag-checkered"></i> Completed';
+
+                buttonText =
+                    '<i class="fa-solid fa-flag-checkered"></i> Completed';
+
                 buttonDisabled = true;
-            } else if(timeLeft <= 0){
+
+                /*
+                Make sure completed machines don't
+                accidentally appear claimable.
+                */
+
+                countdownHtml = "";
+
+            }
+
+            /*
+            =================================================
+            CLAIM READY
+            =================================================
+            */
+
+            else if (timeLeft <= 0) {
+
                 status = "RUNNING";
-                buttonText = '<i class="fa-solid fa-coins"></i> Claim UGX ' + Number(plan.dailyProfit).toLocaleString();
-                buttonClass = "invest-btn claim-btn";
+
+                const profit =
+                    Number(
+                        owned.dailyProfit ??
+                        plan.dailyProfit ??
+                        0
+                    );
+
+                buttonText =
+                    '<i class="fa-solid fa-coins"></i> Claim UGX ' +
+                    profit.toLocaleString();
+
+                buttonClass =
+                    "invest-btn claim-btn";
+
                 buttonDisabled = false;
-            } else {
+
+                countdownHtml = "";
+
+            }
+
+            /*
+            =================================================
+            WAITING FOR NEXT CLAIM
+            =================================================
+            */
+
+            else {
+
                 status = "RUNNING";
-                const hours = Math.floor(timeLeft / 3600000);
-                const mins = Math.floor((timeLeft % 3600000) / 60000);
-                const secs = Math.floor((timeLeft % 60000) / 1000);
-                countdownHtml = `<div class="countdown"><i class="fa-solid fa-clock"></i> Next Claim: ${hours}h ${mins}m ${secs}s</div>`;
-                buttonText = '<i class="fa-solid fa-hourglass"></i> Claimed';
+
+                const hours =
+                    Math.floor(
+                        timeLeft / 3600000
+                    );
+
+                const mins =
+                    Math.floor(
+                        (timeLeft % 3600000) / 60000
+                    );
+
+                const secs =
+                    Math.floor(
+                        (timeLeft % 60000) / 1000
+                    );
+
+                countdownHtml = `
+                    <div class="countdown">
+                        <i class="fa-solid fa-clock"></i>
+                        Next Claim: ${hours}h ${mins}m ${secs}s
+                    </div>
+                `;
+
+                buttonText =
+                    '<i class="fa-solid fa-hourglass"></i> Claimed';
+
                 buttonDisabled = true;
             }
+
+            /*
+            =================================================
+            PROGRESS HTML
+            =================================================
+            */
+
             progressHtml = `
-            <div class="machine-progress">
-                <div class="progress-top"><span>${remaining} Days Left</span><span>${progress}%</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
-            </div>`;
+                <div class="machine-progress">
+
+                    <div class="progress-top">
+
+                        <span>
+                            ${remaining} Days Left
+                        </span>
+
+                        <span>
+                            ${progress}%
+                        </span>
+
+                    </div>
+
+                    <div class="progress-bar">
+
+                        <div
+                            class="progress-fill"
+                            style="width:${progress}%"
+                        ></div>
+
+                    </div>
+
+                </div>
+            `;
         }
 
-        container.innerHTML += `
-        <div class="machine-card">
-            <div class="machine-top">
-                <div class="machine-icon"><i class="${plan.icon || 'fa-solid fa-microchip'}"></i></div>
-                <div>
-                    <div class="machine-name">${plan.name}</div>
-                    <div class="machine-status ${owned? status.toLowerCase() : "available"}">${status}</div>
+        /*
+        =====================================================
+        BUTTON ACTION
+        =====================================================
+        */
+
+        let buttonAction = "";
+
+        if (owned && ownedKey) {
+
+            buttonAction =
+                `claimProfit('${ownedKey}')`;
+
+        } else {
+
+            buttonAction =
+                `buyMachine('${plan.id}')`;
+        }
+
+        /*
+        =====================================================
+        MACHINE CARD
+        =====================================================
+        */
+
+        html += `
+
+            <div class="machine-card">
+
+                <div class="machine-top">
+
+                    <div class="machine-icon">
+
+                        <i class="${
+                            plan.icon ||
+                            "fa-solid fa-microchip"
+                        }"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="machine-name">
+                            ${plan.name}
+                        </div>
+
+                        <div class="machine-status ${
+                            owned
+                                ? status.toLowerCase()
+                                : "available"
+                        }">
+
+                            ${status}
+
+                        </div>
+
+                    </div>
+
                 </div>
+
+
+                <div class="machine-grid">
+
+                    <div>
+
+                        <small>
+                            Investment
+                        </small>
+
+                        <strong>
+                            UGX ${
+                                Number(
+                                    plan.price || 0
+                                ).toLocaleString()
+                            }
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <small>
+                            Daily Profit
+                        </small>
+
+                        <strong>
+                            UGX ${
+                                Number(
+                                    plan.dailyProfit || 0
+                                ).toLocaleString()
+                            }
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <small>
+                            Duration
+                        </small>
+
+                        <strong>
+                            ${
+                                Number(
+                                    plan.duration || 0
+                                )
+                            } Days
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <small>
+                            Total Return
+                        </small>
+
+                        <strong>
+                            UGX ${
+                                Number(
+                                    plan.totalReturn || 0
+                                ).toLocaleString()
+                            }
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                ${progressHtml}
+
+
+                ${countdownHtml}
+
+
+                <button
+
+                    class="${buttonClass}"
+
+                    onclick="${buttonAction}"
+
+                    ${buttonDisabled ? "disabled" : ""}
+
+                >
+
+                    ${buttonText}
+
+                </button>
+
             </div>
-            <div class="machine-grid">
-                <div><small>Investment</small><strong>UGX ${Number(plan.price).toLocaleString()}</strong></div>
-                <div><small>Daily Profit</small><strong>UGX ${Number(plan.dailyProfit).toLocaleString()}</strong></div>
-                <div><small>Duration</small><strong>${plan.duration} Days</strong></div>
-                <div><small>Total Return</small><strong>UGX ${Number(plan.totalReturn).toLocaleString()}</strong></div>
-            </div>
-            ${progressHtml}
-            ${countdownHtml}
-            <button class="${buttonClass}" onclick="${owned? `claimProfit('${ownedKey}')` : `buyMachine('${plan.id}')`}" ${buttonDisabled? "disabled" : ""}>
-                ${buttonText}
-            </button>
-        </div>`;
+
+        `;
     });
-}
+
+    /*
+    =====================================================
+    ONE DOM UPDATE ONLY
+    =====================================================
+    */
+
+    container.innerHTML = html;
+            }
+    
 
 /* BUY MACHINE */
 let selectedMachine = null;
@@ -1562,57 +2086,516 @@ document.querySelectorAll(".category").forEach(tab => {
     });
 });
 
-/* CONFIRM PURCHASE */
-window.confirmPurchase = async () => {
-    if (!currentUser ||!currentUserData) { closeModal(); showToast("User not loaded.", false); return; }
-    const machine = selectedMachine;
-    if (!machine) { closeModal(); return; }
-    const balance = Number(currentUserData.balance || 0);
+/* =========================================================
+   CONFIRM PURCHASE
+   - Atomic balance deduction
+   - Prevents double purchase
+   - Creates machine with claimCount = 0
+   - First claim after 24 hours
+========================================================= */
 
-    if (balance < machine.price) {
+window.confirmPurchase = async () => {
+
+    if (!currentUser) {
         closeModal();
-        document.getElementById("insufficientText").innerHTML =
-        `You need <b>UGX ${machine.price.toLocaleString()}</b> but you only have <b>UGX ${balance.toLocaleString()}</b>`;
-        document.getElementById("insufficientModal").style.display = "flex";
+        showToast("Please login first.", false);
         return;
     }
 
-    const userMachines = currentUserData.machines || {};
-    const owned = Object.values(userMachines).find(item => item.id === machine.id && item.status!== "COMPLETED");
-    if (owned) { closeModal(); showToast("Machine already active.", false); return; }
+    if (!currentUserData) {
+        closeModal();
+        showToast("User data is still loading.", false);
+        return;
+    }
+
+    const machine = selectedMachine;
+
+    if (!machine) {
+        closeModal();
+        showToast("Machine not selected.", false);
+        return;
+    }
+
+    /*
+    =====================================================
+    VALIDATE MACHINE VALUES
+    =====================================================
+    */
+
+    const price = Number(machine.price || 0);
+    const dailyProfit = Number(machine.dailyProfit || 0);
+    const duration = Number(machine.duration || 0);
+
+    if (
+        !Number.isFinite(price) ||
+        price <= 0 ||
+        !Number.isFinite(dailyProfit) ||
+        dailyProfit <= 0 ||
+        !Number.isFinite(duration) ||
+        duration <= 0
+    ) {
+        closeModal();
+        showToast("Invalid machine configuration.", false);
+        return;
+    }
+
+    /*
+    =====================================================
+    CHECK BALANCE BEFORE OPENING TRANSACTION
+    =====================================================
+    */
+
+    const displayedBalance =
+        Number(currentUserData.balance || 0);
+
+    if (displayedBalance < price) {
+
+        closeModal();
+
+        document.getElementById("insufficientText").innerHTML =
+            `You need <b>UGX ${price.toLocaleString()}</b>
+             but you only have
+             <b>UGX ${displayedBalance.toLocaleString()}</b>`;
+
+        document.getElementById("insufficientModal").style.display =
+            "flex";
+
+        return;
+    }
+
+    /*
+    =====================================================
+    PREVENT DUPLICATE ACTIVE MACHINE
+    =====================================================
+    */
+
+    const userMachines =
+        currentUserData.machines || {};
+
+    const alreadyOwned =
+        Object.values(userMachines).some(machineItem => {
+
+            if (!machineItem) return false;
+
+            return (
+                machineItem.id === machine.id &&
+                String(machineItem.status || "")
+                    .toUpperCase() !== "COMPLETED"
+            );
+
+        });
+
+    if (alreadyOwned) {
+
+        closeModal();
+
+        showToast(
+            "Machine already active.",
+            false
+        );
+
+        return;
+    }
+
+    /*
+    =====================================================
+    GENERATE KEYS
+    =====================================================
+    */
+
+    const machinesRef =
+        ref(
+            db,
+            `users/${currentUser.uid}/machines`
+        );
+
+    const activitiesRef =
+        ref(
+            db,
+            `users/${currentUser.uid}/activities`
+        );
+
+    const newMachineKey =
+        push(machinesRef).key;
+
+    const newActivityKey =
+        push(activitiesRef).key;
+
+    if (!newMachineKey || !newActivityKey) {
+
+        closeModal();
+
+        showToast(
+            "Could not create investment record.",
+            false
+        );
+
+        return;
+    }
+
+    /*
+    =====================================================
+    PURCHASE TIME
+    =====================================================
+    */
+
+    const startTime = Date.now();
+
+    /*
+    =====================================================
+    ATOMIC BALANCE TRANSACTION
+    =====================================================
+
+    This is important.
+
+    We DO NOT simply trust currentUserData.balance.
+
+    Firebase reads the latest balance and performs the
+    deduction atomically.
+
+    This prevents two purchase requests from spending
+    the same balance.
+    */
+
+    const balanceRef =
+        ref(
+            db,
+            `users/${currentUser.uid}/balance`
+        );
+
+    let transactionError = null;
 
     try {
-        const newMachineKey = push(ref(db, `users/${currentUser.uid}/machines`)).key;
-        const newActivityKey = push(ref(db, `users/${currentUser.uid}/activities`)).key;
-        const startTime = Date.now();
+
+        const balanceResult =
+            await runTransaction(
+                balanceRef,
+                currentBalance => {
+
+                    const balance =
+                        Number(currentBalance || 0);
+
+                    /*
+                    Invalid balance
+                    */
+                    if (
+                        !Number.isFinite(balance)
+                    ) {
+                        return;
+                    }
+
+                    /*
+                    Not enough money
+                    */
+                    if (balance < price) {
+                        return;
+                    }
+
+                    /*
+                    Deduct purchase price
+                    */
+                    return balance - price;
+                }
+            );
+
+        /*
+        =================================================
+        TRANSACTION FAILED / NOT COMMITTED
+        =================================================
+        */
+
+        if (!balanceResult.committed) {
+
+            /*
+            Get the actual latest balance so the message
+            is accurate.
+            */
+
+            const latestBalanceSnap =
+                await get(balanceRef);
+
+            const latestBalance =
+                Number(
+                    latestBalanceSnap.val() || 0
+                );
+
+            closeModal();
+
+            if (latestBalance < price) {
+
+                document.getElementById(
+                    "insufficientText"
+                ).innerHTML =
+                    `You need <b>UGX ${price.toLocaleString()}</b>
+                     but you only have
+                     <b>UGX ${latestBalance.toLocaleString()}</b>`;
+
+                document.getElementById(
+                    "insufficientModal"
+                ).style.display = "flex";
+
+            } else {
+
+                showToast(
+                    "Purchase could not be completed.",
+                    false
+                );
+            }
+
+            return;
+        }
+
+        /*
+        =================================================
+        BALANCE SUCCESSFULLY DEDUCTED
+        =================================================
+
+        Now create the machine and activity.
+
+        =================================================
+        */
 
         const updates = {};
-        updates[`users/${currentUser.uid}/balance`] = balance - machine.price;
-        updates[`users/${currentUser.uid}/machines/${newMachineKey}`] = {
-            id: machine.id, name: machine.name, icon: machine.icon, category: machine.category,
-            amount: machine.price, dailyProfit: machine.dailyProfit, duration: machine.duration,
-            totalReturn: machine.totalReturn, purchasedAt: startTime, startDate: startTime,
-            nextClaimAt: startTime + 86400000,
-            remainingDays: machine.duration,
-progress: 0,
-totalEarned: 0,
-claimCount: 0,
-status: "RUNNING"
-        };
-        updates[`users/${currentUser.uid}/activities/${newActivityKey}`] = {
-            icon: "fa-solid fa-microchip", title: "Purchased " + machine.name,
-            amount: "-UGX " + machine.price.toLocaleString(), time: new Date().toLocaleString()
+
+        /*
+        -------------------------------------------------
+        MACHINE
+        -------------------------------------------------
+        */
+
+        updates[
+            `users/${currentUser.uid}/machines/${newMachineKey}`
+        ] = {
+
+            id:
+                machine.id,
+
+            name:
+                machine.name,
+
+            icon:
+                machine.icon || "fa-solid fa-microchip",
+
+            category:
+                machine.category || "Starter",
+
+            amount:
+                price,
+
+            dailyProfit:
+                dailyProfit,
+
+            duration:
+                duration,
+
+            totalReturn:
+                Number(machine.totalReturn || 0),
+
+            purchasedAt:
+                startTime,
+
+            startDate:
+                startTime,
+
+            /*
+            First claim is exactly 24 hours later.
+            */
+
+            nextClaimAt:
+                startTime + 86400000,
+
+            /*
+            IMPORTANT:
+            Starts at zero.
+            */
+
+            claimCount:
+                0,
+
+            remainingDays:
+                duration,
+
+            progress:
+                0,
+
+            totalEarned:
+                0,
+
+            status:
+                "RUNNING"
         };
 
-        await update(ref(db), updates);
+        /*
+        -------------------------------------------------
+        PURCHASE ACTIVITY
+        -------------------------------------------------
+        */
+
+        updates[
+            `users/${currentUser.uid}/activities/${newActivityKey}`
+        ] = {
+
+            icon:
+                "fa-solid fa-microchip",
+
+            title:
+                "Purchased " +
+                machine.name,
+
+            amount:
+                "-UGX " +
+                price.toLocaleString(),
+
+            time:
+                new Date().toLocaleString(),
+
+            timestamp:
+                startTime
+        };
+
+        /*
+        =================================================
+        WRITE MACHINE + ACTIVITY
+        =================================================
+        */
+
+        try {
+
+            await update(
+                ref(db),
+                updates
+            );
+
+        } catch (writeError) {
+
+            /*
+            =================================================
+            IMPORTANT LIMITATION
+
+            The balance was already deducted by the
+            transaction above.
+
+            If this second write fails, the machine record
+            won't exist yet.
+
+            We therefore attempt a balance rollback.
+            =================================================
+            */
+
+            console.error(
+                "Machine creation failed:",
+                writeError
+            );
+
+            try {
+
+                await runTransaction(
+                    balanceRef,
+                    currentBalance => {
+
+                        const balance =
+                            Number(
+                                currentBalance || 0
+                            );
+
+                        if (
+                            !Number.isFinite(balance)
+                        ) {
+                            return;
+                        }
+
+                        return balance + price;
+                    }
+                );
+
+            } catch (rollbackError) {
+
+                console.error(
+                    "BALANCE ROLLBACK FAILED:",
+                    rollbackError
+                );
+            }
+
+            throw writeError;
+        }
+
+        /*
+        =====================================================
+        UPDATE LOCAL STATE IMMEDIATELY
+        =====================================================
+        */
+
+        const newMachine = {
+            id: machine.id,
+            name: machine.name,
+            icon:
+                machine.icon ||
+                "fa-solid fa-microchip",
+            category:
+                machine.category ||
+                "Starter",
+            amount: price,
+            dailyProfit: dailyProfit,
+            duration: duration,
+            totalReturn:
+                Number(machine.totalReturn || 0),
+            purchasedAt: startTime,
+            startDate: startTime,
+            nextClaimAt:
+                startTime + 86400000,
+            claimCount: 0,
+            remainingDays: duration,
+            progress: 0,
+            totalEarned: 0,
+            status: "RUNNING"
+        };
+
+        currentUserData = {
+
+            ...currentUserData,
+
+            balance:
+                displayedBalance - price,
+
+            machines: {
+
+                ...(currentUserData.machines || {}),
+
+                [newMachineKey]:
+                    newMachine
+            }
+        };
+
+        /*
+        =====================================================
+        CLOSE + RENDER
+        =====================================================
+        */
+
         closeModal();
-        showToast("Investment activated. First payout in 24 hours.");
+
+        renderMachines();
+
+        showToast(
+            "Investment activated. First payout in 24 hours."
+        );
+
     } catch (error) {
-        console.error(error);
+
+        console.error(
+            "PURCHASE ERROR:",
+            error
+        );
+
         closeModal();
-        showToast("Purchase failed: " + error.message, false);
+
+        showToast(
+            "Purchase failed. Please try again.",
+            false
+        );
     }
 };
+    
 
 /* =========================================================
    CLAIM MACHINE PROFIT
