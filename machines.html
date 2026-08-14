@@ -1342,13 +1342,37 @@ window.currentCategory = "All";
 
 /* CENTERED TOAST */
 let toastTimeout;
+
 window.showToast = (message, success = true) => {
+
     const toast = document.getElementById("toast");
+
     clearTimeout(toastTimeout);
+
     toast.textContent = message;
-    toast.style.background = success? "linear-gradient(90deg,#00D1FF,#00E676)" : "#EF4444";
+
+    toast.style.background = success
+        ? "linear-gradient(90deg,#00D1FF,#00E676)"
+        : "linear-gradient(90deg,#EF4444,#F97316)";
+
     toast.style.display = "block";
-    toastTimeout = setTimeout(() => { toast.style.display = "none"; }, 3000);
+
+    toast.classList.remove("toast-visible");
+
+    /* restart animation */
+    void toast.offsetWidth;
+
+    toast.classList.add("toast-visible");
+
+    toastTimeout = setTimeout(() => {
+
+        toast.classList.remove("toast-visible");
+
+        setTimeout(() => {
+            toast.style.display = "none";
+        }, 250);
+
+    }, 3000);
 };
 
 /* AUTH */
