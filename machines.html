@@ -1320,8 +1320,15 @@ textarea{
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, onValue, get, update, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
+import {
+    getDatabase,
+    ref,
+    onValue,
+    get,
+    update,
+    push,
+    runTransaction
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
   authDomain: "sentebot-7428b.firebaseapp.com",
@@ -1586,7 +1593,11 @@ window.confirmPurchase = async () => {
             amount: machine.price, dailyProfit: machine.dailyProfit, duration: machine.duration,
             totalReturn: machine.totalReturn, purchasedAt: startTime, startDate: startTime,
             nextClaimAt: startTime + 86400000,
-            remainingDays: machine.duration, progress: 0, totalEarned: 0, status: "RUNNING"
+            remainingDays: machine.duration,
+progress: 0,
+totalEarned: 0,
+claimCount: 0,
+status: "RUNNING"
         };
         updates[`users/${currentUser.uid}/activities/${newActivityKey}`] = {
             icon: "fa-solid fa-microchip", title: "Purchased " + machine.name,
@@ -1612,22 +1623,23 @@ window.confirmPurchase = async () => {
    4. activity history
 ========================================================= */
 
-window.claimProfit = async (machineKey) => {
+        window.claimProfit = async (machineKey) => {
+
     if (!currentUser) {
         showToast("Please login first.", false);
         return;
     }
 
+    const uid = currentUser.uid;
+    const userRef = ref(db, `users/${uid}`);
+
     try {
 
-        /* -----------------------------------------
-           GET LATEST USER DATA
-        ----------------------------------------- */
-
-        const userRef = ref(
-            db,
-            `users/${currentUser.uid}`
-        );
+        /*
+        =====================================================
+        PRE-CHECK
+        =====================================================
+        */
 
         const snap = await get(userRef);
 
@@ -1636,14 +1648,8 @@ window.claimProfit = async (machineKey) => {
             return;
         }
 
-        const userData = snap.val();
-
-        /* -----------------------------------------
-           GET MACHINE
-        ----------------------------------------- */
-
-        const machine =
-            userData.machines?.[machineKey];
+        const data = snap.val();
+        const machine = data.machines?.[machineKey];
 
         if (!machine) {
             showToast("Machine not found.", false);
@@ -1651,343 +1657,282 @@ window.claimProfit = async (machineKey) => {
         }
 
         if (
-            String(machine.status || "")
-                .toUpperCase() !== "RUNNING"
+            String(machine.status || "").toUpperCase() !== "RUNNING"
         ) {
             showToast("Machine is not active.", false);
             return;
         }
 
-        /* -----------------------------------------
-           CHECK CLAIM TIME
-        ----------------------------------------- */
-
         const now = Date.now();
 
-        const nextClaimAt =
-            Number(machine.nextClaimAt || 0);
+        const nextClaimAt = Number(machine.nextClaimAt || 0);
 
         if (now < nextClaimAt) {
-            showToast("Not ready to claim yet.", false);
+            const remaining = nextClaimAt - now;
+
+            const hours = Math.floor(
+                remaining / 3600000
+            );
+
+            const minutes = Math.floor(
+                (remaining % 3600000) / 60000
+            );
+
+            showToast(
+                `Next claim in ${hours}h ${minutes}m`,
+                false
+            );
+
             return;
         }
 
-        /* -----------------------------------------
-           PROFIT
-        ----------------------------------------- */
+        /*
+        =====================================================
+        VALIDATE PROFIT
+        =====================================================
+        */
 
-        const profit =
-            Number(machine.dailyProfit || 0);
+        const profit = Number(machine.dailyProfit || 0);
 
         if (!Number.isFinite(profit) || profit <= 0) {
             showToast("Invalid machine profit.", false);
             return;
         }
 
-        /* -----------------------------------------
-           CURRENT VALUES
-        ----------------------------------------- */
+        /*
+        =====================================================
+        IMPORTANT:
+        PRE-GENERATE ACTIVITY KEY
+        =====================================================
+        */
 
-        const currentBalance =
-            Number(userData.balance || 0);
-
-        const currentTodayProfit =
-            Number(userData.todayProfit || 0);
-
-        const currentTotalEarned =
-            Number(machine.totalEarned || 0);
-
-        /* -----------------------------------------
-           NEXT CLAIM
-        ----------------------------------------- */
-
-        const newNextClaim =
-            nextClaimAt + 86400000;
-
-        /* -----------------------------------------
-           CALCULATE REMAINING DAYS
-        ----------------------------------------- */
-
-        const startDate =
-            Number(machine.startDate || now);
-
-        const duration =
-            Number(machine.duration || 0);
-
-        const daysPassed =
-            Math.floor(
-                (now - startDate) / 86400000
-            );
-
-        const newRemaining =
-            Math.max(
-                duration - daysPassed,
-                0
-            );
-
-        /* -----------------------------------------
-           ACTIVITY KEY
-        ----------------------------------------- */
-
-        const activityRef =
-            push(
-                ref(
-                    db,
-                    `users/${currentUser.uid}/activities`
-                )
-            );
-
-        const activityKey =
-            activityRef.key;
-
-        /* -----------------------------------------
-           FIREBASE MULTI-PATH UPDATE
-        ----------------------------------------- */
-
-        const updates = {};
+        const activityKey = push(
+            ref(db, `users/${uid}/activities`)
+        ).key;
 
         /*
-         * MAIN WALLET BALANCE
-         */
-        updates[
-            `users/${currentUser.uid}/balance`
-        ] =
-            currentBalance + profit;
+        =====================================================
+        ATOMIC TRANSACTION
+        =====================================================
 
-        /*
-         * TODAY'S PROFIT
-         *
-         * THIS IS THE IMPORTANT FIELD.
-         *
-         * Dashboard and wallet both read:
-         * users/{uid}/todayProfit
-         */
-        updates[
-            `users/${currentUser.uid}/todayProfit`
-        ] =
-            currentTodayProfit + profit;
+        Only ONE transaction can successfully move this
+        machine from its old claim state to the new one.
 
-        /*
-         * MACHINE TOTAL EARNED
-         */
-        updates[
-            `users/${currentUser.uid}/machines/${machineKey}/totalEarned`
-        ] =
-            currentTotalEarned + profit;
+        If another claim happens simultaneously, Firebase
+        retries the transaction using the newest data.
+        */
 
-        /*
-         * NEXT CLAIM TIME
-         */
-        updates[
-            `users/${currentUser.uid}/machines/${machineKey}/nextClaimAt`
-        ] =
-            newNextClaim;
+        const result = await runTransaction(
+            userRef,
+            (currentData) => {
 
-        /*
-         * REMAINING DAYS
-         */
-        updates[
-            `users/${currentUser.uid}/machines/${machineKey}/remainingDays`
-        ] =
-            newRemaining;
+                if (!currentData) {
+                    return;
+                }
 
-        /*
-         * COMPLETE MACHINE IF FINISHED
-         */
-        if (newRemaining <= 0) {
+                const machines = currentData.machines || {};
+                const currentMachine = machines[machineKey];
 
-            updates[
-                `users/${currentUser.uid}/machines/${machineKey}/status`
-            ] = "COMPLETED";
-        }
+                /*
+                Machine disappeared
+                */
+                if (!currentMachine) {
+                    return;
+                }
 
-        /*
-         * ACTIVITY RECORD
-         */
-        if (activityKey) {
+                /*
+                Must still be RUNNING
+                */
+                if (
+                    String(currentMachine.status || "")
+                        .toUpperCase() !== "RUNNING"
+                ) {
+                    return;
+                }
 
-            updates[
-                `users/${currentUser.uid}/activities/${activityKey}`
-            ] = {
+                /*
+                Re-check the claim time INSIDE the transaction.
 
-                icon: "fa-solid fa-coins",
+                This is extremely important.
 
-                title:
-                    "Claimed from " +
-                    (machine.name || "Investment Machine"),
+                The first request may have passed the check,
+                but another request could have claimed already.
+                */
+                const currentNextClaimAt =
+                    Number(currentMachine.nextClaimAt || 0);
 
-                amount:
-                    "+UGX " +
-                    profit.toLocaleString(),
+                if (Date.now() < currentNextClaimAt) {
+                    return;
+                }
 
-                time:
-                    new Date().toLocaleString(),
+                /*
+                Use the machine's stored profit.
+                */
+                const currentProfit =
+                    Number(currentMachine.dailyProfit || 0);
 
-                timestamp:
-                    now
-            };
-        }
+                if (
+                    !Number.isFinite(currentProfit) ||
+                    currentProfit <= 0
+                ) {
+                    return;
+                }
 
-        /* -----------------------------------------
-           DEBUG
-        ----------------------------------------- */
+                /*
+                =============================================
+                CLAIM COUNT
+                =============================================
+                */
 
-        console.log(
-            "========== MACHINE CLAIM =========="
-        );
+                const duration = Number(currentMachine.duration || 0);
 
-        console.log(
-            "UID:",
-            currentUser.uid
-        );
+if (!Number.isFinite(duration) || duration <= 0) {
+    return;
+    }
 
-        console.log(
-            "Machine:",
-            machine.name
-        );
+                const previousClaims =
+                    Math.max(
+                        Number(currentMachine.claimCount || 0),
+                        0
+                    );
 
-        console.log(
-            "Machine Key:",
-            machineKey
-        );
+                const newClaimCount =
+                    previousClaims + 1;
 
-        console.log(
-            "Profit:",
-            profit
-        );
+                /*
+                =============================================
+                DETERMINE WHETHER THIS IS FINAL CLAIM
+                =============================================
+                */
 
-        console.log(
-            "Previous Balance:",
-            currentBalance
-        );
+                const completed =
+                    newClaimCount >= duration;
 
-        console.log(
-            "New Balance:",
-            currentBalance + profit
-        );
+                /*
+                =============================================
+                CURRENT MONEY
+                =============================================
+                */
 
-        console.log(
-            "Previous Today Profit:",
-            currentTodayProfit
-        );
+                const balance =
+                    Number(currentData.balance || 0);
 
-        console.log(
-            "New Today Profit:",
-            currentTodayProfit + profit
-        );
+                const todayProfit =
+                    Number(currentData.todayProfit || 0);
 
-        console.log(
-            "Balance Firebase Path:",
-            `users/${currentUser.uid}/balance`
-        );
+                const totalEarned =
+                    Number(
+                        currentMachine.totalEarned || 0
+                    );
 
-        console.log(
-            "Today Profit Firebase Path:",
-            `users/${currentUser.uid}/todayProfit`
-        );
+                /*
+                =============================================
+                UPDATE EVERYTHING ATOMICALLY
+                =============================================
+                */
 
-        console.log(
-            "Updates:",
-            updates
-        );
+                currentData.balance =
+                    balance + currentProfit;
 
-        console.log(
-            "=================================="
-        );
+                currentData.todayProfit =
+                    todayProfit + currentProfit;
 
-        /* -----------------------------------------
-           WRITE ONCE
-           
-           IMPORTANT:
-           Do NOT call update() twice.
-        ----------------------------------------- */
-
-        await update(
-            ref(db),
-            updates
-        );
-
-        /* -----------------------------------------
-           VERIFY BALANCE
-        ----------------------------------------- */
-
-        const balanceVerify =
-            await get(
-                ref(
-                    db,
-                    `users/${currentUser.uid}/balance`
-                )
-            );
-
-        /* -----------------------------------------
-           VERIFY TODAY PROFIT
-        ----------------------------------------- */
-
-        const todayProfitVerify =
-            await get(
-                ref(
-                    db,
-                    `users/${currentUser.uid}/todayProfit`
-                )
-            );
-
-        console.log(
-            "========== CLAIM VERIFIED =========="
-        );
-
-        console.log(
-            "Firebase Balance:",
-            balanceVerify.val()
-        );
-
-        console.log(
-            "Firebase Today Profit:",
-            todayProfitVerify.val()
-        );
-
-        console.log(
-            "===================================="
-        );
-
-        /* -----------------------------------------
-           UPDATE LOCAL DATA
-        ----------------------------------------- */
-
-        currentUserData = {
-            ...userData,
-
-            balance:
-                currentBalance + profit,
-
-            todayProfit:
-                currentTodayProfit + profit,
-
-            machines: {
-                ...(userData.machines || {}),
-
-                [machineKey]: {
-                    ...machine,
+                currentData.machines[machineKey] = {
+                    ...currentMachine,
 
                     totalEarned:
-                        currentTotalEarned + profit,
+                        totalEarned + currentProfit,
 
-                    nextClaimAt:
-                        newNextClaim,
+                    claimCount:
+                        newClaimCount,
 
                     remainingDays:
-                        newRemaining,
+                        Math.max(
+                            duration - newClaimCount,
+                            0
+                        ),
+
+                    /*
+                    Don't leave a claimable machine after
+                    the final claim.
+                    */
+                    nextClaimAt:
+                        completed
+                            ? 0
+                            : currentNextClaimAt + 86400000,
 
                     status:
-                        newRemaining <= 0
+                        completed
                             ? "COMPLETED"
-                            : machine.status
-                }
-            }
-        };
+                            : "RUNNING"
+                };
 
-        /* -----------------------------------------
-           SUCCESS
-        ----------------------------------------- */
+                /*
+                =============================================
+                ACTIVITY
+                =============================================
+                */
+
+                if (activityKey) {
+
+                    currentData.activities =
+                        currentData.activities || {};
+
+                    currentData.activities[activityKey] = {
+
+                        icon:
+                            "fa-solid fa-coins",
+
+                        title:
+                            "Claimed from " +
+                            (
+                                currentMachine.name ||
+                                "Investment Machine"
+                            ),
+
+                        amount:
+                            "+UGX " +
+                            currentProfit.toLocaleString(),
+
+                        time:
+                            new Date().toLocaleString(),
+
+                        timestamp:
+                            Date.now()
+                    };
+                }
+
+                return currentData;
+            }
+        );
+
+        /*
+        =====================================================
+        TRANSACTION RESULT
+        =====================================================
+        */
+
+        if (!result.committed) {
+
+            showToast(
+                "Claim was already processed or is not available.",
+                false
+            );
+
+            return;
+        }
+
+        /*
+        =====================================================
+        SUCCESS
+        =====================================================
+        */
+
+        const updatedUser = result.snapshot.val();
+
+        currentUserData = updatedUser;
+
+        renderMachines();
 
         showToast(
             `Claimed UGX ${profit.toLocaleString()} successfully`
@@ -2001,12 +1946,12 @@ window.claimProfit = async (machineKey) => {
         );
 
         showToast(
-            "Claim failed: " + error.message,
+            "Claim failed. Please try again.",
             false
         );
     }
 };
-
+    
 /* LOADING + EMPTY */
 function showLoading() {
     document.getElementById("machineList").innerHTML = `
