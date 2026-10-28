@@ -12,16 +12,15 @@
 --bg:#050a14;--card:#0e1a30;--card2:#111f38;
 --border:rgba(255,255,255,.06);--border2:rgba(34,211,238,.12);
 --text:#f1f5f9;--muted:#8b9bb0;
---green:#34d399;--cyan:#22d3ee;--orange:#fb923c;--red:#f87171;
+--green:#34d399;--cyan:#22d3ee;--orange:#fb923c;--red:#f87171;--yellow:#facc15;
 }
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 body{background:radial-gradient(600px 300px at 50% -5%,rgba(34,211,238,.08),transparent 70%),linear-gradient(180deg,#050a14,#080f20);color:var(--text);min-height:100vh;padding-bottom:calc(110px + env(safe-area-inset-bottom));overflow-x:hidden;-webkit-user-select:none;user-select:none}
 input,textarea{-webkit-user-select:text;user-select:text}
 .container{max-width:500px;margin:auto;padding:14px 12px 0}
 .profile-card{background:linear-gradient(135deg,#101e36,#0c172c);border:1px solid var(--border2);border-radius:18px;padding:16px;display:flex;align-items:center;gap:14px;box-shadow:0 12px 30px rgba(0,0,0,.25);margin-bottom:14px}
 .avatar{width:62px;height:62px;border-radius:16px;border:1px solid rgba(52,211,153,.25);overflow:hidden;flex-shrink:0;background:linear-gradient(135deg,var(--cyan),var(--green))}
 .avatar img{width:100%;height:100%;object-fit:cover}
-.profile-info{flex:1;min-width:0}
 .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;background:rgba(52,211,153,.10);border:1px solid rgba(52,211,153,.15);color:var(--green);font-weight:800;font-size:8px;letter-spacing:.6px;text-transform:uppercase;margin-bottom:6px}
 .phone{font-size:15px;font-weight:800;letter-spacing:-.2px}
 .referral{display:flex;align-items:center;gap:8px;margin-top:6px;color:var(--muted);font-size:11px;font-weight:600}
@@ -39,9 +38,9 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .install-title{font-size:13px;font-weight:700}.install-sub{font-size:10px;color:var(--muted);margin-top:2px}
 .install-btn{padding:8px 14px;border:none;border-radius:10px;background:var(--green);color:#02120e;font-size:11px;font-weight:800;cursor:pointer}
 .section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:0 2px}
-.section-title h3{color:#facc15;font-size:11px;font-weight:800;letter-spacing:.5px}.section-title span{color:var(--muted);font-size:9px;font-weight:700}
+.section-title h3{color:var(--yellow);font-size:11px;font-weight:800;letter-spacing:.5px}.section-title span{color:var(--muted);font-size:9px;font-weight:700}
 .menu-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;cursor:pointer;transition:.15s}
-.menu-card:active{transform:scale(.98);border-color:var(--border2)}
+.menu-card:active{transform:scale(.98)}
 .menu-left{display:flex;align-items:center;gap:10px}
 .menu-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px}
 .pink{background:rgba(236,72,153,.10);color:#f472b6}.purple{background:rgba(168,85,247,.10);color:#a78bfa}.blue{background:rgba(96,165,250,.10);color:var(--cyan)}.green{background:rgba(52,211,153,.10);color:var(--green)}.orange{background:rgba(251,146,60,.10);color:var(--orange)}.red{background:rgba(248,113,113,.10);color:var(--red)}
@@ -98,12 +97,13 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <div class="social-card"><i class="fa-brands fa-telegram channel"></i><p>CHANNEL</p></div>
 <div class="social-card"><i class="fa-brands fa-telegram community"></i><p>COMMUNITY</p></div>
 </div>
-        <div class="bottom-nav" id="bottomNav">
-    <div class="nav-item" onclick="window.location='dashboard.html'"><div class="nav-icon"><i class="fa-solid fa-house"></i></div><span>Home</span></div>
-    <div class="nav-item" onclick="window.location='team.html'"><div class="nav-icon"><i class="fa-solid fa-users"></i></div><span>Team</span></div>
-    <div class="nav-item" onclick="window.location='machines.html'"><div class="nav-icon"><i class="fa-solid fa-microchip"></i></div><span>Machines</span></div>
-    <div class="nav-item" onclick="window.location='wallet.html'"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></div>
-    <div class="nav-item active"><div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
+</div>
+<div class="bottom-nav" id="bottomNav">
+<div class="nav-item" onclick="window.location='dashboard.html'"><div class="nav-icon"><i class="fa-solid fa-house"></i></div><span>Home</span></div>
+<div class="nav-item" onclick="window.location='team.html'"><div class="nav-icon"><i class="fa-solid fa-users"></i></div><span>Team</span></div>
+<div class="nav-item" onclick="window.location='machines.html'"><div class="nav-icon"><i class="fa-solid fa-microchip"></i></div><span>Machines</span></div>
+<div class="nav-item" onclick="window.location='wallet.html'"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></div>
+<div class="nav-item active"><div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -132,16 +132,23 @@ function silentUpdate(id,val){
  const el=document.getElementById(id); if(!el) return;
  if(el.textContent!==val){ el.textContent=val; el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse"); }
 }
+// Auto active nav - kept from your code
+(function(){
+  const page=location.pathname.split("/").pop();
+  document.querySelectorAll("#bottomNav .nav-item").forEach(item=>{
+    const oc=item.getAttribute("onclick")||"";
+    if(oc.includes(page)) item.classList.add("active");
+  });
+})();
+// Silent refresh - ONE listener, no flicker
 onAuthStateChanged(auth,user=>{
   if(!user){location.replace("index.html");return;}
   currentUser=user;
-  const userRef=ref(db,"users/"+user.uid);
-  // SILENT LISTENER - no hard refresh
-  onValue(userRef,snap=>{
+  onValue(ref(db,"users/"+user.uid),snap=>{
     if(!snap.exists()) return;
     const data=snap.val();
-    const hash=JSON.stringify({b:data.balance,p:data.todayProfit+r:data.referralEarnings,code:data.referralCode});
-    if(hash===lastHash) return; // no flicker if same
+    const hash=JSON.stringify({b:data.balance,t:data.todayProfit,r:data.referralEarnings,code:data.referralCode,phone:data.phone,admin:data.isAdmin});
+    if(hash===lastHash) return;
     lastHash=hash;
     silentUpdate("phone",maskPhone(data.phone||""));
     silentUpdate("walletBalance","UGX "+Number(data.balance||0).toLocaleString());
@@ -153,6 +160,9 @@ onAuthStateChanged(auth,user=>{
     }
   });
 });
+document.getElementById("adminPanelBtn").onclick=()=>location.href="admin.html";
+document.getElementById("aboutBtn").onclick=()=>location.href="about.html";
+document.getElementById("transactionsBtn").onclick=()=>location.href="wallet.html";
 document.getElementById("copyReferral").onclick=async()=>{
  const code=document.getElementById("refCode").textContent.trim();
  try{ await navigator.clipboard.writeText(code); notify("Referral code copied ✓"); }catch{ notify("Long press to copy","error"); }
@@ -181,9 +191,6 @@ document.body.appendChild(logoutModal);
 document.getElementById("logoutBtn").onclick=()=>logoutModal.classList.add("active");
 document.getElementById("cancelLogout").onclick=()=>logoutModal.classList.remove("active");
 document.getElementById("confirmLogout").onclick=async()=>{ try{ await signOut(auth); location.replace("index.html"); }catch{ notify("Logout failed","error"); } };
-document.getElementById("adminPanelBtn").onclick=()=>location.href="admin.html";
-document.getElementById("aboutBtn").onclick=()=>location.href="about.html";
-document.getElementById("transactionsBtn").onclick=()=>location.href="wallet.html";
 document.getElementById("giftCodeBtn").onclick=()=>notify("Gift Code feature coming soon");
 document.querySelector(".install-btn").onclick=()=>notify("Add to Home Screen for best experience");
 document.getElementById("supportBtn").onclick=()=>window.open("https://t.me/senteBotAi","_blank");
@@ -193,4 +200,4 @@ document.querySelectorAll(".social-grid .social-card")[2].onclick=()=>window.ope
 document.addEventListener('contextmenu',e=>e.preventDefault());
 </script>
 </body>
-</html>                                                                                                                            </div>
+</html>
