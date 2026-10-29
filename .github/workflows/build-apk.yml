@@ -1,6 +1,5 @@
 name: Build SenteBot APK
 on: [push]
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,42 +15,45 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.5
+
       - name: Create Android Project
         run: |
           mkdir -p app/src/main/java/com/sentebot/app
 
           cat > settings.gradle <<'EOF'
           pluginManagement {
-              repositories {
-                  google()
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
+            repositories {
+              google()
+              mavenCentral()
+              gradlePluginPortal()
+            }
           }
           plugins {
-              id 'com.android.application' version '8.2.2' apply false
+            id 'com.android.application' version '8.2.2' apply false
           }
           include ':app'
           EOF
 
           cat > app/build.gradle <<'EOF'
-          plugins {
-              id 'com.android.application'
-          }
+          plugins { id 'com.android.application' }
           android {
-              namespace 'com.sentebot.app'
-              compileSdk 34
-              defaultConfig {
-                  applicationId "com.sentebot.app"
-                  minSdk 21
-                  targetSdk 34
-                  versionCode 1
-                  versionName "1.0"
-              }
-              compileOptions {
-                  sourceCompatibility 17
-                  targetCompatibility 17
-              }
+            namespace 'com.sentebot.app'
+            compileSdk 34
+            defaultConfig {
+              applicationId "com.sentebot.app"
+              minSdk 21
+              targetSdk 34
+              versionCode 1
+              versionName "1.0"
+            }
+            compileOptions {
+              sourceCompatibility 17
+              targetCompatibility 17
+            }
           }
           EOF
 
@@ -77,20 +79,20 @@ jobs:
           import android.webkit.WebView;
           import android.webkit.WebViewClient;
           public class MainActivity extends Activity {
-              protected void onCreate(Bundle b) {
-                  super.onCreate(b);
-                  WebView w = new WebView(this);
-                  w.getSettings().setJavaScriptEnabled(true);
-                  w.getSettings().setDomStorageEnabled(true);
-                  w.setWebViewClient(new WebViewClient());
-                  w.loadUrl("https://quantamwallet.github.io/SenteBot-AI/");
-                  setContentView(w);
-              }
+            protected void onCreate(Bundle b) {
+              super.onCreate(b);
+              WebView w = new WebView(this);
+              w.getSettings().setJavaScriptEnabled(true);
+              w.getSettings().setDomStorageEnabled(true);
+              w.setWebViewClient(new WebViewClient());
+              w.loadUrl("https://quantamwallet.github.io/SenteBot-AI/");
+              setContentView(w);
+            }
           }
           EOF
 
-      - name: Build Debug APK
-        run: gradle :app:assembleDebug --stacktrace --no-daemon
+      - name: Build APK
+        run: gradle :app:assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
