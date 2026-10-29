@@ -5,40 +5,53 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
           
-      - name: Build APK
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        
+      - name: Build SenteBot APK
         run: |
-          sudo apt-get update -y
-          sudo apt-get install -y wget unzip
           mkdir -p app/src/main/java/com/sentebot/app
-          mkdir -p app/src/main/res/drawable
+          
+          cat > settings.gradle <<'EOF'
+          include ':app'
+          EOF
           
           cat > app/build.gradle <<'EOF'
-          plugins { id 'com.android.application' }
-          android {
-            namespace 'com.sentebot.app'
-            compileSdk 34
-            defaultConfig {
-              applicationId "com.sentebot.app"
-              minSdk 21
-              targetSdk 34
-              versionCode 1
-              versionName "1.0"
-            }
+          plugins {
+              id 'com.android.application'
           }
-          dependencies {}
+          android {
+              namespace 'com.sentebot.app'
+              compileSdk 34
+              defaultConfig {
+                  applicationId "com.sentebot.app"
+                  minSdk 21
+                  targetSdk 34
+                  versionCode 1
+                  versionName "1.0"
+              }
+              buildTypes {
+                  release { minifyEnabled false }
+                  debug { minifyEnabled false }
+              }
+          }
           EOF
           
           cat > app/src/main/AndroidManifest.xml <<'EOF'
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
             <uses-permission android:name="android.permission.INTERNET" />
-            <application android:allowBackup="true" android:icon="@mipmap/ic_launcher" android:label="SenteBot">
-              <activity android:name=".MainActivity" android:exported="true" android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
-                <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+            <application android:allowBackup="true" android:label="SenteBot" android:theme="@android:style/Theme.NoTitleBar">
+              <activity android:name=".MainActivity" android:exported="true">
+                <intent-filter>
+                  <action android:name="android.intent.action.MAIN" />
+                  <category android:name="android.intent.category.LAUNCHER" />
+                </intent-filter>
               </activity>
             </application>
           </manifest>
@@ -46,29 +59,28 @@ jobs:
           
           cat > app/src/main/java/com/sentebot/app/MainActivity.java <<'EOF'
           package com.sentebot.app;
-          import android.app.Activity; import android.os.Bundle; import android.webkit.WebView; import android.webkit.WebViewClient;
+          import android.app.Activity;
+          import android.os.Bundle;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
           public class MainActivity extends Activity {
-            protected void onCreate(Bundle b) {
-              super.onCreate(b);
-              WebView w = new WebView(this);
-              w.getSettings().setJavaScriptEnabled(true);
-              w.getSettings().setDomStorageEnabled(true);
-              w.setWebViewClient(new WebViewClient());
-              w.loadUrl("https://quantamwallet.github.io/SenteBot-AI/");
-              setContentView(w);
-            }
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  WebView webView = new WebView(this);
+                  webView.getSettings().setJavaScriptEnabled(true);
+                  webView.getSettings().setDomStorageEnabled(true);
+                  webView.setWebViewClient(new WebViewClient());
+                  webView.loadUrl("https://quantamwallet.github.io/SenteBot-AI/");
+                  setContentView(webView);
+              }
           }
           EOF
           
-          cat > settings.gradle <<'EOF'
-          include ':app'
-          EOF
+          gradle :app:assembleDebug --no-daemon
           
-          wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
-          unzip -q gradle-8.5-bin.zip
-          ./gradle-8.5/bin/gradle :app:assembleDebug --no-daemon
-          
-      - uses: actions/upload-artifact@v4
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
           name: SenteBot-APK
           path: app/build/outputs/apk/debug/app-debug.apk
