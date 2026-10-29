@@ -1,0 +1,160 @@
+name: SenteBot APK Build
+
+'on':
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.2'
+
+      - name: Create Android project and copy website
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p app/src/main/java/com/sentebot/app app/src/main/assets
+          shopt -s nullglob
+          for file in *.html *.js *.css *.json *.png *.jpg *.jpeg *.svg *.webp *.ico; do
+            if [ -f "$file" ]; then cp "$file" app/src/main/assets/; fi
+          done
+          if [ -d www ]; then cp -R www/. app/src/main/assets/; fi
+          if [ -d dist ]; then cp -R dist/. app/src/main/assets/; fi
+          if [ ! -f app/src/main/assets/index.html ]; then
+            echo "ERROR: index.html not found in the repository root, www/, or dist/."
+            exit 1
+          fi
+          cat > settings.gradle <<'GRADLE'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+          rootProject.name = 'SenteBot'
+          include ':app'
+          GRADLE
+          cat > build.gradle <<'GRADLE'
+          plugins {
+              id 'com.android.application' version '8.2.2' apply false
+              id 'org.jetbrains.kotlin.android' version '1.9.22' apply false
+          }
+          GRADLE
+          cat > app/build.gradle <<'GRADLE'
+          plugins {
+              id 'com.android.application'
+              id 'org.jetbrains.kotlin.android'
+          }
+          android {
+              namespace 'com.sentebot.app'
+              compileSdk 34
+              defaultConfig {
+                  applicationId 'com.sentebot.app'
+                  minSdk 24
+                  targetSdk 34
+                  versionCode 1
+                  versionName '1.0'
+              }
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_17
+                  targetCompatibility JavaVersion.VERSION_17
+              }
+              kotlinOptions {
+                  jvmTarget = '17'
+              }
+          }
+          GRADLE
+          cat > app/src/main/AndroidManifest.xml <<'XML'
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <uses-permission android:name="android.permission.INTERNET" />
+              <application
+                  android:allowBackup="true"
+                  android:usesCleartextTraffic="true"
+                  android:label="SenteBot AI"
+                  android:theme="@android:style/Theme.Material.Light.NoActionBar">
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:configChanges="orientation|keyboardHidden|screenSize">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          XML
+          cat > app/src/main/java/com/sentebot/app/MainActivity.kt <<'KOTLIN'
+          package com.sentebot.app
+
+          import android.app.Activity
+          import android.os.Bundle
+          import android.webkit.WebChromeClient
+          import android.webkit.WebView
+          import android.webkit.WebViewClient
+
+          class MainActivity : Activity() {
+              private lateinit var webView: WebView
+              override fun onCreate(savedInstanceState: Bundle?) {
+                  super.onCreate(savedInstanceState)
+                  webView = WebView(this)
+                  setContentView(webView)
+                  webView.settings.javaScriptEnabled = true
+                  webView.settings.domStorageEnabled = true
+                  webView.webViewClient = WebViewClient()
+                  webView.webChromeClient = WebChromeClient()
+                  if (savedInstanceState != null) webView.restoreState(savedInstanceState)
+                  else webView.loadUrl("file:///android_asset/index.html")
+              }
+              override fun onSaveInstanceState(outState: Bundle) {
+                  webView.saveState(outState)
+                  super.onSaveInstanceState(outState)
+              }
+              @Deprecated("Deprecated in Android API")
+              override fun onBackPressed() {
+                  if (::webView.isInitialized && webView.canGoBack()) webView.goBack()
+                  else super.onBackPressed()
+              }
+          }
+          KOTLIN
+          echo "Website files copied:"
+          find app/src/main/assets -maxdepth 2 -type f -print
+
+      - name: Build debug APK
+        run: gradle :app:assembleDebug --stacktrace
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SenteBot-AI-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
