@@ -17,7 +17,6 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 .header{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
 .back-btn{width:46px;height:46px;border-radius:15px;background:rgba(0,209,255,.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;}
 .page-title h2{font-size:22px;font-weight:800;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-
 .admin-card{background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));border:1px solid var(--border);border-radius:22px;padding:20px;margin-bottom:16px;backdrop-filter:blur(16px);}
 .admin-card h3{font-size:16px;font-weight:800;margin-bottom:10px;color:var(--green);}
 .admin-card p{font-size:13px;color:var(--muted);margin-bottom:16px;}
@@ -25,14 +24,11 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 .seed-btn:active{transform:scale(.97);}
 .seed-btn:disabled{opacity:.5;cursor:not-allowed;}
 #status{margin-top:14px;font-size:13px;color:var(--muted);text-align:center;min-height:20px;}
-
-/* NEW TABS */
 .tabs{display:flex;gap:8px;overflow-x:auto;margin:20px 0;padding-bottom:8px;}
 .tab{padding:10px 16px;border-radius:12px;background:rgba(0,209,255,.06);border:1px solid var(--border);color:var(--muted);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:.2s;}
 .tab.active{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;border-color:transparent;}
 .tab-content{display:none;}
 .tab-content.active{display:block;}
-
 .search{width:100%;padding:12px 14px;border-radius:12px;background:#050A18;border:1px solid var(--border);color:#fff;margin-bottom:12px;outline:none;}
 .item{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:14px;margin-bottom:10px;}
 .item-top{display:flex;justify-content:space-between;align-items:center;gap:10px;}
@@ -47,11 +43,8 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 .btn.approve{background:var(--green);color:#000;}
 .btn.reject{background:var(--red);color:#fff;}
 .btn.chat{background:var(--cyan);color:#000;}
-
 .input{width:100%;padding:12px;border-radius:12px;background:#050A18;border:1px solid var(--border);color:#fff;margin-bottom:10px;outline:none;}
 .textarea{width:100%;padding:12px;border-radius:12px;background:#050A18;border:1px solid var(--border);color:#fff;min-height:90px;resize:none;outline:none;margin-bottom:10px;}
-
-/* CHAT */
 .chat-list{max-height:500px;overflow-y:auto;}
 .chat-user{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:12px;background:rgba(255,255,255,.03);margin-bottom:8px;cursor:pointer;border:1px solid transparent;}
 .chat-user:hover{border-color:var(--border);}
@@ -72,23 +65,19 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 <div class="container">
   <div class="header">
     <div class="back-btn" onclick="window.location='profile.html'"><i class="fa-solid fa-arrow-left"></i></div>
-    <div class="page-title"><h2>Admin Panel</h2></div>
+    <div class="page-title"><h2>Admin Panel - LIVE</h2></div>
   </div>
-
   <div class="stats-grid">
     <div class="stat"><h4 id="totalUsers">0</h4><small>USERS</small></div>
     <div class="stat"><h4 id="totalDeposits">0</h4><small>DEPOSITS</small></div>
     <div class="stat"><h4 id="totalWithdraws">0</h4><small>WITHDRAWS</small></div>
   </div>
-
-  <!-- ORIGINAL CARD - NOT TOUCHED -->
   <div class="admin-card">
     <h3><i class="fa-solid fa-database"></i> Machine Seeder</h3>
     <p>This will create 20 machines in Firebase Realtime Database at `/machines`. Run only once.</p>
     <button class="seed-btn" id="seedBtn"><i class="fa-solid fa-rocket"></i> Create 20 Machines</button>
     <div id="status"></div>
   </div>
-
   <div class="tabs">
     <div class="tab active" data-tab="users"><i class="fa-solid fa-users"></i> Users</div>
     <div class="tab" data-tab="deposits"><i class="fa-solid fa-arrow-down"></i> Deposits</div>
@@ -96,24 +85,16 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
     <div class="tab" data-tab="notify"><i class="fa-solid fa-bell"></i> Notify All</div>
     <div class="tab" data-tab="support"><i class="fa-solid fa-headset"></i> Support</div>
   </div>
-
-  <!-- USERS -->
   <div class="tab-content active" id="tab-users">
     <input class="search" id="userSearch" placeholder="Search by email / UID...">
-    <div id="usersList">Loading users...</div>
+    <div id="usersList">Listening real-time...</div>
   </div>
-
-  <!-- DEPOSITS -->
   <div class="tab-content" id="tab-deposits">
-    <div id="depositsList">Loading deposits...</div>
+    <div id="depositsList">Listening real-time...</div>
   </div>
-
-  <!-- WITHDRAWALS -->
   <div class="tab-content" id="tab-withdraws">
-    <div id="withdrawsList">Loading withdrawals...</div>
+    <div id="withdrawsList">Listening real-time...</div>
   </div>
-
-  <!-- NOTIFY ALL -->
   <div class="tab-content" id="tab-notify">
     <div class="admin-card">
       <h3><i class="fa-solid fa-bullhorn"></i> Send Notification to ALL Users</h3>
@@ -124,8 +105,6 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
     </div>
     <div id="notifHistory"></div>
   </div>
-
-  <!-- SUPPORT CHAT -->
   <div class="tab-content" id="tab-support">
     <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:12px;">
       <div>
@@ -142,14 +121,12 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
       </div>
     </div>
   </div>
-
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, set, get, onValue, push, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
+import { getDatabase, ref, set, get, onValue, push, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
   authDomain: "sentebot-7428b.firebaseapp.com",
@@ -163,7 +140,6 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getDatabase(app);
 const ADMIN_UID = "AQ1kRn34wlSGu0MPQfvRLXfmbqA3";
-
 onAuthStateChanged(auth, user=>{
   if(!user || user.uid !== ADMIN_UID){
     window.location.href = "profile.html";
@@ -171,8 +147,6 @@ onAuthStateChanged(auth, user=>{
   }
   initAdmin();
 });
-
-// === ORIGINAL SEEDER - UNTOUCHED ===
 document.getElementById("seedBtn").onclick = async () => {
   const btn = document.getElementById("seedBtn");
   const status = document.getElementById("status");
@@ -208,15 +182,11 @@ document.getElementById("seedBtn").onclick = async () => {
     status.innerHTML = "✅ Successfully created all 20 machines in Realtime Database.";
     btn.innerHTML = `<i class="fa-solid fa-check"></i> Done`;
   } catch (e) {
-    console.error(e);
     status.innerHTML = "❌ Error: " + e.message;
     btn.disabled = false;
   }
 };
-
-// === NEW ADMIN LOGIC ===
 function initAdmin(){
-  // Tabs
   document.querySelectorAll('.tab').forEach(t=>{
     t.onclick=()=>{
       document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
@@ -225,13 +195,8 @@ function initAdmin(){
       document.getElementById('tab-'+t.dataset.tab).classList.add('active');
     }
   });
-  loadUsers();
-  loadDeposits();
-  loadWithdraws();
-  loadSupportList();
-  loadNotifHistory();
+  loadUsers(); loadDeposits(); loadWithdraws(); loadSupportList(); loadNotifHistory();
 }
-
 let allUsersData = {};
 function loadUsers(){
   onValue(ref(db,'users'), snap=>{
@@ -247,22 +212,13 @@ function renderUsers(data){
   let html='';
   Object.entries(data).reverse().forEach(([uid,u])=>{
     if(q && !JSON.stringify(u).toLowerCase().includes(q) && !uid.toLowerCase().includes(q)) return;
-    html+=`<div class="item">
-      <div class="item-top"><b>${u.email||'No email'}</b><span class="badge approved">$${Number(u.balance||0).toLocaleString()}</span></div>
-      <small>UID: ${uid}</small>
-      <small>Phone: ${u.phone||'-'} | Referral: ${u.referralCode||'-'} | Machines: ${u.machines?Object.keys(u.machines).length:0}</small>
-      <div class="row-btns">
-        <button class="btn chat" onclick="window.openChat('${uid}')"><i class="fa-solid fa-message"></i> Chat</button>
-        <button class="btn approve" onclick="window.addBalance('${uid}')"><i class="fa-solid fa-plus"></i> Add Bal</button>
-      </div>
-    </div>`;
+    html+=`<div class="item"><div class="item-top"><b>${u.email||'No email'}</b><span class="badge approved">$${Number(u.balance||0).toLocaleString()}</span></div><small>UID: ${uid}</small><small>Phone: ${u.phone||'-'} | Bal: ${u.balance||0}</small><div class="row-btns"><button class="btn chat" onclick="window.openChat('${uid}')"><i class="fa-solid fa-message"></i> Chat</button><button class="btn approve" onclick="window.addBalance('${uid}')"><i class="fa-solid fa-plus"></i> Add Bal</button></div></div>`;
   });
-  list.innerHTML = html || 'No users found';
+  list.innerHTML = html || 'No users';
 }
 document.getElementById('userSearch').oninput = ()=>renderUsers(allUsersData);
 window.addBalance = async (uid)=>{
-  const amt = prompt('Enter amount to add (use negative to deduct):');
-  if(!amt) return;
+  const amt = prompt('Enter amount to add (use negative to deduct):'); if(!amt) return;
   const balRef = ref(db,'users/'+uid+'/balance');
   const snap = await get(balRef);
   const cur = Number(snap.val()||0);
@@ -270,107 +226,166 @@ window.addBalance = async (uid)=>{
   alert('Updated');
 };
 
-// DEPOSITS - checks multiple possible paths
+// DEPOSITS - REALTIME
 function loadDeposits(){
-  const paths = ['deposits','depositRequests','transactions/deposits'];
-  const container = document.getElementById('depositsList');
-  const checkPath = (i)=>{
-    if(i>=paths.length){ container.innerHTML='No deposits found in /deposits, /depositRequests, /transactions/deposits'; return; }
-    onValue(ref(db,paths[i]), snap=>{
-      const data = snap.val();
-      if(!data){ checkPath(i+1); return; }
-      renderDepositData(data, paths[i]);
-    }, ()=>checkPath(i+1));
-  };
-  checkPath(0);
-}
-function renderDepositData(data, basePath){
-  const list = document.getElementById('depositsList');
-  document.getElementById('totalDeposits').textContent = Object.keys(data).length;
-  let html='';
-  Object.entries(data).reverse().forEach(([id,d])=>{
-    // support nested uid structure
-    if(typeof d==='object' && !d.amount && !d.status){
-      Object.entries(d).forEach(([sid,sub])=>{
-        html+=depositItem(`${basePath}/${id}/${sid}`, sid, sub);
-      });
-    }else{
-      html+=depositItem(`${basePath}/${id}`, id, d);
-    }
+  onValue(ref(db,'deposits'), snap=>{
+    const data = snap.val()||{};
+    const list = document.getElementById('depositsList');
+    document.getElementById('totalDeposits').textContent = Object.keys(data).length;
+    if(!Object.keys(data).length){ list.innerHTML='No deposits yet - REAL-TIME listening...'; return; }
+    let html='';
+    Object.entries(data).forEach(([id,d])=>{
+      if(d && d.uid === undefined && typeof d === 'object' && !d.amount){
+        Object.entries(d).forEach(([sid,sub])=>{ html+=depositItem(`deposits/${id}/${sid}`, sid, sub); });
+      } else {
+        html+=depositItem(`deposits/${id}`, id, d);
+      }
+    });
+    list.innerHTML = html;
   });
-  list.innerHTML = html;
 }
 function depositItem(path, id, d){
   const st = (d.status||'pending').toLowerCase();
-  return `<div class="item">
-    <div class="item-top"><b>$${d.amount||0} - ${d.method||d.type||'Deposit'}</b><span class="badge ${st}">${st.toUpperCase()}</span></div>
-    <small>ID: ${id}</small>
-    <small>User: ${d.email||d.uid||'-'} | Tx: ${d.txId||d.transactionId||'-'}</small>
-    <small>${new Date(d.timestamp||d.createdAt||Date.now()).toLocaleString()}</small>
-    <div class="row-btns">
-      <button class="btn approve" onclick="window.approveDeposit('${path}')">Approve</button>
-      <button class="btn reject" onclick="window.rejectDeposit('${path}')">Reject</button>
-    </div>
-  </div>`;
+  return `<div class="item"><div class="item-top"><b>$${Number(d.amount||0).toLocaleString()} Deposit</b><span class="badge ${st}">${st.toUpperCase()}</span></div><small>ID: ${id}</small><small>User: ${d.email||d.uid} | LIVE</small><small>${new Date(d.timestamp||Date.now()).toLocaleString()}</small><div class="row-btns"><button class="btn approve" ${st!=='pending'?'disabled':''} onclick="window.approveDeposit('${path}')">Approve & Add Balance</button><button class="btn reject" ${st!=='pending'?'disabled':''} onclick="window.rejectDeposit('${path}')">Reject</button></div></div>`;
 }
 window.approveDeposit = async (path)=>{
-  if(!confirm('Approve this deposit?')) return;
-  await update(ref(db,path),{status:'approved', approvedAt:Date.now()});
-  // try credit balance if uid exists
   const snap = await get(ref(db,path));
   const d = snap.val();
-  if(d && d.uid && d.amount){
-    const balSnap = await get(ref(db,'users/'+d.uid+'/balance'));
-    const cur = Number(balSnap.val()||0);
-    await set(ref(db,'users/'+d.uid+'/balance'), cur+Number(d.amount));
-  }
-  alert('Approved & credited');
+  if(!d || d.status!=='pending') return alert('Already processed or not found');
+  if(!confirm(`Approve $${d.amount} for ${d.email}?`)) return;
+  await update(ref(db,path),{status:'approved', approvedAt:Date.now()});
+  const balRef = ref(db,`users/${d.uid}/balance`);
+  const balSnap = await get(balRef);
+  const cur = Number(balSnap.val()||0);
+  await set(balRef, cur + Number(d.amount));
+  alert(`✅ Approved & $${d.amount} added to balance`);
 };
 window.rejectDeposit = async (path)=>{
-  if(!confirm('Reject this deposit?')) return;
-  await update(ref(db,path),{status:'rejected'});
+  const snap = await get(ref(db,path));
+  if(snap.val()?.status!=='pending') return alert('Already processed');
+  if(!confirm('Reject deposit?')) return;
+  await update(ref(db,path),{status:'rejected', rejectedAt:Date.now()});
 };
 
-// WITHDRAWALS
+// WITHDRAWALS - REALTIME - BALANCE ALREADY DEDUCTED
 function loadWithdraws(){
-  const paths = ['withdrawals','withdrawalRequests','transactions/withdrawals'];
-  const container = document.getElementById('withdrawsList');
-  const checkPath = (i)=>{
-    if(i>=paths.length){ container.innerHTML='No withdrawals found'; return; }
-    onValue(ref(db,paths[i]), snap=>{
-      const data = snap.val();
-      if(!data){ checkPath(i+1); return; }
-      renderWithdrawData(data, paths[i]);
-    }, ()=>checkPath(i+1));
-  };
-  checkPath(0);
-}
-function renderWithdrawData(data, basePath){
-  const list = document.getElementById('withdrawsList');
-  document.getElementById('totalWithdraws').textContent = Object.keys(data).length;
-  let html='';
-  Object.entries(data).reverse().forEach(([id,d])=>{
-    if(typeof d==='object' && !d.amount && !d.status){
-      Object.entries(d).forEach(([sid,sub])=>{
-        html+=withdrawItem(`${basePath}/${id}/${sid}`, sid, sub);
-      });
-    }else{
-      html+=withdrawItem(`${basePath}/${id}`, id, d);
-    }
+  onValue(ref(db,'withdrawals'), snap=>{
+    const data = snap.val()||{};
+    const list = document.getElementById('withdrawsList');
+    document.getElementById('totalWithdraws').textContent = Object.keys(data).length;
+    if(!Object.keys(data).length){ list.innerHTML='No withdrawals yet - REAL-TIME listening...'; return; }
+    let html='';
+    Object.entries(data).forEach(([id,d])=>{
+      if(d && d.uid === undefined && typeof d === 'object' && !d.amount){
+        Object.entries(d).forEach(([sid,sub])=>{ html+=withdrawItem(`withdrawals/${id}/${sid}`, sid, sub); });
+      } else {
+        html+=withdrawItem(`withdrawals/${id}`, id, d);
+      }
+    });
+    list.innerHTML = html;
   });
-  list.innerHTML = html;
 }
 function withdrawItem(path, id, d){
   const st = (d.status||'pending').toLowerCase();
-  return `<div class="item">
-    <div class="item-top"><b>$${d.amount||0} - ${d.method||'Withdraw'}</b><span class="badge ${st}">${st.toUpperCase()}</span></div>
-    <small>ID: ${id}</small>
-    <small>User: ${d.email||d.uid||'-'} | Address: ${d.address||d.wallet||'-'}</small>
-    <small>${new Date(d.timestamp||d.createdAt||Date.now()).toLocaleString()}</small>
-    <div class="row-btns">
-      <button class="btn approve" onclick="window.approveWithdraw('${path}')">Approve</button>
-      <button class="btn reject" onclick="window.rejectWithdraw('${path}')">Reject</button>
-    </div>
-  </div>`;
+  return `<div class="item"><div class="item-top"><b>$${Number(d.amount||0).toLocaleString()} Withdraw</b><span class="badge ${st}">${st.toUpperCase()}</span></div><small>ID: ${id} | ${d.email||d.uid}</small><small>Address: ${d.address||d.wallet||'-'}</small><small>${new Date(d.timestamp||Date.now()).toLocaleString()} | Deducted already</small><div class="row-btns"><button class="btn approve" ${st!=='pending'?'disabled':''} onclick="window.approveWithdraw('${path}')">Mark as Paid</button><button class="btn reject" ${st!=='pending'?'disabled':''} onclick="window.rejectWithdraw('${path}')">Reject & Refund</button></div></div>`;
 }
-window.approveWithdraw
+window.approveWithdraw = async (path)=>{
+  const snap = await get(ref(db,path));
+  const d = snap.val();
+  if(d.status!=='pending') return alert('Already processed');
+  if(!confirm(`Mark $${d.amount} as PAID?`)) return;
+  await update(ref(db,path),{status:'approved', approvedAt:Date.now()});
+};
+window.rejectWithdraw = async (path)=>{
+  const snap = await get(ref(db,path));
+  const d = snap.val();
+  if(d.status!=='pending') return alert('Already processed');
+  if(!confirm(`Reject & REFUND $${d.amount} to ${d.email}?`)) return;
+  const balRef = ref(db,`users/${d.uid}/balance`);
+  const balSnap = await get(balRef);
+  const cur = Number(balSnap.val()||0);
+  await set(balRef, cur + Number(d.amount));
+  await update(ref(db,path),{status:'rejected', refundedAt:Date.now()});
+  alert(`↩️ $${d.amount} refunded`);
+};
+
+// NOTIFY ALL - REALTIME
+document.getElementById('sendNotifBtn').onclick = async ()=>{
+  const title = document.getElementById('notifTitle').value.trim();
+  const msg = document.getElementById('notifMsg').value.trim();
+  const st = document.getElementById('notifStatus');
+  if(!title||!msg){ st.textContent='Fill title & message'; return; }
+  st.textContent='Sending to ALL users...';
+  const payload = { title, message:msg, timestamp:Date.now(), from:'admin' };
+  await push(ref(db,'notifications'), payload);
+  const usersSnap = await get(ref(db,'users'));
+  const users = usersSnap.val()||{};
+  await Promise.all(Object.keys(users).map(uid=> push(ref(db,`user_notifications/${uid}`), payload)));
+  st.textContent=`✅ Sent to ${Object.keys(users).length} users - REAL-TIME`;
+  document.getElementById('notifTitle').value=''; 
+  document.getElementById('notifMsg').value='';
+};
+function loadNotifHistory(){
+  onValue(ref(db,'notifications'), snap=>{
+    const data = snap.val()||{};
+    let html='<div style="margin-top:10px">';
+    Object.entries(data).reverse().slice(0,10).forEach(([id,n])=>{ 
+      html+=`<div class="item"><b>${n.title}</b><small>${n.message}</small><small>${new Date(n.timestamp).toLocaleString()}</small></div>`; 
+    });
+    html+='</div>';
+    document.getElementById('notifHistory').innerHTML=html;
+  });
+}
+
+// SUPPORT CHAT - REALTIME
+let activeChatUid = null;
+let chatUnsub = null;
+function loadSupportList(){
+  onValue(ref(db,'supportChats'), snap=>{
+    const data = snap.val()||{};
+    const container = document.getElementById('supportUsers');
+    const q = (document.getElementById('supportSearch').value||'').toLowerCase();
+    let html='';
+    Object.entries(data).reverse().forEach(([uid,msgs])=>{
+      const user = allUsersData[uid]||{};
+      if(q && !uid.toLowerCase().includes(q) && !JSON.stringify(user).toLowerCase().includes(q)) return;
+      const last = Object.values(msgs).pop()||{};
+      html+=`<div class="chat-user" data-uid="${uid}" onclick="window.openChat('${uid}')"><div><b style="font-size:12px">${user.email||uid.slice(0,12)}</b><small>${(last.text||last.message||'').slice(0,30)}</small></div><i class="fa-solid fa-chevron-right" style="font-size:10px;color:var(--muted)"></i></div>`;
+    });
+    container.innerHTML = html||'No chats - REAL-TIME listening...';
+  });
+}
+document.getElementById('supportSearch').oninput = ()=>loadSupportList();
+window.openChat = (uid)=>{
+  activeChatUid = uid;
+  document.getElementById('chatWith').textContent = allUsersData[uid]?.email || uid;
+  document.querySelectorAll('.chat-user').forEach(el=>el.classList.remove('active'));
+  document.querySelector(`.chat-user[data-uid="${uid}"]`)?.classList.add('active');
+  if(chatUnsub) chatUnsub();
+  const chatRef = ref(db, `supportChats/${uid}`);
+  chatUnsub = onValue(chatRef, snap=>{
+    const msgs = snap.val()||{};
+    const box = document.getElementById('chatMsgs');
+    box.innerHTML='';
+    Object.values(msgs).forEach(m=>{
+      const div = document.createElement('div');
+      const isAdmin = m.sender==='admin' || m.from==='admin';
+      div.className = `msg ${isAdmin?'admin':'user'}`;
+      div.textContent = m.text||m.message||'';
+      box.appendChild(div);
+    });
+    box.scrollTop = box.scrollHeight;
+  });
+};
+document.getElementById('chatSend').onclick = sendReply;
+document.getElementById('chatInput').onkeydown = e=>{ if(e.key==='Enter') sendReply(); };
+async function sendReply(){
+  const txt = document.getElementById('chatInput').value.trim();
+  if(!txt||!activeChatUid) return;
+  await push(ref(db,`supportChats/${activeChatUid}`),{ text:txt, message:txt, sender:'admin', from:'admin', timestamp:Date.now() });
+  await push(ref(db,`user_notifications/${activeChatUid}`),{ title:'Support Reply', message:txt, timestamp:Date.now(), from:'admin', type:'support' });
+  document.getElementById('chatInput').value='';
+}
+</script>
+</body>
+</html>
