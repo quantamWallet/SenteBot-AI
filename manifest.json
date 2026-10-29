@@ -1,16 +1,23 @@
 {
   "name": "SenteBot-AI",
   "short_name": "SenteBot",
+  "description": "SenteBot - AI Crypto Mining Bot",
   "start_url": "/SenteBot-AI/",
   "scope": "/SenteBot-AI/",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#050a14",
   "theme_color": "#050a14",
-  "description": "SenteBot-AI Trusted Investment Platform",
   "icons": [
     {
-      "src": "https://quantamwallet.github.io/SenteBot-AI/icon-512.png",
+      "src": "/SenteBot-AI/icon-512.png",
       "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/SenteBot-AI/icon-512.png",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     }
