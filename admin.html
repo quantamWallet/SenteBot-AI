@@ -44,7 +44,6 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 .btn.chat{background:var(--cyan);color:#000;}
 .input{width:100%;padding:12px;border-radius:12px;background:#050A18;border:1px solid var(--border);color:#fff;margin-bottom:10px;outline:none;}
 .textarea{width:100%;padding:12px;border-radius:12px;background:#050A18;border:1px solid var(--border);color:#fff;min-height:90px;resize:none;outline:none;margin-bottom:10px;}
-/* BIGGER SUPPORT */
 .support-wrap{display:grid;grid-template-columns:320px 1fr;gap:16px;height:75vh;}
 .chat-list{height:100%;overflow-y:auto;background:rgba(0,0,0,.2);border-radius:16px;padding:8px;border:1px solid var(--border);}
 .chat-user{display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:12px;background:rgba(255,255,255,.03);margin-bottom:8px;cursor:pointer;border:1px solid transparent;}
@@ -65,7 +64,7 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 </head>
 <body>
 <div class="container">
-<div class="header"><div class="back-btn" onclick="window.location='profile.html'"><i class="fa-solid fa-arrow-left"></i></div><div class="page-title"><h2>Admin Panel - LIVE</h2></div></div>
+<div class="header"><div class="back-btn" onclick="window.location='profile.html'"><i class="fa-solid fa-arrow-left"></i></div><div class="page-title"><h2>Admin Panel - LIVE SYNC</h2></div></div>
 <div class="stats-grid"><div class="stat"><h4 id="totalUsers">0</h4><small>USERS</small></div><div class="stat"><h4 id="totalDeposits">0</h4><small>DEPOSITS</small></div><div class="stat"><h4 id="totalWithdraws">0</h4><small>WITHDRAWS</small></div></div>
 <div class="admin-card"><h3><i class="fa-solid fa-database"></i> Machine Seeder</h3><p>This will create 20 machines at `/machines`. Run only once.</p><button class="seed-btn" id="seedBtn"><i class="fa-solid fa-rocket"></i> Create 20 Machines</button><div id="status"></div></div>
 <div class="tabs">
@@ -76,10 +75,10 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 <div class="tab" data-tab="support"><i class="fa-solid fa-headset"></i> Support</div>
 </div>
 <div class="tab-content active" id="tab-users"><input class="search" id="userSearch" placeholder="Search by email / UID..."><div id="usersList">Listening real-time...</div></div>
-<div class="tab-content" id="tab-deposits"><div id="depositsList">Listening real-time...</div></div>
-<div class="tab-content" id="tab-withdraws"><div id="withdrawsList">Listening real-time...</div></div>
+<div class="tab-content" id="tab-deposits"><div id="depositsList">Syncing with Firebase real-time...</div></div>
+<div class="tab-content" id="tab-withdraws"><div id="withdrawsList">Syncing with Firebase real-time...</div></div>
 <div class="tab-content" id="tab-notify">
-<div class="admin-card"><h3><i class="fa-solid fa-bullhorn"></i> Send Notification to ALL Users (Instant)</h3><input class="input" id="notifTitle" placeholder="Title e.g. System Maintenance"><textarea class="textarea" id="notifMsg" placeholder="Message to all users..."></textarea><button class="seed-btn" id="sendNotifBtn"><i class="fa-solid fa-paper-plane"></i> Send Instant to All Users</button><div id="notifStatus" style="margin-top:10px;font-size:12px;color:var(--muted);text-align:center;"></div><small style="color:var(--muted);font-size:10px;display:block;margin-top:8px;text-align:center;">Saves to /notifications + /global_notifications - User app should listen to those paths</small></div><div id="notifHistory"></div>
+<div class="admin-card"><h3><i class="fa-solid fa-bullhorn"></i> Send Notification to ALL Users (Instant)</h3><input class="input" id="notifTitle" placeholder="Title e.g. System Maintenance"><textarea class="textarea" id="notifMsg" placeholder="Message to all users..."></textarea><button class="seed-btn" id="sendNotifBtn"><i class="fa-solid fa-paper-plane"></i> Send Instant to All Users</button><div id="notifStatus" style="margin-top:10px;font-size:12px;color:var(--muted);text-align:center;"></div></div><div id="notifHistory"></div>
 </div>
 <div class="tab-content" id="tab-support">
 <div class="support-wrap">
@@ -187,86 +186,130 @@ window.addBalance = async (uid)=>{
   await set(balRef, cur + Number(amt));
   alert('Updated');
 };
-  // DEPOSITS - REALTIME WITH HISTORY
+  // === DEPOSITS - FULLY REAL-TIME SYNCED - SHOWS ALL HISTORY ===
+function flattenDeposits(data){
+  const out=[];
+  if(!data) return out;
+  Object.entries(data).forEach(([k1,v1])=>{
+    if(!v1 || typeof v1!=='object') return;
+    // Case 1: deposits/{pushId} = {amount, uid, status}
+    if(v1.amount!==undefined){
+      out.push({ path:`deposits/${k1}`, id:k1, data:v1 });
+    } else {
+      // Case 2: deposits/{uid}/{pushId} = {amount, status}
+      Object.entries(v1).forEach(([k2,v2])=>{
+        if(v2 && typeof v2==='object' && v2.amount!==undefined){
+          out.push({ path:`deposits/${k1}/${k2}`, id:k2, data:v2, parentUid:k1 });
+        }
+      });
+    }
+  });
+  return out;
+}
 function loadDeposits(){
   onValue(ref(db,'deposits'), snap=>{
-    const data = snap.val()||{};
+    const raw = snap.val()||{};
+    const flat = flattenDeposits(raw);
     const list = document.getElementById('depositsList');
-    const count = Object.keys(data).length;
-    document.getElementById('totalDeposits').textContent = count;
-    if(count===0){ list.innerHTML='<div style="text-align:center;color:var(--muted);padding:30px;"><i class="fa-solid fa-inbox" style="font-size:30px;margin-bottom:10px;display:block"></i>No deposits yet<br><small>Will appear here real-time when user deposits</small></div>'; return; }
+    document.getElementById('totalDeposits').textContent = flat.length;
+    if(flat.length===0){
+      list.innerHTML='<div style="text-align:center;color:var(--muted);padding:30px;"><i class="fa-solid fa-inbox" style="font-size:30px;margin-bottom:10px;display:block"></i>No deposits yet<br><small style="color:var(--cyan)">Real-time listening to /deposits - new deposits will appear instantly</small></div>';
+      return;
+    }
+    flat.sort((a,b)=>(b.data.timestamp||0)-(a.data.timestamp||0));
     let html='';
-    Object.entries(data).reverse().forEach(([id,d])=>{
-      if(d && d.uid===undefined && typeof d==='object' && !d.amount){
-        Object.entries(d).reverse().forEach(([sid,sub])=>{ html+=depositItem(`deposits/${id}/${sid}`, sid, sub); });
-      } else {
-        html+=depositItem(`deposits/${id}`, id, d);
-      }
+    flat.forEach(({path,id,data})=>{
+      const st = (data.status||'pending').toLowerCase();
+      const isPending = st==='pending';
+      html+=`<div class="item" style="${st==='approved'?'border-left:3px solid var(--green)':st==='rejected'?'border-left:3px solid var(--red)':'border-left:3px solid #FFC107'}">
+      <div class="item-top"><b>$${Number(data.amount||0).toLocaleString()} Deposit</b><span class="badge ${st}">${st.toUpperCase()}</span></div>
+      <small>ID: ${id}</small><small>User: ${data.email||data.uid||'--'} | Method: ${data.method||'-'}</small>
+      <small>${new Date(data.timestamp||Date.now()).toLocaleString()} | Path: ${path}</small>
+      <div class="row-btns">
+      <button class="btn approve" ${isPending?'':'disabled style="opacity:.3"'} onclick="window.approveDeposit('${path}')">${isPending?'Approve & Add Balance':'✓ '+st}</button>
+      <button class="btn reject" ${isPending?'':'disabled style="opacity:.3"'} onclick="window.rejectDeposit('${path}')">${isPending?'Reject':'Done'}</button>
+      </div></div>`;
     });
     list.innerHTML = html;
   });
 }
-function depositItem(path, id, d){
-  const st = (d.status||'pending').toLowerCase();
-  const isPending = st==='pending';
-  return `<div class="item" style="${st==='approved'?'border-left:3px solid var(--green)':st==='rejected'?'border-left:3px solid var(--red)':'border-left:3px solid #FFC107'}"><div class="item-top"><b>$${Number(d.amount||0).toLocaleString()} Deposit</b><span class="badge ${st}">${st.toUpperCase()}</span></div><small>ID: ${id}</small><small>User: ${d.email||d.uid} | Method: ${d.method||'-'}</small><small>${new Date(d.timestamp||Date.now()).toLocaleString()}</small><div class="row-btns"><button class="btn approve" ${isPending?'':'disabled style="opacity:.3"'} onclick="window.approveDeposit('${path}')">${isPending?'Approve & Add Balance':'Already '+st}</button><button class="btn reject" ${isPending?'':'disabled style="opacity:.3"'} onclick="window.rejectDeposit('${path}')">${isPending?'Reject':'Done'}</button></div></div>`;
-}
 window.approveDeposit = async (path)=>{
   const snap = await get(ref(db,path));
   const d = snap.val();
-  if(!d || d.status!=='pending') return alert('Already processed');
-  if(!confirm(`Approve $${d.amount} for ${d.email}? Will ADD to balance`)) return;
+  if(!d || d.status!=='pending') return alert('Already '+ (d?.status||'processed'));
+  if(!confirm(`Approve $${d.amount} for ${d.email||d.uid}? Will ADD to balance`)) return;
   await update(ref(db,path),{status:'approved', approvedAt:Date.now()});
   const balRef = ref(db,`users/${d.uid}/balance`);
   const balSnap = await get(balRef);
   const cur = Number(balSnap.val()||0);
   await set(balRef, cur + Number(d.amount));
-  alert(`✅ $${d.amount} approved & credited`);
+  alert(`✅ $${d.amount} approved & credited to user balance`);
 };
 window.rejectDeposit = async (path)=>{
   const snap = await get(ref(db,path));
-  if(snap.val()?.status!=='pending') return alert('Already processed');
+  const d = snap.val();
+  if(!d || d.status!=='pending') return alert('Already '+d.status);
   if(!confirm('Reject deposit?')) return;
   await update(ref(db,path),{status:'rejected', rejectedAt:Date.now()});
 };
 
-// WITHDRAWALS - REALTIME WITH HISTORY
+// === WITHDRAWALS - FULLY REAL-TIME SYNCED ===
+function flattenWithdraws(data){
+  const out=[];
+  if(!data) return out;
+  Object.entries(data).forEach(([k1,v1])=>{
+    if(!v1 || typeof v1!=='object') return;
+    if(v1.amount!==undefined){
+      out.push({ path:`withdrawals/${k1}`, id:k1, data:v1 });
+    } else {
+      Object.entries(v1).forEach(([k2,v2])=>{
+        if(v2 && typeof v2==='object' && v2.amount!==undefined){
+          out.push({ path:`withdrawals/${k1}/${k2}`, id:k2, data:v2, parentUid:k1 });
+        }
+      });
+    }
+  });
+  return out;
+}
 function loadWithdraws(){
   onValue(ref(db,'withdrawals'), snap=>{
-    const data = snap.val()||{};
+    const raw = snap.val()||{};
+    const flat = flattenWithdraws(raw);
     const list = document.getElementById('withdrawsList');
-    const count = Object.keys(data).length;
-    document.getElementById('totalWithdraws').textContent = count;
-    if(count===0){ list.innerHTML='<div style="text-align:center;color:var(--muted);padding:30px;"><i class="fa-solid fa-inbox" style="font-size:30px;margin-bottom:10px;display:block"></i>No withdrawals yet<br><small>Will appear here real-time when user withdraws</small></div>'; return; }
+    document.getElementById('totalWithdraws').textContent = flat.length;
+    if(flat.length===0){
+      list.innerHTML='<div style="text-align:center;color:var(--muted);padding:30px;"><i class="fa-solid fa-inbox" style="font-size:30px;margin-bottom:10px;display:block"></i>No withdrawals yet<br><small style="color:var(--cyan)">Real-time listening to /withdrawals - will appear instantly</small></div>';
+      return;
+    }
+    flat.sort((a,b)=>(b.data.timestamp||0)-(a.data.timestamp||0));
     let html='';
-    Object.entries(data).reverse().forEach(([id,d])=>{
-      if(d && d.uid===undefined && typeof d==='object' && !d.amount){
-        Object.entries(d).reverse().forEach(([sid,sub])=>{ html+=withdrawItem(`withdrawals/${id}/${sid}`, sid, sub); });
-      } else {
-        html+=withdrawItem(`withdrawals/${id}`, id, d);
-      }
+    flat.forEach(({path,id,data})=>{
+      const st = (data.status||'pending').toLowerCase();
+      const isPending = st==='pending';
+      html+=`<div class="item" style="${st==='approved'?'border-left:3px solid var(--green)':st==='rejected'?'border-left:3px solid var(--red)':'border-left:3px solid #FFC107'}">
+      <div class="item-top"><b>$${Number(data.amount||0).toLocaleString()} Withdraw</b><span class="badge ${st}">${st.toUpperCase()}</span></div>
+      <small>ID: ${id} | User: ${data.email||data.uid}</small><small>Address: ${data.address||data.wallet||'-'}</small>
+      <small>${new Date(data.timestamp||Date.now()).toLocaleString()} | Already deducted when requested | ${path}</small>
+      <div class="row-btns">
+      <button class="btn approve" ${isPending?'':'disabled style="opacity:.3"'} onclick="window.approveWithdraw('${path}')">${isPending?'Mark as Paid':'✓ '+st}</button>
+      <button class="btn reject" ${isPending?'':'disabled style="opacity:.3"'} onclick="window.rejectWithdraw('${path}')">${isPending?'Reject & Refund':'Done'}</button>
+      </div></div>`;
     });
     list.innerHTML = html;
   });
 }
-function withdrawItem(path, id, d){
-  const st = (d.status||'pending').toLowerCase();
-  const isPending = st==='pending';
-  return `<div class="item" style="${st==='approved'?'border-left:3px solid var(--green)':st==='rejected'?'border-left:3px solid var(--red)':'border-left:3px solid #FFC107'}"><div class="item-top"><b>$${Number(d.amount||0).toLocaleString()} Withdraw</b><span class="badge ${st}">${st.toUpperCase()}</span></div><small>ID: ${id} | ${d.email||d.uid}</small><small>Address: ${d.address||d.wallet||'-'}</small><small>${new Date(d.timestamp||Date.now()).toLocaleString()} | Balance already deducted at request</small><div class="row-btns"><button class="btn approve" ${isPending?'':'disabled style="opacity:.3"'} onclick="window.approveWithdraw('${path}')">${isPending?'Mark as Paid':'Already '+st}</button><button class="btn reject" ${isPending?'':'disabled style="opacity:.3"'} onclick="window.rejectWithdraw('${path}')">${isPending?'Reject & Refund':'Done'}</button></div></div>`;
-}
 window.approveWithdraw = async (path)=>{
   const snap = await get(ref(db,path));
   const d = snap.val();
-  if(d.status!=='pending') return alert('Already processed');
+  if(!d || d.status!=='pending') return alert('Already '+d.status);
   if(!confirm(`Mark $${d.amount} as PAID to ${d.address}?`)) return;
   await update(ref(db,path),{status:'approved', approvedAt:Date.now()});
-  alert('✅ Marked as paid');
 };
 window.rejectWithdraw = async (path)=>{
   const snap = await get(ref(db,path));
   const d = snap.val();
-  if(d.status!=='pending') return alert('Already processed');
-  if(!confirm(`Reject & REFUND $${d.amount} to ${d.email}?`)) return;
+  if(!d || d.status!=='pending') return alert('Already '+d.status);
+  if(!confirm(`Reject & REFUND $${d.amount} to ${d.email||d.uid}?`)) return;
   const balRef = ref(db,`users/${d.uid}/balance`);
   const balSnap = await get(balRef);
   const cur = Number(balSnap.val()||0);
@@ -275,26 +318,23 @@ window.rejectWithdraw = async (path)=>{
   alert(`↩️ $${d.amount} refunded to balance`);
 };
 
-// NOTIFY ALL - FAST INSTANT (NO LOOP)
+// === NOTIFY - INSTANT ===
 document.getElementById('sendNotifBtn').onclick = async ()=>{
   const title = document.getElementById('notifTitle').value.trim();
   const msg = document.getElementById('notifMsg').value.trim();
   const st = document.getElementById('notifStatus');
   if(!title||!msg){ st.textContent='Fill title & message'; return; }
-  st.textContent='Sending...';
+  st.textContent='Sending instant...';
   try{
-    const payload = { title, message:msg, timestamp:Date.now(), from:'admin', read:false };
-    // Instant: only 2 writes, not loop to every user
+    const payload = { title, message:msg, timestamp:Date.now(), from:'admin' };
     await push(ref(db,'notifications'), payload);
     await push(ref(db,'global_notifications'), payload);
-    st.textContent=`✅ Sent instantly! Users will see it in real-time`;
+    st.textContent='✅ Sent instantly! Users listening to /global_notifications will see it';
     st.style.color='#00E676';
     document.getElementById('notifTitle').value=''; 
     document.getElementById('notifMsg').value='';
-    setTimeout(()=>{ st.textContent=''; st.style.color=''; },3000);
-  }catch(e){
-    st.textContent='❌ Error: '+e.message;
-  }
+    setTimeout(()=>{ st.textContent=''; },4000);
+  }catch(e){ st.textContent='❌ '+e.message; }
 };
 function loadNotifHistory(){
   onValue(ref(db,'notifications'), snap=>{
@@ -308,7 +348,7 @@ function loadNotifHistory(){
   });
 }
 
-// SUPPORT CHAT - BIGGER
+// === SUPPORT - BIGGER ===
 let activeChatUid = null;
 let chatUnsub = null;
 function loadSupportList(){
@@ -321,10 +361,9 @@ function loadSupportList(){
       const user = allUsersData[uid]||{};
       if(q && !uid.toLowerCase().includes(q) && !JSON.stringify(user).toLowerCase().includes(q)) return;
       const last = Object.values(msgs).pop()||{};
-      const unread = Object.values(msgs).filter(m=>m.sender==='user').length;
-      html+=`<div class="chat-user" data-uid="${uid}" onclick="window.openChat('${uid}')"><div style="flex:1"><b style="font-size:13px;display:block">${user.email||uid.slice(0,14)}</b><small style="color:var(--muted)">${(last.text||last.message||'No message').slice(0,35)}</small></div><div style="background:var(--cyan);color:#000;font-size:10px;padding:2px 6px;border-radius:10px;font-weight:800">${unread}</div></div>`;
+      html+=`<div class="chat-user" data-uid="${uid}" onclick="window.openChat('${uid}')"><div style="flex:1"><b style="font-size:13px;display:block">${user.email||uid.slice(0,14)}</b><small style="color:var(--muted)">${(last.text||last.message||'').slice(0,35)}</small></div></div>`;
     });
-    container.innerHTML = html||'<div style="text-align:center;color:var(--muted);padding:20px;">No support chats<br><small>Real-time listening...</small></div>';
+    container.innerHTML = html||'<div style="text-align:center;color:var(--muted);padding:20px;">No chats - listening real-time...</div>';
   });
 }
 document.getElementById('supportSearch').oninput = ()=>loadSupportList();
