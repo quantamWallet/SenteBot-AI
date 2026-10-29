@@ -15,14 +15,25 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: 8.5
-
       - name: Create Android Project
         run: |
           mkdir -p app/src/main/java/com/sentebot/app
+          mkdir -p app/src/main/assets
+          mkdir -p app/src/main/res/mipmap-hdpi
+          mkdir -p app/src/main/res/mipmap-mdpi
+          mkdir -p app/src/main/res/mipmap-xhdpi
+          mkdir -p app/src/main/res/mipmap-xxhdpi
+          mkdir -p app/src/main/res/mipmap-xxxhdpi
+
+          # Copy your web files to assets - CHANGE THIS if your html is in folder
+          cp -r *.html *.js *.css *.json app/src/main/assets/ 2>/dev/null || true
+          cp -r ./*.html app/src/main/assets/ 2>/dev/null || true
+          # If you have a www or dist folder, use that
+          if [ -d "www" ]; then cp -r www/* app/src/main/assets/; fi
+          if [ -d "dist" ]; then cp -r dist/* app/src/main/assets/; fi
+
+          # Make sure index.html exists in assets
+          ls app/src/main/assets/
 
           cat > settings.gradle <<'EOF'
           pluginManagement {
@@ -30,6 +41,13 @@ jobs:
               google()
               mavenCentral()
               gradlePluginPortal()
+            }
+          }
+          dependencyResolutionManagement {
+            repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+            repositories {
+              google()
+              mavenCentral()
             }
           }
           plugins {
@@ -41,58 +59,87 @@ jobs:
           cat > app/build.gradle <<'EOF'
           plugins { id 'com.android.application' }
           android {
-            namespace 'com.sentebot.app'
-            compileSdk 34
-            defaultConfig {
-              applicationId "com.sentebot.app"
-              minSdk 21
-              targetSdk 34
-              versionCode 1
-              versionName "1.0"
-            }
-            compileOptions {
-              sourceCompatibility 17
-              targetCompatibility 17
-            }
+              namespace 'com.sentebot.app'
+              compileSdk 34
+              defaultConfig {
+                  applicationId "com.sentebot.app"
+                  minSdk 24
+                  targetSdk 34
+                  versionCode 9
+                  versionName "1.0.9"
+              }
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_17
+                  targetCompatibility JavaVersion.VERSION_17
+              }
+          }
+          dependencies {
           }
           EOF
 
           cat > app/src/main/AndroidManifest.xml <<'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-            <uses-permission android:name="android.permission.INTERNET" />
-            <application android:allowBackup="true" android:label="SenteBot" android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
-              <activity android:name=".MainActivity" android:exported="true">
-                <intent-filter>
-                  <action android:name="android.intent.action.MAIN" />
-                  <category android:name="android.intent.category.LAUNCHER" />
-                </intent-filter>
-              </activity>
-            </application>
+              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+              <application
+                  android:allowBackup="true"
+                  android:icon="@mipmap/ic_launcher"
+                  android:label="SenteBot Ai"
+                  android:theme="@android:style/Theme.NoTitleBar">
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:configChanges="orientation|keyboardHidden|screenSize">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
           </manifest>
           EOF
 
-          cat > app/src/main/java/com/sentebot/app/MainActivity.java <<'EOF'
-          package com.sentebot.app;
-          import android.app.Activity;
-          import android.os.Bundle;
-          import android.webkit.WebView;
-          import android.webkit.WebViewClient;
-          public class MainActivity extends Activity {
-            protected void onCreate(Bundle b) {
-              super.onCreate(b);
-              WebView w = new WebView(this);
-              w.getSettings().setJavaScriptEnabled(true);
-              w.getSettings().setDomStorageEnabled(true);
-              w.setWebViewClient(new WebViewClient());
-              w.loadUrl("https://quantamwallet.github.io/SenteBot-AI/");
-              setContentView(w);
-            }
+          cat > app/src/main/java/com/sentebot/app/MainActivity.kt <<'EOF'
+          package com.sentebot.app
+          import android.os.Bundle
+          import android.webkit.WebView
+          import android.webkit.WebViewClient
+          import android.webkit.WebSettings
+          import androidx.appcompat.app.AppCompatActivity
+          class MainActivity : AppCompatActivity() {
+              override fun onCreate(savedInstanceState: Bundle?) {
+                  super.onCreate(savedInstanceState)
+                  val webView = WebView(this)
+                  setContentView(webView)
+                  webView.settings.javaScriptEnabled = true
+                  webView.settings.domStorageEnabled = true
+                  webView.settings.allowFileAccess = true
+                  webView.settings.allowContentAccess = true
+                  webView.settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                  webView.webViewClient = WebViewClient()
+                  webView.loadUrl("file:///android_asset/index.html")
+              }
           }
           EOF
 
+          # Create simple icons from your 512 png if present
+          # If you uploaded sentabot_full_512.png to repo root, convert
+          if [ -f "sentabot_full_512.png" ] || [ -f "icon.png" ]; then
+            ICON=$(ls sentabot_full_512.png icon.png 2>/dev/null | head -1)
+            cp $ICON app/src/main/res/mipmap-hdpi/ic_launcher.png
+            cp $ICON app/src/main/res/mipmap-mdpi/ic_launcher.png
+            cp $ICON app/src/main/res/mipmap-xhdpi/ic_launcher.png
+            cp $ICON app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+            cp $ICON app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+          else
+            # fallback blank
+            echo "No icon found, using default"
+          fi
+
       - name: Build APK
-        run: gradle :app:assembleDebug --no-daemon
+        run: |
+          chmod +x gradlew || true
+          gradle :app:assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
