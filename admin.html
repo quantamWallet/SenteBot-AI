@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#050a14">
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}</script>
 <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 :root{--bg:#050A18;--card:#0E1629;--green:#00E676;--cyan:#00D1FF;--red:#EF4444;--text:#F8FAFC;--muted:#94A3B8;--border:rgba(0,209,255,.15);}
 body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),transparent 60%),linear-gradient(180deg,#050A18,#070B14);color:var(--text);min-height:100vh;padding:20px;}
-.container{max-width:540px;margin:auto;}
+.container{max-width:800px;margin:auto;}
 .header{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
 .back-btn{width:46px;height:46px;border-radius:15px;background:rgba(0,209,255,.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;}
 .page-title h2{font-size:22px;font-weight:800;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
@@ -21,22 +21,67 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
 .admin-card{background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));border:1px solid var(--border);border-radius:22px;padding:20px;margin-bottom:16px;backdrop-filter:blur(16px);}
 .admin-card h3{font-size:16px;font-weight:800;margin-bottom:10px;color:var(--green);}
 .admin-card p{font-size:13px;color:var(--muted);margin-bottom:16px;}
-
 .seed-btn{width:100%;background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;border:none;padding:16px;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:.2s;}
 .seed-btn:active{transform:scale(.97);}
 .seed-btn:disabled{opacity:.5;cursor:not-allowed;}
-
 #status{margin-top:14px;font-size:13px;color:var(--muted);text-align:center;min-height:20px;}
+
+/* NEW TABS */
+.tabs{display:flex;gap:8px;overflow-x:auto;margin:20px 0;padding-bottom:8px;}
+.tab{padding:10px 16px;border-radius:12px;background:rgba(0,209,255,.06);border:1px solid var(--border);color:var(--muted);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:.2s;}
+.tab.active{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;border-color:transparent;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+.search{width:100%;padding:12px 14px;border-radius:12px;background:#050A18;border:1px solid var(--border);color:#fff;margin-bottom:12px;outline:none;}
+.item{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:14px;margin-bottom:10px;}
+.item-top{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.item b{font-size:13px;}
+.item small{font-size:11px;color:var(--muted);display:block;margin-top:4px;word-break:break-all;}
+.badge{padding:4px 8px;border-radius:20px;font-size:10px;font-weight:800;}
+.badge.pending{background:rgba(255,193,7,.15);color:#FFC107;}
+.badge.approved{background:rgba(0,230,118,.15);color:var(--green);}
+.badge.rejected{background:rgba(239,68,68,.15);color:var(--red);}
+.row-btns{display:flex;gap:8px;margin-top:10px;}
+.btn{flex:1;padding:9px;border-radius:10px;border:none;font-weight:800;font-size:12px;cursor:pointer;}
+.btn.approve{background:var(--green);color:#000;}
+.btn.reject{background:var(--red);color:#fff;}
+.btn.chat{background:var(--cyan);color:#000;}
+
+.input{width:100%;padding:12px;border-radius:12px;background:#050A18;border:1px solid var(--border);color:#fff;margin-bottom:10px;outline:none;}
+.textarea{width:100%;padding:12px;border-radius:12px;background:#050A18;border:1px solid var(--border);color:#fff;min-height:90px;resize:none;outline:none;margin-bottom:10px;}
+
+/* CHAT */
+.chat-list{max-height:500px;overflow-y:auto;}
+.chat-user{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:12px;background:rgba(255,255,255,.03);margin-bottom:8px;cursor:pointer;border:1px solid transparent;}
+.chat-user:hover{border-color:var(--border);}
+.chat-user.active{border-color:var(--cyan);background:rgba(0,209,255,.08);}
+.chat-box{background:#050A18;border:1px solid var(--border);border-radius:16px;padding:12px;height:380px;display:flex;flex-direction:column;}
+.chat-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.msg{max-width:80%;padding:8px 12px;border-radius:12px;font-size:12px;line-height:1.4;}
+.msg.user{align-self:flex-start;background:rgba(255,255,255,.08);color:#fff;}
+.msg.admin{align-self:flex-end;background:linear-gradient(90deg,var(--cyan),var(--green));color:#000;font-weight:600;}
+.chat-input{display:flex;gap:8px;}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;}
+.stat h4{font-size:18px;color:var(--cyan);}
+.stat small{color:var(--muted);font-size:11px;}
 </style>
 </head>
 <body>
-
 <div class="container">
   <div class="header">
     <div class="back-btn" onclick="window.location='profile.html'"><i class="fa-solid fa-arrow-left"></i></div>
     <div class="page-title"><h2>Admin Panel</h2></div>
   </div>
 
+  <div class="stats-grid">
+    <div class="stat"><h4 id="totalUsers">0</h4><small>USERS</small></div>
+    <div class="stat"><h4 id="totalDeposits">0</h4><small>DEPOSITS</small></div>
+    <div class="stat"><h4 id="totalWithdraws">0</h4><small>WITHDRAWS</small></div>
+  </div>
+
+  <!-- ORIGINAL CARD - NOT TOUCHED -->
   <div class="admin-card">
     <h3><i class="fa-solid fa-database"></i> Machine Seeder</h3>
     <p>This will create 20 machines in Firebase Realtime Database at `/machines`. Run only once.</p>
@@ -44,12 +89,66 @@ body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),tra
     <div id="status"></div>
   </div>
 
+  <div class="tabs">
+    <div class="tab active" data-tab="users"><i class="fa-solid fa-users"></i> Users</div>
+    <div class="tab" data-tab="deposits"><i class="fa-solid fa-arrow-down"></i> Deposits</div>
+    <div class="tab" data-tab="withdraws"><i class="fa-solid fa-arrow-up"></i> Withdrawals</div>
+    <div class="tab" data-tab="notify"><i class="fa-solid fa-bell"></i> Notify All</div>
+    <div class="tab" data-tab="support"><i class="fa-solid fa-headset"></i> Support</div>
+  </div>
+
+  <!-- USERS -->
+  <div class="tab-content active" id="tab-users">
+    <input class="search" id="userSearch" placeholder="Search by email / UID...">
+    <div id="usersList">Loading users...</div>
+  </div>
+
+  <!-- DEPOSITS -->
+  <div class="tab-content" id="tab-deposits">
+    <div id="depositsList">Loading deposits...</div>
+  </div>
+
+  <!-- WITHDRAWALS -->
+  <div class="tab-content" id="tab-withdraws">
+    <div id="withdrawsList">Loading withdrawals...</div>
+  </div>
+
+  <!-- NOTIFY ALL -->
+  <div class="tab-content" id="tab-notify">
+    <div class="admin-card">
+      <h3><i class="fa-solid fa-bullhorn"></i> Send Notification to ALL Users</h3>
+      <input class="input" id="notifTitle" placeholder="Title e.g. System Maintenance">
+      <textarea class="textarea" id="notifMsg" placeholder="Message to all users..."></textarea>
+      <button class="seed-btn" id="sendNotifBtn"><i class="fa-solid fa-paper-plane"></i> Send to All Users</button>
+      <div id="notifStatus" style="margin-top:10px;font-size:12px;color:var(--muted);text-align:center;"></div>
+    </div>
+    <div id="notifHistory"></div>
+  </div>
+
+  <!-- SUPPORT CHAT -->
+  <div class="tab-content" id="tab-support">
+    <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:12px;">
+      <div>
+        <input class="search" id="supportSearch" placeholder="Search support...">
+        <div class="chat-list" id="supportUsers"></div>
+      </div>
+      <div class="chat-box">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Chatting with: <b id="chatWith" style="color:var(--cyan)">Select a user</b></div>
+        <div class="chat-msgs" id="chatMsgs"></div>
+        <div class="chat-input">
+          <input class="input" id="chatInput" placeholder="Type reply..." style="margin:0">
+          <button class="btn chat" id="chatSend" style="width:80px"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, set, get, onValue, push, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
@@ -63,7 +162,6 @@ const firebaseConfig = {
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getDatabase(app);
-
 const ADMIN_UID = "AQ1kRn34wlSGu0MPQfvRLXfmbqA3";
 
 onAuthStateChanged(auth, user=>{
@@ -71,14 +169,15 @@ onAuthStateChanged(auth, user=>{
     window.location.href = "profile.html";
     return;
   }
+  initAdmin();
 });
 
+// === ORIGINAL SEEDER - UNTOUCHED ===
 document.getElementById("seedBtn").onclick = async () => {
   const btn = document.getElementById("seedBtn");
   const status = document.getElementById("status");
   btn.disabled = true;
   status.innerHTML = "⏳ Creating machines...";
-
   const machines=[
     {id:"machine1",name:"Nano AI Miner",category:"Starter",price:20000,dailyProfit:2000,duration:20,totalReturn:60000,icon:"fa-solid fa-microchip"},
     {id:"machine2",name:"Crypto Seed Bot",category:"Starter",price:50000,dailyProfit:5000,duration:20,totalReturn:150000,icon:"fa-solid fa-robot"},
@@ -101,7 +200,6 @@ document.getElementById("seedBtn").onclick = async () => {
     {id:"machine19",name:"Ultimate Hash Pro",category:"High Yield",price:18000000,dailyProfit:1800000,duration:20,totalReturn:54000000,icon:"fa-solid fa-fire"},
     {id:"machine20",name:"SenteBot Supreme X",category:"High Yield",price:20000000,dailyProfit:2000000,duration:20,totalReturn:60000000,icon:"fa-solid fa-rocket"}
   ];
-
   try {
     for (const machine of machines) {
       status.innerHTML = `Creating ${machine.name}...`;
@@ -115,6 +213,164 @@ document.getElementById("seedBtn").onclick = async () => {
     btn.disabled = false;
   }
 };
-</script>
-</body>
-</html>
+
+// === NEW ADMIN LOGIC ===
+function initAdmin(){
+  // Tabs
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.onclick=()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById('tab-'+t.dataset.tab).classList.add('active');
+    }
+  });
+  loadUsers();
+  loadDeposits();
+  loadWithdraws();
+  loadSupportList();
+  loadNotifHistory();
+}
+
+let allUsersData = {};
+function loadUsers(){
+  onValue(ref(db,'users'), snap=>{
+    const data = snap.val()||{};
+    allUsersData = data;
+    document.getElementById('totalUsers').textContent = Object.keys(data).length;
+    renderUsers(data);
+  });
+}
+function renderUsers(data){
+  const q = (document.getElementById('userSearch').value||'').toLowerCase();
+  const list = document.getElementById('usersList');
+  let html='';
+  Object.entries(data).reverse().forEach(([uid,u])=>{
+    if(q && !JSON.stringify(u).toLowerCase().includes(q) && !uid.toLowerCase().includes(q)) return;
+    html+=`<div class="item">
+      <div class="item-top"><b>${u.email||'No email'}</b><span class="badge approved">$${Number(u.balance||0).toLocaleString()}</span></div>
+      <small>UID: ${uid}</small>
+      <small>Phone: ${u.phone||'-'} | Referral: ${u.referralCode||'-'} | Machines: ${u.machines?Object.keys(u.machines).length:0}</small>
+      <div class="row-btns">
+        <button class="btn chat" onclick="window.openChat('${uid}')"><i class="fa-solid fa-message"></i> Chat</button>
+        <button class="btn approve" onclick="window.addBalance('${uid}')"><i class="fa-solid fa-plus"></i> Add Bal</button>
+      </div>
+    </div>`;
+  });
+  list.innerHTML = html || 'No users found';
+}
+document.getElementById('userSearch').oninput = ()=>renderUsers(allUsersData);
+window.addBalance = async (uid)=>{
+  const amt = prompt('Enter amount to add (use negative to deduct):');
+  if(!amt) return;
+  const balRef = ref(db,'users/'+uid+'/balance');
+  const snap = await get(balRef);
+  const cur = Number(snap.val()||0);
+  await set(balRef, cur + Number(amt));
+  alert('Updated');
+};
+
+// DEPOSITS - checks multiple possible paths
+function loadDeposits(){
+  const paths = ['deposits','depositRequests','transactions/deposits'];
+  const container = document.getElementById('depositsList');
+  const checkPath = (i)=>{
+    if(i>=paths.length){ container.innerHTML='No deposits found in /deposits, /depositRequests, /transactions/deposits'; return; }
+    onValue(ref(db,paths[i]), snap=>{
+      const data = snap.val();
+      if(!data){ checkPath(i+1); return; }
+      renderDepositData(data, paths[i]);
+    }, ()=>checkPath(i+1));
+  };
+  checkPath(0);
+}
+function renderDepositData(data, basePath){
+  const list = document.getElementById('depositsList');
+  document.getElementById('totalDeposits').textContent = Object.keys(data).length;
+  let html='';
+  Object.entries(data).reverse().forEach(([id,d])=>{
+    // support nested uid structure
+    if(typeof d==='object' && !d.amount && !d.status){
+      Object.entries(d).forEach(([sid,sub])=>{
+        html+=depositItem(`${basePath}/${id}/${sid}`, sid, sub);
+      });
+    }else{
+      html+=depositItem(`${basePath}/${id}`, id, d);
+    }
+  });
+  list.innerHTML = html;
+}
+function depositItem(path, id, d){
+  const st = (d.status||'pending').toLowerCase();
+  return `<div class="item">
+    <div class="item-top"><b>$${d.amount||0} - ${d.method||d.type||'Deposit'}</b><span class="badge ${st}">${st.toUpperCase()}</span></div>
+    <small>ID: ${id}</small>
+    <small>User: ${d.email||d.uid||'-'} | Tx: ${d.txId||d.transactionId||'-'}</small>
+    <small>${new Date(d.timestamp||d.createdAt||Date.now()).toLocaleString()}</small>
+    <div class="row-btns">
+      <button class="btn approve" onclick="window.approveDeposit('${path}')">Approve</button>
+      <button class="btn reject" onclick="window.rejectDeposit('${path}')">Reject</button>
+    </div>
+  </div>`;
+}
+window.approveDeposit = async (path)=>{
+  if(!confirm('Approve this deposit?')) return;
+  await update(ref(db,path),{status:'approved', approvedAt:Date.now()});
+  // try credit balance if uid exists
+  const snap = await get(ref(db,path));
+  const d = snap.val();
+  if(d && d.uid && d.amount){
+    const balSnap = await get(ref(db,'users/'+d.uid+'/balance'));
+    const cur = Number(balSnap.val()||0);
+    await set(ref(db,'users/'+d.uid+'/balance'), cur+Number(d.amount));
+  }
+  alert('Approved & credited');
+};
+window.rejectDeposit = async (path)=>{
+  if(!confirm('Reject this deposit?')) return;
+  await update(ref(db,path),{status:'rejected'});
+};
+
+// WITHDRAWALS
+function loadWithdraws(){
+  const paths = ['withdrawals','withdrawalRequests','transactions/withdrawals'];
+  const container = document.getElementById('withdrawsList');
+  const checkPath = (i)=>{
+    if(i>=paths.length){ container.innerHTML='No withdrawals found'; return; }
+    onValue(ref(db,paths[i]), snap=>{
+      const data = snap.val();
+      if(!data){ checkPath(i+1); return; }
+      renderWithdrawData(data, paths[i]);
+    }, ()=>checkPath(i+1));
+  };
+  checkPath(0);
+}
+function renderWithdrawData(data, basePath){
+  const list = document.getElementById('withdrawsList');
+  document.getElementById('totalWithdraws').textContent = Object.keys(data).length;
+  let html='';
+  Object.entries(data).reverse().forEach(([id,d])=>{
+    if(typeof d==='object' && !d.amount && !d.status){
+      Object.entries(d).forEach(([sid,sub])=>{
+        html+=withdrawItem(`${basePath}/${id}/${sid}`, sid, sub);
+      });
+    }else{
+      html+=withdrawItem(`${basePath}/${id}`, id, d);
+    }
+  });
+  list.innerHTML = html;
+}
+function withdrawItem(path, id, d){
+  const st = (d.status||'pending').toLowerCase();
+  return `<div class="item">
+    <div class="item-top"><b>$${d.amount||0} - ${d.method||'Withdraw'}</b><span class="badge ${st}">${st.toUpperCase()}</span></div>
+    <small>ID: ${id}</small>
+    <small>User: ${d.email||d.uid||'-'} | Address: ${d.address||d.wallet||'-'}</small>
+    <small>${new Date(d.timestamp||d.createdAt||Date.now()).toLocaleString()}</small>
+    <div class="row-btns">
+      <button class="btn approve" onclick="window.approveWithdraw('${path}')">Approve</button>
+      <button class="btn reject" onclick="window.rejectWithdraw('${path}')">Reject</button>
+    </div>
+  </div>`;
+}
+window.approveWithdraw
