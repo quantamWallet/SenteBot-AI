@@ -1,0 +1,10 @@
+name: Build SenteBot APK
+
+on: [push, workflow_dispatch]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test workflow
+        run: echo "GitHub Actions workflow is working"
