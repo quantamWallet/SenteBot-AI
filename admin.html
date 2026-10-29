@@ -5,88 +5,74 @@
 <meta name="theme-color" content="#050a14">
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}</script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SenteBot Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SenteBot Admin - FIXED SYNC</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
-:root{--bg:#050A18;--card:#0E1629;--green:#00E676;--cyan:#00D1FF;--red:#EF4444;--text:#F8FAFC;--muted:#94A3B8;--border:rgba(0,209,255,.15);}
-body{background:radial-gradient(1200px 600px at 50% -20%,rgba(0,209,255,.12),transparent 60%),linear-gradient(180deg,#050A18,#070B14);color:var(--text);min-height:100vh;padding:20px;}
+:root{--green:#00E676;--cyan:#00D1FF;--red:#EF4444;--muted:#94A3B8;--border:rgba(0,209,255,.15);}
+body{background:#050A18;color:#fff;min-height:100vh;padding:20px;}
 .container{max-width:1000px;margin:auto;}
-.header{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
-.back-btn{width:46px;height:46px;border-radius:15px;background:rgba(0,209,255,.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;}
-.page-title h2{font-size:22px;font-weight:800;background:linear-gradient(90deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.admin-card{background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));border:1px solid var(--border);border-radius:22px;padding:20px;margin-bottom:16px;backdrop-filter:blur(16px);}
-.admin-card h3{font-size:16px;font-weight:800;margin-bottom:10px;color:var(--green);}
-.admin-card p{font-size:13px;color:var(--muted);margin-bottom:16px;}
-.seed-btn{width:100%;background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;border:none;padding:16px;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:.3s;}
-.seed-btn:disabled{background:#1a2332;color:var(--muted);cursor:not-allowed;opacity:.6;}
-#status{margin-top:14px;font-size:13px;color:var(--muted);text-align:center;min-height:20px;}
-.tabs{display:flex;gap:8px;overflow-x:auto;margin:20px 0;padding-bottom:8px;}
-.tab{padding:10px 16px;border-radius:12px;background:rgba(0,209,255,.06);border:1px solid var(--border);color:var(--muted);font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;}
-.tab.active{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;border-color:transparent;}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.back-btn{width:44px;height:44px;border-radius:12px;background:rgba(0,209,255,.08);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.page-title h2{font-size:20px;font-weight:800;}
+.admin-card{background:linear-gradient(180deg,#14243e,#0e1629);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:14px;}
+.seed-btn{width:100%;background:linear-gradient(90deg,var(--cyan),var(--green));color:#000;border:none;padding:14px;border-radius:12px;font-weight:800;cursor:pointer;}
+.seed-btn:disabled{background:#1a2332;color:var(--muted);opacity:.6;}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin:16px 0;}
+.tab{padding:9px 14px;border-radius:10px;background:rgba(0,209,255,.06);border:1px solid var(--border);color:var(--muted);font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap;}
+.tab.active{background:linear-gradient(90deg,var(--cyan),var(--green));color:#000;}
 .tab-content{display:none;}
 .tab-content.active{display:block;}
-.search{width:100%;padding:12px 14px;border-radius:12px;background:#050A18;border:1px solid var(--border);color:#fff;margin-bottom:12px;outline:none;}
-.item{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:14px;margin-bottom:10px;}
-.item-top{display:flex;justify-content:space-between;align-items:center;gap:10px;}
-.item b{font-size:13px;}
-.item small{font-size:11px;color:var(--muted);display:block;margin-top:4px;word-break:break-all;}
-.badge{padding:4px 8px;border-radius:20px;font-size:10px;font-weight:800;}
+.search{width:100%;padding:11px;border-radius:10px;background:#050A18;border:1px solid var(--border);color:#fff;margin-bottom:10px;outline:none;}
+.item{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:12px;margin-bottom:8px;}
+.badge{padding:3px 7px;border-radius:12px;font-size:10px;font-weight:800;}
 .badge.pending{background:rgba(255,193,7,.15);color:#FFC107;}
 .badge.approved{background:rgba(0,230,118,.15);color:var(--green);}
 .badge.rejected{background:rgba(239,68,68,.15);color:var(--red);}
-.row-btns{display:flex;gap:8px;margin-top:10px;}
-.btn{flex:1;padding:9px;border-radius:10px;border:none;font-weight:800;font-size:12px;cursor:pointer;}
+.row-btns{display:flex;gap:6px;margin-top:8px;}
+.btn{flex:1;padding:8px;border-radius:8px;border:none;font-weight:800;font-size:11px;cursor:pointer;}
 .btn.approve{background:var(--green);color:#000;}
 .btn.reject{background:var(--red);color:#fff;}
 .btn.chat{background:var(--cyan);color:#000;}
-.input{width:100%;padding:12px;border-radius:12px;background:#050A18;border:1px solid var(--border);color:#fff;margin-bottom:10px;outline:none;}
-.textarea{width:100%;padding:12px;border-radius:12px;background:#050A18;border:1px solid var(--border);color:#fff;min-height:90px;resize:none;outline:none;margin-bottom:10px;}
-.support-wrap{display:grid;grid-template-columns:320px 1fr;gap:16px;height:75vh;}
-.chat-list{height:100%;overflow-y:auto;background:rgba(0,0,0,.2);border-radius:16px;padding:8px;border:1px solid var(--border);}
-.chat-user{display:flex;justify-content:space-between;align-items:center;padding:14px;border-radius:12px;background:rgba(255,255,255,.03);margin-bottom:8px;cursor:pointer;border:1px solid transparent;}
-.chat-user:hover{border-color:var(--border);}
+.input{width:100%;padding:11px;border-radius:10px;background:#050A18;border:1px solid var(--border);color:#fff;margin-bottom:8px;outline:none;}
+.textarea{width:100%;padding:11px;border-radius:10px;background:#050A18;border:1px solid var(--border);color:#fff;min-height:80px;outline:none;margin-bottom:8px;}
+.support-wrap{display:grid;grid-template-columns:300px 1fr;gap:12px;height:70vh;}
+.chat-list{height:100%;overflow-y:auto;background:rgba(0,0,0,.2);border-radius:14px;padding:6px;border:1px solid var(--border);}
+.chat-user{padding:12px;border-radius:10px;background:rgba(255,255,255,.03);margin-bottom:6px;cursor:pointer;border:1px solid transparent;}
 .chat-user.active{border-color:var(--cyan);background:rgba(0,209,255,.1);}
-.chat-box{background:#050A18;border:1px solid var(--border);border-radius:18px;padding:16px;height:100%;display:flex;flex-direction:column;}
-.chat-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:12px;padding:8px;}
-.msg{max-width:78%;padding:12px 16px;border-radius:18px;font-size:13px;line-height:1.5;}
-.msg.user{align-self:flex-start;background:rgba(255,255,255,.1);color:#fff;border-bottom-left-radius:4px;}
-.msg.admin{align-self:flex-end;background:linear-gradient(90deg,var(--cyan),var(--green));color:#000;font-weight:600;border-bottom-right-radius:4px;}
-.chat-input{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.05);padding:8px;border-radius:14px;}
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;}
-.stat h4{font-size:18px;color:var(--cyan);}
-.stat small{color:var(--muted);font-size:11px;}
-@media(max-width:700px){.support-wrap{grid-template-columns:1fr;height:auto;}.chat-list{max-height:250px;}.chat-box{height:65vh;}}
+.chat-box{background:#050A18;border:1px solid var(--border);border-radius:14px;padding:12px;height:100%;display:flex;flex-direction:column;}
+.chat-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.msg{max-width:78%;padding:10px 14px;border-radius:14px;font-size:12px;}
+.msg.user{align-self:flex-start;background:rgba(255,255,255,.1);}
+.msg.admin{align-self:flex-end;background:linear-gradient(90deg,var(--cyan),var(--green));color:#000;font-weight:600;}
+.chat-input{display:flex;gap:8px;background:rgba(255,255,255,.05);padding:6px;border-radius:10px;}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.stat{background:#0e1629;border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;}
+.stat h4{font-size:16px;color:var(--cyan);}
+@media(max-width:700px){.support-wrap{grid-template-columns:1fr;height:auto;}.chat-box{height:60vh;}}
 </style>
 </head>
 <body>
 <div class="container">
-<div class="header"><div class="back-btn" onclick="window.location='profile.html'"><i class="fa-solid fa-arrow-left"></i></div><div class="page-title"><h2>Admin Panel - LIVE SYNC</h2></div></div>
+<div class="header"><div class="back-btn" onclick="location='profile.html'"><i class="fa-solid fa-arrow-left"></i></div><div class="page-title"><h2>Admin - REAL-TIME FIXED</h2></div></div>
 <div class="stats-grid"><div class="stat"><h4 id="totalUsers">0</h4><small>USERS</small></div><div class="stat"><h4 id="totalDeposits">0</h4><small>DEPOSITS</small></div><div class="stat"><h4 id="totalWithdraws">0</h4><small>WITHDRAWS</small></div></div>
-<div class="admin-card" id="machineCard"><h3><i class="fa-solid fa-database"></i> Machine Seeder</h3><p id="machineInfo">Checking machines...</p><button class="seed-btn" id="seedBtn"><i class="fa-solid fa-rocket"></i> Create 20 Machines</button><div id="status"></div></div>
+<div class="admin-card" id="machineCard"><h3><i class="fa-solid fa-database"></i> Machine Seeder</h3><p id="machineInfo">Checking...</p><button class="seed-btn" id="seedBtn">Create 20 Machines</button><div id="status" style="font-size:12px;text-align:center;margin-top:8px;color:var(--muted)"></div></div>
 <div class="tabs">
-<div class="tab active" data-tab="users"><i class="fa-solid fa-users"></i> Users</div>
-<div class="tab" data-tab="deposits"><i class="fa-solid fa-arrow-down"></i> Deposits</div>
-<div class="tab" data-tab="withdraws"><i class="fa-solid fa-arrow-up"></i> Withdrawals</div>
-<div class="tab" data-tab="notify"><i class="fa-solid fa-bell"></i> Notify All</div>
-<div class="tab" data-tab="support"><i class="fa-solid fa-headset"></i> Support</div>
+<div class="tab active" data-tab="users">Users</div>
+<div class="tab" data-tab="deposits">Deposits</div>
+<div class="tab" data-tab="withdraws">Withdrawals</div>
+<div class="tab" data-tab="notify">Notify</div>
+<div class="tab" data-tab="support">Support Chat - BIG</div>
 </div>
-<div class="tab-content active" id="tab-users"><input class="search" id="userSearch" placeholder="Search by email / UID..."><div id="usersList">Listening real-time...</div></div>
-<div class="tab-content" id="tab-deposits"><div id="depositsList">Syncing with Firebase real-time...</div></div>
-<div class="tab-content" id="tab-withdraws"><div id="withdrawsList">Syncing with Firebase real-time...</div></div>
-<div class="tab-content" id="tab-notify">
-<div class="admin-card"><h3><i class="fa-solid fa-bullhorn"></i> Send Notification to ALL Users (Instant)</h3><input class="input" id="notifTitle" placeholder="Title"><textarea class="textarea" id="notifMsg" placeholder="Message..."></textarea><button class="seed-btn" id="sendNotifBtn"><i class="fa-solid fa-paper-plane"></i> Send Instant</button><div id="notifStatus" style="margin-top:10px;font-size:12px;color:var(--muted);text-align:center;"></div></div><div id="notifHistory"></div>
+<div class="tab-content active" id="tab-users"><input class="search" id="userSearch" placeholder="Search email/UID"><div id="usersList">Loading...</div></div>
+<div class="tab-content" id="tab-deposits"><div id="debugDeposits" style="font-size:10px;color:var(--muted);margin-bottom:6px"></div><div id="depositsList">Syncing...</div></div>
+<div class="tab-content" id="tab-withdraws"><div id="debugWithdraws" style="font-size:10px;color:var(--muted);margin-bottom:6px"></div><div id="withdrawsList">Syncing...</div></div>
+<div class="tab-content" id="tab-notify"><div class="admin-card"><h3>Notify All - Instant</h3><input class="input" id="notifTitle" placeholder="Title"><textarea class="textarea" id="notifMsg" placeholder="Message"></textarea><button class="seed-btn" id="sendNotifBtn">Send Instant</button><div id="notifStatus" style="text-align:center;margin-top:8px;font-size:12px"></div></div><div id="notifHistory"></div></div>
+<div class="tab-content" id="tab-support"><div class="support-wrap"><div><input class="search" id="supportSearch" placeholder="Search"><div class="chat-list" id="supportUsers"></div></div><div class="chat-box"><div style="font-size:11px;color:var(--muted);margin-bottom:6px">Chatting with: <b id="chatWith" style="color:var(--cyan)">Select user</b></div><div class="chat-msgs" id="chatMsgs"></div><div class="chat-input"><input class="input" id="chatInput" placeholder="Reply..." style="margin:0;border:none;background:transparent"><button class="btn chat" id="chatSend" style="width:70px">Send</button></div></div></div></div>
 </div>
-<div class="tab-content" id="tab-support">
-<div class="support-wrap">
-<div><input class="search" id="supportSearch" placeholder="Search support..."><div class="chat-list" id="supportUsers"></div></div>
-<div class="chat-box"><div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Chatting with: <b id="chatWith" style="color:var(--cyan)">Select a user</b></div><div class="chat-msgs" id="chatMsgs"></div><div class="chat-input"><input class="input" id="chatInput" placeholder="Type reply..." style="margin:0;border:none;background:transparent"><button class="btn chat" id="chatSend" style="width:80px"><i class="fa-solid fa-paper-plane"></i></button></div></div>
-</div>
-</div>
-</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -103,37 +89,24 @@ const firebaseConfig = {
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getDatabase(app);
-const ADMIN_UID = "AQ1kRn34wlSGu0MPQfvRLXfmbqA3";
-onAuthStateChanged(auth, user=>{
-  if(!user || user.uid !== ADMIN_UID){ window.location.href = "profile.html"; return; }
-  initAdmin();
-  checkMachines();
+const ADMIN_UID="AQ1kRn34wlSGu0MPQfvRLXfmbqA3";
+onAuthStateChanged(auth,u=>{
+  if(!u||u.uid!==ADMIN_UID){location='profile.html';return;}
+  initAdmin(); checkMachines();
 });
 function checkMachines(){
-  onValue(ref(db,'machines'), snap=>{
-    const data = snap.val()||{};
-    const count = Object.keys(data).length;
-    const btn = document.getElementById('seedBtn');
-    const info = document.getElementById('machineInfo');
-    if(count>=20){
-      btn.disabled=true;
-      btn.innerHTML=`<i class="fa-solid fa-check"></i> Machines Already Created (${count})`;
-      info.textContent=`✅ ${count} machines already exist in /machines - Seeder disabled`;
-      info.style.color='#00E676';
-      document.getElementById('status').textContent='Seeder locked - machines exist';
-    } else if(count>0){
-      info.textContent=`⚠️ Found ${count}/20 machines - You can recreate`;
-    } else {
-      info.textContent='This will create 20 machines at /machines. Run only once.';
-    }
+  onValue(ref(db,'machines'),s=>{
+    const c=Object.keys(s.val()||{}).length;
+    const b=document.getElementById('seedBtn');
+    const i=document.getElementById('machineInfo');
+    if(c>=20){b.disabled=true;b.innerHTML=`✅ Machines Exist (${c})`;i.textContent=`${c} machines found - disabled`;}
+    else i.textContent=`Found ${c}/20 machines`;
   });
 }
-document.getElementById("seedBtn").onclick = async () => {
-  const btn = document.getElementById("seedBtn");
-  const status = document.getElementById("status");
-  btn.disabled = true;
-  status.innerHTML = "⏳ Creating machines...";
-  const machines=[
+document.getElementById("seedBtn").onclick=async()=>{
+  const btn=document.getElementById("seedBtn");const st=document.getElementById("status");
+  btn.disabled=true;st.textContent="Creating...";
+  const m=[
     {id:"machine1",name:"Nano AI Miner",category:"Starter",price:20000,dailyProfit:2000,duration:20,totalReturn:60000,icon:"fa-solid fa-microchip"},
     {id:"machine2",name:"Crypto Seed Bot",category:"Starter",price:50000,dailyProfit:5000,duration:20,totalReturn:150000,icon:"fa-solid fa-robot"},
     {id:"machine3",name:"Quantum Mini",category:"Starter",price:100000,dailyProfit:10000,duration:20,totalReturn:300000,icon:"fa-solid fa-brain"},
@@ -155,17 +128,8 @@ document.getElementById("seedBtn").onclick = async () => {
     {id:"machine19",name:"Ultimate Hash Pro",category:"High Yield",price:18000000,dailyProfit:1800000,duration:20,totalReturn:54000000,icon:"fa-solid fa-fire"},
     {id:"machine20",name:"SenteBot Supreme X",category:"High Yield",price:20000000,dailyProfit:2000000,duration:20,totalReturn:60000000,icon:"fa-solid fa-rocket"}
   ];
-  try {
-    for (const machine of machines) {
-      status.innerHTML = `Creating ${machine.name}...`;
-      await set(ref(db, "machines/" + machine.id), machine);
-    }
-    status.innerHTML = "✅ Successfully created all 20 machines.";
-    btn.innerHTML = `<i class="fa-solid fa-check"></i> Done - 20 Machines Created`;
-  } catch (e) {
-    status.innerHTML = "❌ Error: " + e.message;
-    btn.disabled = false;
-  }
+  for(const x of m){await set(ref(db,"machines/"+x.id),x);}
+  st.textContent="✅ Done";btn.innerHTML="✅ Done";
 };
 function initAdmin(){
   document.querySelectorAll('.tab').forEach(t=>{
@@ -178,254 +142,264 @@ function initAdmin(){
   });
   loadUsers(); loadDeposits(); loadWithdraws(); loadSupportList(); loadNotifHistory();
 }
-let allUsersData = {};
+let allUsersData={};
+let allDeposits=[], allWithdraws=[];
 function loadUsers(){
   onValue(ref(db,'users'), snap=>{
-    const data = snap.val()||{};
-    allUsersData = data;
-    document.getElementById('totalUsers').textContent = Object.keys(data).length;
+    const data=snap.val()||{};
+    allUsersData=data;
+    document.getElementById('totalUsers').textContent=Object.keys(data).length;
     renderUsers(data);
+    // Also extract deposits/withdrawals from users node
+    extractFromUsers(data);
   });
 }
+function extractFromUsers(users){
+  let d=[],w=[];
+  Object.entries(users).forEach(([uid,u])=>{
+    if(u.deposits){
+      Object.entries(u.deposits).forEach(([id,val])=>{
+        if(val && val.amount) d.push({path:`users/${uid}/deposits/${id}`,id,data:{...val,uid,email:val.email||u.email}});
+      });
+    }
+    if(u.depositRequests){
+      Object.entries(u.depositRequests).forEach(([id,val])=>{
+        if(val && val.amount) d.push({path:`users/${uid}/depositRequests/${id}`,id,data:{...val,uid,email:val.email||u.email}});
+      });
+    }
+    if(u.withdrawals){
+      Object.entries(u.withdrawals).forEach(([id,val])=>{
+        if(val && val.amount) w.push({path:`users/${uid}/withdrawals/${id}`,id,data:{...val,uid,email:val.email||u.email}});
+      });
+    }
+  });
+  // merge with root deposits
+  renderDepositsCombined();
+  renderWithdrawsCombined();
+  // store temp for merging
+  window._userDeposits=d;
+  window._userWithdraws=w;
+}
 function renderUsers(data){
-  const q = (document.getElementById('userSearch').value||'').toLowerCase();
-  const list = document.getElementById('usersList');
+  const q=(document.getElementById('userSearch').value||'').toLowerCase();
+  const list=document.getElementById('usersList');
   let html='';
   Object.entries(data).reverse().forEach(([uid,u])=>{
     if(q && !JSON.stringify(u).toLowerCase().includes(q) && !uid.toLowerCase().includes(q)) return;
-    html+=`<div class="item"><div class="item-top"><b>${u.email||'No email'}</b><span class="badge approved">$${Number(u.balance||0).toLocaleString()}</span></div><small>UID: ${uid}</small><small>Bal: ${u.balance||0}</small><div class="row-btns"><button class="btn chat" onclick="window.openChat('${uid}')"><i class="fa-solid fa-message"></i> Chat</button><button class="btn approve" onclick="window.addBalance('${uid}')"><i class="fa-solid fa-plus"></i> Add Bal</button></div></div>`;
+    html+=`<div class="item"><div style="display:flex;justify-content:space-between"><b>${u.email||'No email'}</b><span class="badge approved">$${Number(u.balance||0).toLocaleString()}</span></div><small>UID:${uid}</small><div class="row-btns"><button class="btn chat" onclick="openChat('${uid}')">Chat</button><button class="btn approve" onclick="addBalance('${uid}')">Add Bal</button></div></div>`;
   });
-  list.innerHTML = html || '<div style="text-align:center;color:var(--muted);padding:20px;">No users yet</div>';
+  list.innerHTML=html||'No users';
 }
-document.getElementById('userSearch').oninput = ()=>renderUsers(allUsersData);
-window.addBalance = async (uid)=>{
-  const amt = prompt('Enter amount to add (negative to deduct):'); if(!amt) return;
-  const balRef = ref(db,'users/'+uid+'/balance');
-  const snap = await get(balRef);
-  const cur = Number(snap.val()||0);
-  await set(balRef, cur + Number(amt));
+document.getElementById('userSearch').oninput=()=>renderUsers(allUsersData);
+window.addBalance=async(uid)=>{
+  const amt=prompt('Amount (+/-):'); if(!amt) return;
+  const br=ref(db,`users/${uid}/balance`);
+  const s=await get(br);
+  await set(br, Number(s.val()||0)+Number(amt));
   alert('Updated');
 };
 
-  // === DEPOSITS - PENDING TOP, APPROVED BOTTOM + HISTORY ===
-function flattenDeposits(data){
-  const out=[];
-  if(!data) return out;
-  Object.entries(data).forEach(([k1,v1])=>{
-    if(!v1 || typeof v1!=='object') return;
-    if(v1.amount!==undefined){
-      out.push({ path:`deposits/${k1}`, id:k1, data:v1 });
-    } else {
-      Object.entries(v1).forEach(([k2,v2])=>{
-        if(v2 && typeof v2==='object' && v2.amount!==undefined){
-          out.push({ path:`deposits/${k1}/${k2}`, id:k2, data:v2 });
-        }
-      });
-    }
-  });
-  return out;
-}
+// DEPOSITS - MULTI SOURCE REALTIME
 function loadDeposits(){
   onValue(ref(db,'deposits'), snap=>{
-    const raw = snap.val()||{};
-    const flat = flattenDeposits(raw);
-    const list = document.getElementById('depositsList');
-    document.getElementById('totalDeposits').textContent = flat.length;
-    if(flat.length===0){
-      list.innerHTML='<div style="text-align:center;color:var(--muted);padding:30px;"><i class="fa-solid fa-inbox" style="font-size:30px;display:block;margin-bottom:10px"></i>No deposits yet<br><small>Real-time listening...</small></div>';
-      return;
-    }
-    // Sort: pending first (newest), then approved/rejected bottom
-    flat.sort((a,b)=>{
-      const sa = (a.data.status||'pending').toLowerCase();
-      const sb = (b.data.status||'pending').toLowerCase();
-      const pa = sa==='pending'?0:1;
-      const pb = sb==='pending'?0:1;
-      if(pa!==pb) return pa-pb;
-      return (b.data.timestamp||0)-(a.data.timestamp||0);
+    const raw=snap.val()||{};
+    document.getElementById('debugDeposits').textContent=`Root /deposits keys:${Object.keys(raw).length} | Raw:${JSON.stringify(raw).slice(0,100)}`;
+    const flat=[];
+    Object.entries(raw).forEach(([k1,v1])=>{
+      if(!v1) return;
+      if(v1.amount!==undefined){
+        flat.push({path:`deposits/${k1}`,id:k1,data:v1});
+      } else if(typeof v1==='object'){
+        Object.entries(v1).forEach(([k2,v2])=>{
+          if(v2 && v2.amount!==undefined) flat.push({path:`deposits/${k1}/${k2}`,id:k2,data:{...v2,uid:v2.uid||k1}});
+        });
+      }
     });
-    let html='<div style="margin-bottom:10px;font-size:11px;color:var(--muted)">Pending on top, History at bottom</div>';
-    flat.forEach(({path,id,data})=>{
-      const st = (data.status||'pending').toLowerCase();
-      const isPending = st==='pending';
-      html+=`<div class="item" style="${st==='approved'?'border-left:3px solid var(--green);opacity:.7':st==='rejected'?'border-left:3px solid var(--red);opacity:.7':'border-left:3px solid #FFC107'}">
-      <div class="item-top"><b>$${Number(data.amount||0).toLocaleString()}</b><span class="badge ${st}">${st.toUpperCase()}</span></div>
-      <small>ID: ${id} | User: ${data.email||data.uid}</small><small>${new Date(data.timestamp||Date.now()).toLocaleString()}</small>
-      <div class="row-btns">
-      <button class="btn approve" ${isPending?'':'disabled style="opacity:.3"'} onclick="window.approveDeposit('${path}')">${isPending?'Approve & Add Balance':'✓ '+st}</button>
-      <button class="btn reject" ${isPending?'':'disabled style="opacity:.3"'} onclick="window.rejectDeposit('${path}')">${isPending?'Reject':'Done'}</button>
-      </div></div>`;
-    });
-    list.innerHTML = html;
+    window._rootDeposits=flat;
+    renderDepositsCombined();
   });
 }
-window.approveDeposit = async (path)=>{
-  const snap = await get(ref(db,path));
-  const d = snap.val();
-  if(!d || d.status!=='pending') return alert('Already '+d.status);
+function renderDepositsCombined(){
+  const root=window._rootDeposits||[];
+  const user=window._userDeposits||[];
+  const combined=[...root,...user];
+  // dedupe by id+amount
+  const seen=new Set();
+  const uniq=[];
+  combined.forEach(x=>{
+    const key=x.path;
+    if(!seen.has(key)){seen.add(key);uniq.push(x);}
+  });
+  uniq.sort((a,b)=>{
+    const sa=(a.data.status||'pending').toLowerCase();
+    const sb=(b.data.status||'pending').toLowerCase();
+    const pa=sa==='pending'?0:1;
+    const pb=sb==='pending'?0:1;
+    if(pa!==pb) return pa-pb;
+    return (b.data.timestamp||b.data.createdAt||0)-(a.data.timestamp||a.data.createdAt||0);
+  });
+  allDeposits=uniq;
+  document.getElementById('totalDeposits').textContent=uniq.length;
+  const list=document.getElementById('depositsList');
+  if(uniq.length===0){list.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted)">No deposits yet - listening to /deposits AND users/*/deposits real-time<br><small>If you just deposited, check Firebase console if it saved under users node</small></div>';return;}
+  let html='<div style="font-size:10px;color:var(--muted);margin-bottom:6px">Pending on top - History bottom | Total:'+uniq.length+'</div>';
+  uniq.forEach(({path,id,data})=>{
+    const st=(data.status||'pending').toLowerCase();
+    const pending=st==='pending';
+    html+=`<div class="item" style="border-left:3px solid ${st==='approved'?'var(--green)':st==='rejected'?'var(--red)':'#FFC107'};${pending?'':'opacity:.6'}"><div style="display:flex;justify-content:space-between"><b>$${Number(data.amount||0).toLocaleString()}</b><span class="badge ${st}">${st.toUpperCase()}</span></div><small>ID:${id}</small><small>User:${data.email||data.uid||'--'}</small><small>${new Date(data.timestamp||data.createdAt||Date.now()).toLocaleString()}</small><small style="color:var(--cyan)">${path}</small><div class="row-btns"><button class="btn approve" ${pending?'':'disabled'} onclick="approveDeposit('${path}')">Approve & Add</button><button class="btn reject" ${pending?'':'disabled'} onclick="rejectDeposit('${path}')">Reject</button></div></div>`;
+  });
+  list.innerHTML=html;
+}
+window.approveDeposit=async(path)=>{
+  const s=await get(ref(db,path)); const d=s.val();
+  if(!d||d.status!=='pending') return alert('Already '+d.status);
   if(!confirm(`Approve $${d.amount}?`)) return;
-  await update(ref(db,path),{status:'approved', approvedAt:Date.now()});
-  const balRef = ref(db,`users/${d.uid}/balance`);
-  const balSnap = await get(balRef);
-  const cur = Number(balSnap.val()||0);
-  await set(balRef, cur + Number(d.amount));
-  alert(`✅ Approved & added`);
+  await update(ref(db,path),{status:'approved',approvedAt:Date.now()});
+  const br=ref(db,`users/${d.uid}/balance`);
+  const cur=await get(br);
+  await set(br, Number(cur.val()||0)+Number(d.amount));
+  alert('✅ Approved & credited');
 };
-window.rejectDeposit = async (path)=>{
-  const snap = await get(ref(db,path));
-  const d = snap.val();
+window.rejectDeposit=async(path)=>{
+  const s=await get(ref(db,path)); const d=s.val();
   if(d.status!=='pending') return alert('Already '+d.status);
   if(!confirm('Reject?')) return;
-  await update(ref(db,path),{status:'rejected', rejectedAt:Date.now()});
+  await update(ref(db,path),{status:'rejected',rejectedAt:Date.now()});
 };
 
-// === WITHDRAWALS - PENDING TOP, HISTORY BOTTOM ===
-function flattenWithdraws(data){
-  const out=[];
-  if(!data) return out;
-  Object.entries(data).forEach(([k1,v1])=>{
-    if(!v1 || typeof v1!=='object') return;
-    if(v1.amount!==undefined){
-      out.push({ path:`withdrawals/${k1}`, id:k1, data:v1 });
-    } else {
-      Object.entries(v1).forEach(([k2,v2])=>{
-        if(v2 && typeof v2==='object' && v2.amount!==undefined){
-          out.push({ path:`withdrawals/${k1}/${k2}`, id:k2, data:v2 });
-        }
-      });
-    }
-  });
-  return out;
-}
+// WITHDRAWALS - MULTI SOURCE
 function loadWithdraws(){
   onValue(ref(db,'withdrawals'), snap=>{
-    const raw = snap.val()||{};
-    const flat = flattenWithdraws(raw);
-    const list = document.getElementById('withdrawsList');
-    document.getElementById('totalWithdraws').textContent = flat.length;
-    if(flat.length===0){
-      list.innerHTML='<div style="text-align:center;color:var(--muted);padding:30px;">No withdrawals yet<br><small>Real-time listening...</small></div>';
-      return;
-    }
-    flat.sort((a,b)=>{
-      const sa = (a.data.status||'pending').toLowerCase();
-      const sb = (b.data.status||'pending').toLowerCase();
-      const pa = sa==='pending'?0:1;
-      const pb = sb==='pending'?0:1;
-      if(pa!==pb) return pa-pb;
-      return (b.data.timestamp||0)-(a.data.timestamp||0);
+    const raw=snap.val()||{};
+    document.getElementById('debugWithdraws').textContent=`Root /withdrawals keys:${Object.keys(raw).length}`;
+    const flat=[];
+    Object.entries(raw).forEach(([k1,v1])=>{
+      if(!v1) return;
+      if(v1.amount!==undefined) flat.push({path:`withdrawals/${k1}`,id:k1,data:v1});
+      else if(typeof v1==='object'){
+        Object.entries(v1).forEach(([k2,v2])=>{
+          if(v2 && v2.amount!==undefined) flat.push({path:`withdrawals/${k1}/${k2}`,id:k2,data:{...v2,uid:v2.uid||k1}});
+        });
+      }
     });
-    let html='<div style="margin-bottom:10px;font-size:11px;color:var(--muted)">⚡ Pending withdrawals on top, paid history at bottom</div>';
-    flat.forEach(({path,id,data})=>{
-      const st = (data.status||'pending').toLowerCase();
-      const isPending = st==='pending';
-      html+=`<div class="item" style="${st==='approved'?'border-left:3px solid var(--green);opacity:.7':st==='rejected'?'border-left:3px solid var(--red);opacity:.7':'border-left:3px solid #FFC107'}">
-      <div class="item-top"><b>$${Number(data.amount||0).toLocaleString()}</b><span class="badge ${st}">${st.toUpperCase()}</span></div>
-      <small>ID: ${id} | ${data.email||data.uid}</small><small>Wallet: ${data.address||data.wallet||'-'}</small><small>${new Date(data.timestamp||Date.now()).toLocaleString()}</small>
-      <div class="row-btns">
-      <button class="btn approve" ${isPending?'':'disabled style="opacity:.3"'} onclick="window.approveWithdraw('${path}')">${isPending?'Mark as Paid':'✓ '+st}</button>
-      <button class="btn reject" ${isPending?'':'disabled style="opacity:.3"'} onclick="window.rejectWithdraw('${path}')">${isPending?'Reject & Refund':'Done'}</button>
-      </div></div>`;
-    });
-    list.innerHTML = html;
+    window._rootWithdraws=flat;
+    renderWithdrawsCombined();
   });
 }
-window.approveWithdraw = async (path)=>{
-  const snap = await get(ref(db,path));
-  const d = snap.val();
+function renderWithdrawsCombined(){
+  const root=window._rootWithdraws||[];
+  const user=window._userWithdraws||[];
+  const combined=[...root,...user];
+  const seen=new Set(); const uniq=[];
+  combined.forEach(x=>{if(!seen.has(x.path)){seen.add(x.path);uniq.push(x);}});
+  uniq.sort((a,b)=>{
+    const sa=(a.data.status||'pending').toLowerCase();
+    const sb=(b.data.status||'pending').toLowerCase();
+    const pa=sa==='pending'?0:1; const pb=sb==='pending'?0:1;
+    if(pa!==pb) return pa-pb;
+    return (b.data.timestamp||0)-(a.data.timestamp||0);
+  });
+  allWithdraws=uniq;
+  document.getElementById('totalWithdraws').textContent=uniq.length;
+  const list=document.getElementById('withdrawsList');
+  if(uniq.length===0){list.innerHTML='<div style="text-align:center;padding:20px;color:var(--muted)">No withdrawals yet - listening real-time</div>';return;}
+    let html='<div style="font-size:10px;color:var(--muted);margin-bottom:6px">Pending on top - History bottom | Total:'+uniq.length+'</div>';
+  uniq.forEach(({path,id,data})=>{
+    const st=(data.status||'pending').toLowerCase(); const pending=st==='pending';
+    html+=`<div class="item" style="border-left:3px solid ${st==='approved'?'var(--green)':st==='rejected'?'var(--red)':'#FFC107'};${pending?'':'opacity:.6'}"><div style="display:flex;justify-content:space-between"><b>$${Number(data.amount||0).toLocaleString()}</b><span class="badge ${st}">${st.toUpperCase()}</span></div><small>ID:${id}|${data.email||data.uid}</small><small>Addr:${data.address||data.wallet||'-'}</small><small>${new Date(data.timestamp||Date.now()).toLocaleString()}</small><small style="color:var(--cyan)">${path}</small><div class="row-btns"><button class="btn approve" ${pending?'':'disabled'} onclick="approveWithdraw('${path}')">Mark Paid</button><button class="btn reject" ${pending?'':'disabled'} onclick="rejectWithdraw('${path}')">Reject & Refund</button></div></div>`;
+  });
+  list.innerHTML=html;
+}
+window.approveWithdraw=async(path)=>{
+  const s=await get(ref(db,path)); const d=s.val();
   if(d.status!=='pending') return alert('Already '+d.status);
-  if(!confirm(`Mark $${d.amount} as PAID?`)) return;
-  await update(ref(db,path),{status:'approved', approvedAt:Date.now()});
+  if(!confirm(`Mark $${d.amount} PAID?`)) return;
+  await update(ref(db,path),{status:'approved',approvedAt:Date.now()});
 };
-window.rejectWithdraw = async (path)=>{
-  const snap = await get(ref(db,path));
-  const d = snap.val();
+window.rejectWithdraw=async(path)=>{
+  const s=await get(ref(db,path)); const d=s.val();
   if(d.status!=='pending') return alert('Already '+d.status);
   if(!confirm(`Refund $${d.amount}?`)) return;
-  const balRef = ref(db,`users/${d.uid}/balance`);
-  const balSnap = await get(balRef);
-  const cur = Number(balSnap.val()||0);
-  await set(balRef, cur + Number(d.amount));
-  await update(ref(db,path),{status:'rejected', refundedAt:Date.now()});
-  alert(`↩️ Refunded`);
+  const br=ref(db,`users/${d.uid}/balance`);
+  const cur=await get(br);
+  await set(br, Number(cur.val()||0)+Number(d.amount));
+  await update(ref(db,path),{status:'rejected',refundedAt:Date.now()});
+  alert('Refunded');
 };
 
-// NOTIFY
-document.getElementById('sendNotifBtn').onclick = async ()=>{
-  const title = document.getElementById('notifTitle').value.trim();
-  const msg = document.getElementById('notifMsg').value.trim();
-  const st = document.getElementById('notifStatus');
-  if(!title||!msg){ st.textContent='Fill title & message'; return; }
+// NOTIFY - INSTANT
+document.getElementById('sendNotifBtn').onclick=async()=>{
+  const t=document.getElementById('notifTitle').value.trim();
+  const m=document.getElementById('notifMsg').value.trim();
+  const st=document.getElementById('notifStatus');
+  if(!t||!m){st.textContent='Fill both';return;}
   st.textContent='Sending...';
   try{
-    const payload = { title, message:msg, timestamp:Date.now(), from:'admin' };
-    await push(ref(db,'notifications'), payload);
-    await push(ref(db,'global_notifications'), payload);
-    st.textContent='✅ Sent instantly!';
-    st.style.color='#00E676';
-    document.getElementById('notifTitle').value=''; 
-    document.getElementById('notifMsg').value='';
-    setTimeout(()=>{ st.textContent=''; },3000);
-  }catch(e){ st.textContent='❌ '+e.message; }
+    const p={title:t,message:m,timestamp:Date.now(),from:'admin'};
+    await push(ref(db,'notifications'),p);
+    await push(ref(db,'global_notifications'),p);
+    st.textContent='✅ Sent!';st.style.color='#00E676';
+    document.getElementById('notifTitle').value='';document.getElementById('notifMsg').value='';
+    setTimeout(()=>st.textContent='',3000);
+  }catch(e){st.textContent='❌ '+e.message;}
 };
 function loadNotifHistory(){
-  onValue(ref(db,'notifications'), snap=>{
-    const data = snap.val()||{};
-    let html='<div style="margin-top:10px">';
-    Object.entries(data).reverse().slice(0,20).forEach(([id,n])=>{ 
-      html+=`<div class="item"><b>${n.title}</b><small>${n.message}</small><small>${new Date(n.timestamp).toLocaleString()}</small></div>`; 
+  onValue(ref(db,'notifications'),s=>{
+    const data=s.val()||{};
+    let h='<div style="margin-top:8px">';
+    Object.entries(data).reverse().slice(0,10).forEach(([id,n])=>{
+      h+=`<div class="item"><b>${n.title}</b><small>${n.message}</small><small>${new Date(n.timestamp).toLocaleString()}</small></div>`;
     });
-    html+='</div>';
-    document.getElementById('notifHistory').innerHTML=html;
+    h+='</div>';document.getElementById('notifHistory').innerHTML=h;
   });
 }
 
-// SUPPORT BIG
-let activeChatUid = null;
-let chatUnsub = null;
+// SUPPORT - BIGGER + FIXED OPEN
+let activeChatUid=null; let chatUnsub=null;
 function loadSupportList(){
   onValue(ref(db,'supportChats'), snap=>{
-    const data = snap.val()||{};
-    const container = document.getElementById('supportUsers');
-    const q = (document.getElementById('supportSearch').value||'').toLowerCase();
+    const data=snap.val()||{};
+    const c=document.getElementById('supportUsers');
+    const q=(document.getElementById('supportSearch').value||'').toLowerCase();
     let html='';
     Object.entries(data).reverse().forEach(([uid,msgs])=>{
-      const user = allUsersData[uid]||{};
+      const user=allUsersData[uid]||{};
       if(q && !uid.toLowerCase().includes(q) && !JSON.stringify(user).toLowerCase().includes(q)) return;
-      const last = Object.values(msgs).pop()||{};
-      html+=`<div class="chat-user" data-uid="${uid}" onclick="window.openChat('${uid}')"><div style="flex:1"><b style="font-size:13px;display:block">${user.email||uid.slice(0,14)}</b><small>${(last.text||last.message||'').slice(0,35)}</small></div></div>`;
+      const last=Object.values(msgs).pop()||{};
+      html+=`<div class="chat-user" data-uid="${uid}" onclick="openChat('${uid}')"><div><b style="font-size:12px">${user.email||uid.slice(0,14)}</b><br><small style="color:var(--muted)">${(last.text||last.message||'').slice(0,30)}</small></div></div>`;
     });
-    container.innerHTML = html||'<div style="text-align:center;color:var(--muted);padding:20px;">No chats - listening...</div>';
+    c.innerHTML=html||'<div style="padding:20px;text-align:center;color:var(--muted)">No chats - listening real-time to /supportChats</div>';
   });
 }
-document.getElementById('supportSearch').oninput = ()=>loadSupportList();
-window.openChat = (uid)=>{
-  activeChatUid = uid;
-  document.getElementById('chatWith').textContent = allUsersData[uid]?.email || uid;
+document.getElementById('supportSearch').oninput=()=>loadSupportList();
+window.openChat=(uid)=>{
+  console.log('Opening chat',uid);
+  activeChatUid=uid;
+  document.getElementById('chatWith').textContent=allUsersData[uid]?.email||uid;
   document.querySelectorAll('.chat-user').forEach(el=>el.classList.remove('active'));
   document.querySelector(`.chat-user[data-uid="${uid}"]`)?.classList.add('active');
   if(chatUnsub) chatUnsub();
-  const chatRef = ref(db, `supportChats/${uid}`);
-  chatUnsub = onValue(chatRef, snap=>{
-    const msgs = snap.val()||{};
-    const box = document.getElementById('chatMsgs');
+  const cr=ref(db,`supportChats/${uid}`);
+  chatUnsub=onValue(cr, snap=>{
+    const msgs=snap.val()||{};
+    const box=document.getElementById('chatMsgs');
     box.innerHTML='';
     Object.values(msgs).sort((a,b)=>(a.timestamp||0)-(b.timestamp||0)).forEach(m=>{
-      const div = document.createElement('div');
-      const isAdmin = m.sender==='admin' || m.from==='admin';
-      div.className = `msg ${isAdmin?'admin':'user'}`;
-      div.innerHTML = `${m.text||m.message||''}<br><small style="font-size:9px;opacity:.6">${new Date(m.timestamp||Date.now()).toLocaleTimeString()}</small>`;
-      box.appendChild(div);
+      const d=document.createElement('div');
+      const isAdmin=m.sender==='admin'||m.from==='admin';
+      d.className=`msg ${isAdmin?'admin':'user'}`;
+      d.textContent=m.text||m.message||'';
+      box.appendChild(d);
     });
-    box.scrollTop = box.scrollHeight;
+    box.scrollTop=box.scrollHeight;
   });
 };
-document.getElementById('chatSend').onclick = sendReply;
-document.getElementById('chatInput').onkeydown = e=>{ if(e.key==='Enter') sendReply(); };
+document.getElementById('chatSend').onclick=sendReply;
+document.getElementById('chatInput').onkeydown=e=>{if(e.key==='Enter') sendReply();};
 async function sendReply(){
-  const txt = document.getElementById('chatInput').value.trim();
-  if(!txt||!activeChatUid) return alert('Select a user first');
-  await push(ref(db,`supportChats/${activeChatUid}`),{ text:txt, message:txt, sender:'admin', from:'admin', timestamp:Date.now() });
+  const txt=document.getElementById('chatInput').value.trim();
+  if(!txt||!activeChatUid) return alert('Select user first');
+  await push(ref(db,`supportChats/${activeChatUid}`),{text:txt,message:txt,sender:'admin',from:'admin',timestamp:Date.now()});
   document.getElementById('chatInput').value='';
 }
 </script>
