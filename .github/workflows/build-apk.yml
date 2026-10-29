@@ -5,20 +5,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
+          
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
+
       - name: Build APK
         run: |
-          bubblewrap init --manifest https://quantamwallet.github.io/SenteBot-AI/manifest.json --directory ./twa -- --skipPwaValidation
+          mkdir twa
           cd twa
+          echo '{"packageId":"com.sentebot.app","host":"quantamwallet.github.io","name":"SenteBot-AI","launcherName":"SenteBot","display":"standalone","themeColor":"#050a14","navigationColor":"#050a14","backgroundColor":"#050a14","enableNotifications":true,"startUrl":"/SenteBot-AI/","iconUrl":"https://quantamwallet.github.io/SenteBot-AI/icon-512.png","maskableIconUrl":"https://quantamwallet.github.io/SenteBot-AI/icon-512.png","splashScreenFadeOutDuration":300,"signing":{"deployType":"local","keystorePath":"./android.keystore","keystorePassword":"123456","keyAlias":"android","keyPassword":"123456"},"appVersion":"1.0.0","appVersionCode":1,"shortcuts":[],"generatorApp":"bubblewrap-cli","webManifestUrl":"https://quantamwallet.github.io/SenteBot-AI/manifest.json","fallbackType":"customtabs","features":{},"alphaDependencies":{"enabled":false},"enableSiteSettingsShortcut":true,"isChromeOSOnly":false,"isMetaQuest":false,"fullScopeUrl":"https://quantamwallet.github.io/SenteBot-AI/","minSdkVersion":19,"orientation":"default","fingerprints":[],"additionalTrustedOrigins":[]}' > twa-manifest.json
           bubblewrap build --skipPwaValidation
+          
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
