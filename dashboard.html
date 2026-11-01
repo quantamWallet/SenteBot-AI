@@ -123,50 +123,49 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <div class="scroll-card"><div class="card-header"><h3><i class="fa-solid fa-list"></i> Recent Activities</h3><span id="activityCount">Latest</span></div><div class="scroll-list" id="recentActivities"></div></div>
 </div>
 <div class="bottom-nav" id="bottomNav">
-  <div class="nav-item" role="button" tabindex="0"
-       onclick="navigateToPage('dashboard.html', this)"
-       onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToPage('dashboard.html',this)}">
+  <div class="nav-item" data-page="dashboard.html" onclick="navigateToPage('dashboard.html')">
     <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
     <span>Home</span>
-  </div>  <div class="nav-item" role="button" tabindex="0"
-       onclick="navigateToPage('team.html', this)"
-       onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToPage('team.html',this)}">
+  </div>  <div class="nav-item" data-page="team.html" onclick="navigateToPage('team.html')">
     <div class="nav-icon"><i class="fa-solid fa-users"></i></div>
     <span>Team</span>
-  </div>  <div class="nav-item" role="button" tabindex="0"
-       onclick="navigateToPage('machines.html', this)"
-       onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToPage('machines.html',this)}">
+  </div>  <div class="nav-item" data-page="machines.html" onclick="navigateToPage('machines.html')">
     <div class="nav-icon"><i class="fa-solid fa-microchip"></i></div>
     <span>Machines</span>
-  </div>  <div class="nav-item active" aria-current="page">
+  </div>  <div class="nav-item" data-page="wallet.html" onclick="navigateToPage('wallet.html')">
     <div class="nav-icon"><i class="fa-solid fa-wallet"></i></div>
     <span>Wallet</span>
-  </div>  <div class="nav-item" role="button" tabindex="0"
-       onclick="navigateToPage('profile.html', this)"
-       onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToPage('profile.html',this)}">
+  </div>  <div class="nav-item" data-page="profile.html" onclick="navigateToPage('profile.html')">
     <div class="nav-icon"><i class="fa-solid fa-user"></i></div>
     <span>Profile</span>
   </div>
 </div><script>
-  let isNavigating = false;
+  function updateActiveNav() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
-  function navigateToPage(page, button) {
-    if (isNavigating) return;
+    document.querySelectorAll('#bottomNav .nav-item').forEach(item => {
+      const isActive = item.dataset.page === currentPage;
 
+      item.classList.toggle('active', isActive);
+
+      if (isActive) {
+        item.setAttribute('aria-current', 'page');
+      } else {
+        item.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function navigateToPage(page) {
     const currentPage = window.location.pathname.split('/').pop();
 
-    // Don't reload the current page.
+    // Don't reload the page you're already on.
     if (currentPage === page) return;
 
-    isNavigating = true;
-
-    // Prevent accidental repeated taps.
-    document.querySelectorAll('#bottomNav .nav-item').forEach(item => {
-      item.style.pointerEvents = 'none';
-    });
-
-    window.location.assign(page);
+    window.location.href = page;
   }
+
+  updateActiveNav();
 </script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
