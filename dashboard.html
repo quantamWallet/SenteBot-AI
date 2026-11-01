@@ -161,17 +161,15 @@ input,textarea{-webkit-user-select:text;user-select:text}
 
     // Don't reload the page you're already on.
     if (currentPage === page) return;
-
-    window.location.href = page;
-  }
-
-  updateActiveNav();
-</script>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, onValue, get, update, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-const firebaseConfig = { apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8", authDomain: "sentebot-7428b.firebaseapp.com", databaseURL: "https://sentebot-7428b-default-rtdb.europe-west1.firebasedatabase.app", projectId: "sentebot-7428b", storageBucket: "sentebot-7428b.appspot.com", messagingSenderId: "1058684674800", appId: "1:1058684674800:web:707cac3cc1c2149fa1a1ae" };
+const firebaseConfig = {
+  apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
+  authDomain: "sentebot-7428b.firebaseapp.com",
+  databaseURL: "https://sentebot-7428b-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "sentebot-7428b",
+  storageBucket: "sentebot-7428b.firebasestorage.app",
+  messagingSenderId: "24568208668",
+  appId: "1:24568208668:web:e01e4001149dfa93eeaed9"
+};
 const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getDatabase(app);
 let currentUser=null; let lastData=null;
 function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
