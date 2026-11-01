@@ -1,287 +1,869 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#050a14">
-<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}</script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SenteBot Withdraw</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
-:root{--bg:#050A18;--card:#0E1629;--card2:#14243E;--green:#00E676;--cyan:#00D1FF;--red:#EF4444;--text:#F8FAFC;--muted:#94A3B8;--border:rgba(0,209,255,.15);--glow-cyan:0 0 25px rgba(0,209,255,.25);}
-body{background:radial-gradient(1200px 600px at 50% -20%,rgba(239,68,68,.10),transparent 60%),linear-gradient(180deg,#050A18,#070B14);color:var(--text);min-height:100vh;padding-bottom:120px;}
-.container{max-width:540px;margin:auto;padding:18px;}
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
-    /* BLOCK CHROME TAP TO SEARCH + LONG PRESS */
-*{
-  -webkit-touch-callout: none; /* iOS long press menu */
-  -webkit-user-select: none;   /* Safari */
-   -khtml-user-select: none;   /* Konqueror */
-     -moz-user-select: none;   /* Firefox */
-      -ms-user-select: none;   /* IE/Edge */
-          user-select: none;   /* Standard */
-}
-
-/* Allow selection only in inputs */
-input, textarea{
-  -webkit-user-select: text;
-     -moz-user-select: text;
-      -ms-user-select: text;
-          user-select: text;
-}
-.back-btn{width:46px;height:46px;border-radius:15px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer}
-.page-title{text-align:center;flex:1;}
-.page-title h2{font-size:22px;font-weight:800;background:linear-gradient(90deg,#fff,var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.balance-card{background:linear-gradient(180deg,rgba(20,36,62,.9),rgba(14,22,41,.9));border-radius:28px;padding:24px;border:1px solid var(--border);box-shadow:var(--glow-cyan);margin-bottom:20px;}
-.balance-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
-.balance-value{font-size:32px;font-weight:800;margin:10px 0;background:linear-gradient(90deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.form-card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:24px;padding:24px;margin-bottom:18px;backdrop-filter:blur(16px);}
-.form-group{margin-bottom:20px;}
-.form-label{font-size:13px;color:var(--muted);margin-bottom:10px;font-weight:600;}
-.form-input{width:100%;height:56px;background:#0B1324;border:1px solid var(--border);border-radius:16px;padding:0 18px;color:#fff;font-size:16px;font-weight:700;outline:none;transition:.3s;}
-.form-input:focus{border-color:var(--cyan);box-shadow:var(--glow-cyan);}
-.phone-display{display:flex;align-items:center;gap:12px;background:#0B1324;border:1px solid var(--border);border-radius:16px;padding:0 18px;height:56px;}
-.phone-display i{color:var(--green);font-size:20px;}
-.phone-display span{font-size:16px;font-weight:800;}
-.phone-note{font-size:12px;color:var(--muted);margin-top:8px;}
-.info-box{background:rgba(0,209,255,.08);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:20px;}
-.info-box p{font-size:13px;color:var(--muted);line-height:1.6;}
-.info-box strong{color:var(--cyan);}
-.withdraw-btn{width:100%;height:56px;border:none;border-radius:18px;background:linear-gradient(90deg,var(--red),#DC2626);color:#fff;font-size:16px;font-weight:800;cursor:pointer;transition:.3s;box-shadow:0 6px 18px rgba(220,38,38,.12);}
-.withdraw-btn:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(1);}
-.withdraw-btn:active{transform:scale(.98);}
-.bottom-nav{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);width:calc(100% - 26px);max-width:540px;height:74px;background:rgba(8,16,32,.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.03);border-radius:20px;display:flex;align-items:center;padding:10px;gap:8px;}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;font-size:11px;color:var(--muted);cursor:pointer;}
-.nav-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:14px;font-size:22px;}
-.nav-item.active{color:var(--cyan);font-weight:700;}
-.nav-item.active .nav-icon{background:rgba(0,209,255,.15);color:var(--cyan);box-shadow:0 0 18px rgba(0,209,255,.35);}
-.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);padding:14px 24px;border-radius:14px;font-weight:800;font-size:14px;display:none;z-index:10000;box-shadow:0 10px 30px rgba(0,0,0,.6);}
-.toast.success{background:linear-gradient(90deg,var(--cyan),var(--green));color:#05121A;}
-.toast.error{background:var(--red);color:#fff;}
-.loading-box{display:flex;justify-content:center;padding:20px;}
-.loader{width:35px;height:35px;border:3px solid rgba(239,68,68,.2);border-top:3px solid var(--red);border-radius:50%;animation:spin .8s linear infinite;}
-@keyframes spin{100%{transform:rotate(360deg);}}
-</style>
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google" content="notranslate">
+    <meta name="theme-color" content="#050A18">
+
+    <link rel="manifest" href="/manifest.json">
+
+    <title>SenteBot Withdraw</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/sw.js").catch(error => {
+                    console.error("Service worker registration failed:", error);
+                });
+            });
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg: #050A18;
+            --card: #0E1629;
+            --card2: #14243E;
+            --green: #00E676;
+            --cyan: #00D1FF;
+            --red: #EF4444;
+            --text: #F8FAFC;
+            --muted: #94A3B8;
+            --border: rgba(0,209,255,.15);
+            --glow-cyan: 0 0 25px rgba(0,209,255,.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background:
+                radial-gradient(1200px 600px at 50% -20%,
+                    rgba(239,68,68,.10), transparent 60%),
+                linear-gradient(180deg,#050A18,#070B14);
+            color: var(--text);
+            min-height: 100vh;
+            padding-bottom: calc(120px + env(safe-area-inset-bottom));
+        }
+
+        input {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        .container {
+            max-width: 540px;
+            margin: auto;
+            padding: 18px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .back-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 15px;
+            background: rgba(239,68,68,.06);
+            border: 1px solid rgba(239,68,68,.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .page-title {
+            text-align: center;
+            flex: 1;
+        }
+
+        .page-title h2 {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(90deg,#fff,var(--red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .balance-card {
+            background: linear-gradient(
+                180deg,
+                rgba(20,36,62,.9),
+                rgba(14,22,41,.9)
+            );
+            border-radius: 28px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            box-shadow: var(--glow-cyan);
+            margin-bottom: 20px;
+        }
+
+        .balance-label {
+            font-size: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .balance-value {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 10px 0;
+            overflow-wrap: anywhere;
+            background: linear-gradient(90deg,var(--green),var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-card {
+            background: linear-gradient(180deg,var(--card),var(--card2));
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 18px;
+            backdrop-filter: blur(16px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 56px;
+            background: #0B1324;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 0 18px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .phone-display {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #0B1324;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 0 18px;
+            min-height: 56px;
+            overflow-wrap: anywhere;
+        }
+
+        .phone-display i {
+            color: var(--green);
+            font-size: 20px;
+        }
+
+        .phone-display span {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .phone-note {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        .info-box {
+            background: rgba(0,209,255,.08);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .info-box p {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            color: var(--cyan);
+        }
+
+        .withdraw-btn {
+            width: 100%;
+            min-height: 56px;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(90deg,var(--red),#DC2626);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: opacity .2s;
+            box-shadow: 0 6px 18px rgba(220,38,38,.12);
+        }
+
+        .withdraw-btn:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            left: 50%;
+            bottom: calc(18px + env(safe-area-inset-bottom));
+            transform: translateX(-50%);
+            width: calc(100% - 26px);
+            max-width: 540px;
+            min-height: 74px;
+            background: rgba(8,16,32,.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,.03);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+            font-size: 11px;
+            color: var(--muted);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .nav-icon {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            font-size: 22px;
+        }
+
+        .nav-item.active {
+            color: var(--cyan);
+            font-weight: 700;
+        }
+
+        .nav-item.active .nav-icon {
+            background: rgba(0,209,255,.15);
+            color: var(--cyan);
+            box-shadow: 0 0 18px rgba(0,209,255,.2);
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: calc(105px + env(safe-area-inset-bottom));
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: calc(100% - 32px);
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 13px;
+            display: none;
+            z-index: 10000;
+            overflow-wrap: anywhere;
+            box-shadow: 0 10px 30px rgba(0,0,0,.6);
+        }
+
+        .toast.success {
+            background: linear-gradient(90deg,var(--cyan),var(--green));
+            color: #05121A;
+        }
+
+        .toast.error {
+            background: var(--red);
+            color: #fff;
+        }
+
+        .loading-text {
+            color: var(--muted);
+            font-size: 13px;
+        }
+    </style>
+</head>
+
 <body>
 
-<div id="toast" class="toast"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-<div class="container">
-    <div class="header">
-        <div class="back-btn" onclick="window.location='wallet.html'"><i class="fa-solid fa-arrow-left"></i></div>
-        <div class="page-title"><h2>Withdraw Funds</h2></div>
-        <div style="width:46px;"></div>
-    </div>
+<main class="container">
 
-    <div class="balance-card">
+    <header class="header">
+        <button class="back-btn" type="button"
+                onclick="window.location.href='wallet.html'"
+                aria-label="Back to wallet">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+
+        <div class="page-title">
+            <h2>Withdraw Funds</h2>
+        </div>
+
+        <div style="width:46px" aria-hidden="true"></div>
+    </header>
+
+    <section class="balance-card">
         <div class="balance-label">Available Balance</div>
-        <div class="balance-value" id="walletBalance">UGX 0</div>
-    </div>
+        <div class="balance-value" id="walletBalance" aria-live="polite">
+            Loading balance...
+        </div>
+    </section>
 
-    <div class="form-card">
+    <section class="form-card">
+
         <div class="form-group">
             <div class="form-label">Withdrawal Number</div>
-            <div class="phone-display" id="phoneDisplay"><div class="loading-box"><div class="loader"></div></div></div>
-            <div class="phone-note">* Withdrawals are only allowed to your registered number</div>
+
+            <div class="phone-display" id="phoneDisplay">
+                <span class="loading-text">Loading registered number...</span>
+            </div>
+
+            <div class="phone-note">
+                Withdrawals are only allowed to your registered number.
+            </div>
         </div>
 
         <div class="form-group">
-            <div class="form-label">Amount to Withdraw</div>
-            <input type="number" id="withdrawAmount" class="form-input" placeholder="Enter amount" min="10000">
+            <label class="form-label" for="withdrawAmount">
+                Amount to Withdraw
+            </label>
+
+            <input
+                type="number"
+                id="withdrawAmount"
+                class="form-input"
+                placeholder="Enter amount"
+                min="10000"
+                step="1"
+                inputmode="numeric"
+                autocomplete="off"
+            >
         </div>
 
         <div class="form-group">
-            <div class="form-label">Confirm Password</div>
-            <input type="password" id="withdrawPassword" class="form-input" placeholder="Enter your password to confirm">
-            <div class="phone-note">Enter your account password to confirm this withdrawal.</div>
+            <label class="form-label" for="withdrawPassword">
+                Confirm Password
+            </label>
+
+            <input
+                type="password"
+                id="withdrawPassword"
+                class="form-input"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+            >
+
+            <div class="phone-note">
+                Confirm your account password before requesting a withdrawal.
+            </div>
         </div>
 
         <div class="info-box">
-            <p><strong>Note:</strong> Minimum withdrawal is UGX 10,000. Processing takes 5-30 minutes. Fees: 1%</p>
+            <p>
+                <strong>Note:</strong>
+                Minimum withdrawal is UGX 10,000.
+                The displayed fee is 1%.
+                Processing time may vary.
+            </p>
         </div>
 
-        <button class="withdraw-btn" id="withdrawBtn" onclick="requestWithdraw()" disabled>
-            <i class="fa-solid fa-arrow-up"></i> Request Withdrawal
+        <button class="withdraw-btn" id="withdrawBtn" type="button" disabled>
+            <i class="fa-solid fa-arrow-up"></i>
+            Request Withdrawal
         </button>
-    </div>
-</div>
 
-<div class="bottom-nav">
-    <div class="nav-item" onclick="window.location='dashboard.html'"><div class="nav-icon"><i class="fa-solid fa-house"></i></div><span>Home</span></div>
-    <div class="nav-item" onclick="window.location='team.html'"><div class="nav-icon"><i class="fa-solid fa-users"></i></div><span>Team</span></div>
-    <div class="nav-item" onclick="window.location='machines.html'"><div class="nav-icon"><i class="fa-solid fa-microchip"></i></div><span>Machines</span></div>
-    <div class="nav-item active"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></div>
-    <div class="nav-item" onclick="window.location='profile.html'"><div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
-</div>
+    </section>
+</main>
+
+<nav class="bottom-nav" aria-label="Main navigation">
+
+    <a class="nav-item" href="dashboard.html">
+        <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
+        <span>Home</span>
+    </a>
+
+    <a class="nav-item" href="team.html">
+        <div class="nav-icon"><i class="fa-solid fa-users"></i></div>
+        <span>Team</span>
+    </a>
+
+    <a class="nav-item" href="machines.html">
+        <div class="nav-icon"><i class="fa-solid fa-microchip"></i></div>
+        <span>Machines</span>
+    </a>
+
+    <a class="nav-item active" href="wallet.html" aria-current="page">
+        <div class="nav-icon"><i class="fa-solid fa-wallet"></i></div>
+        <span>Wallet</span>
+    </a>
+
+    <a class="nav-item" href="profile.html">
+        <div class="nav-icon"><i class="fa-solid fa-user"></i></div>
+        <span>Profile</span>
+    </a>
+
+</nav>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, onValue, update, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {
+    initializeApp,
+    getApps
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+    getAuth,
+    onAuthStateChanged,
+    EmailAuthProvider,
+    reauthenticateWithCredential
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+    getDatabase,
+    ref,
+    onValue,
+    runTransaction,
+    push,
+    update
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
-  authDomain: "sentebot-7428b.firebaseapp.com",
-  databaseURL: "https://sentebot-7428b-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "sentebot-7428b",
-  storageBucket: "sentebot-7428b.firebasestorage.app",
-  messagingSenderId: "24568208668",
-  appId: "1:24568208668:web:e01e4001149dfa93eeaed9"
+    apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
+    authDomain: "sentebot-7428b.firebaseapp.com",
+    databaseURL: "https://sentebot-7428b-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "sentebot-7428b",
+    storageBucket: "sentebot-7428b.firebasestorage.app",
+    messagingSenderId: "24568208668",
+    appId: "1:24568208668:web:e01e4001149dfa93eeaed9"
 };
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length
+    ? getApps()[0]
+    : initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
 const db = getDatabase(app);
+
+const MIN_WITHDRAWAL = 10000;
+const FEE_RATE = 0.01;
+
 let currentUser = null;
-let processing = false;
 let currentUserData = null;
 let userPhone = "";
+let processing = false;
+let balanceLoaded = false;
+let unsubscribeUser = null;
+let toastTimer = null;
 
-function showToast(message, type="success"){
-    const toast=document.getElementById("toast");
-    toast.textContent=message;
-    toast.className="toast " + type;
-    toast.style.display="block";
-    setTimeout(()=>{toast.style.display="none";},3000);
+const balanceElement = document.getElementById("walletBalance");
+const phoneElement = document.getElementById("phoneDisplay");
+const amountInput = document.getElementById("withdrawAmount");
+const passwordInput = document.getElementById("withdrawPassword");
+const withdrawButton = document.getElementById("withdrawBtn");
+
+
+function showToast(message, type = "success") {
+    const toast = document.getElementById("toast");
+
+    clearTimeout(toastTimer);
+
+    toast.textContent = message;
+    toast.className = "toast " + type;
+    toast.style.display = "block";
+
+    toastTimer = setTimeout(() => {
+        toast.style.display = "none";
+    }, 3500);
 }
 
-function maskPhone(phone){
-    if(!phone) return "";
-    const str = phone.toString();
-    if(str.length < 7) return str;
-    return str.substring(0, 5) + "***" + str.substring(str.length - 3);
+
+function formatUGX(amount) {
+    return "UGX " + Number(amount).toLocaleString("en-UG");
 }
 
-onAuthStateChanged(auth,(user)=>{
-    if(!user){window.location.href="index.html";return;}
+
+function maskPhone(phone) {
+    const value = String(phone || "");
+
+    if (!value) return "";
+
+    if (value.length < 7) return value;
+
+    return value.slice(0, 5) +
+        "***" +
+        value.slice(-3);
+}
+
+
+function updateButtonState() {
+    const amount = amountInput.valueAsNumber;
+
+    const validAmount =
+        Number.isSafeInteger(amount) &&
+        amount >= MIN_WITHDRAWAL;
+
+    withdrawButton.disabled =
+        processing ||
+        !currentUser ||
+        !balanceLoaded ||
+        !currentUserData ||
+        !userPhone ||
+        !validAmount;
+}
+
+
+function showPhone() {
+    phoneElement.replaceChildren();
+
+    const icon = document.createElement("i");
+    icon.className = "fa-solid fa-phone";
+
+    const text = document.createElement("span");
+    text.textContent = maskPhone(userPhone);
+
+    phoneElement.append(icon, text);
+}
+
+
+function renderUserData(data) {
+    currentUserData = data;
+
+    // Preserve the previous display if balance data is missing or invalid.
+    if (
+        data.balance !== null &&
+        data.balance !== undefined &&
+        data.balance !== "" &&
+        Number.isSafeInteger(Number(data.balance)) &&
+        Number(data.balance) >= 0
+    ) {
+        balanceElement.textContent = formatUGX(Number(data.balance));
+        balanceLoaded = true;
+    }
+
+    userPhone = String(data.phone || "").trim();
+
+    if (userPhone) {
+        showPhone();
+    } else {
+        phoneElement.textContent = "No registered number";
+    }
+
+    updateButtonState();
+}
+
+
+function stopUserListener() {
+    if (unsubscribeUser) {
+        unsubscribeUser();
+        unsubscribeUser = null;
+    }
+}
+
+
+function loadUser() {
+    stopUserListener();
+
+    if (!currentUser) return;
+
+    const userRef = ref(db, "users/" + currentUser.uid);
+
+    unsubscribeUser = onValue(
+        userRef,
+        snapshot => {
+            if (!snapshot.exists()) {
+                showToast("Account data could not be found.", "error");
+                return;
+            }
+
+            renderUserData(snapshot.val());
+        },
+        error => {
+            console.error("Wallet listener error:", error);
+
+            // Keep the last valid displayed balance.
+            showToast("Unable to refresh account data.", "error");
+        }
+    );
+}
+
+
+onAuthStateChanged(auth, user => {
+    if (!user) {
+        stopUserListener();
+        window.location.replace("index.html");
+        return;
+    }
+
     currentUser = user;
     loadUser();
 });
 
-function loadUser(){
-    const userRef = ref(db,"users/" + currentUser.uid);
-    onValue(userRef,(snapshot)=>{
-        if(!snapshot.exists()) return;
-        currentUserData = snapshot.val();
-        const balance = Number(currentUserData.balance || 0);
-        userPhone = currentUserData.phone || "";
-        document.getElementById("walletBalance").textContent = "UGX " + balance.toLocaleString();
-        document.getElementById("phoneDisplay").innerHTML = `<i class="fa-solid fa-phone"></i><span>${maskPhone(userPhone)}</span>`;
-        // enable withdraw button only if user has phone and balance is available; input listener will handle amount min
-        if(userPhone) document.getElementById("withdrawBtn").disabled = false;
-    });
-}
 
-window.requestWithdraw = async () => {
-    if(processing) return;
-    processing = true;
-    if(!currentUser || !currentUserData){ showToast("User not loaded", "error"); processing = false; return; }
+amountInput.addEventListener("input", updateButtonState);
 
-    const amount = Number(document.getElementById("withdrawAmount").value);
-    const password = document.getElementById("withdrawPassword").value || "";
-    const balance = Number(currentUserData.balance || 0);
-    const minWithdraw = 10000;
-    const fee = Math.ceil(amount * 0.01);
-    const totalDeduct = amount + fee;
+passwordInput.addEventListener("input", updateButtonState);
 
-    if(!userPhone){ showToast("No phone number registered", "error"); processing = false; return; }
-    if(!password){ showToast("Enter password to confirm", "error"); processing = false; return; }
-    if(amount < minWithdraw){ showToast("Minimum withdrawal is UGX 10,000", "error"); processing = false; return; }
-    if(balance < totalDeduct){ showToast("Insufficient balance", "error"); processing = false; return; }
 
-    const btn = document.getElementById("withdrawBtn");
-    btn.disabled = true;
-    const originalBtnHTML = btn.innerHTML;
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing...`;
+withdrawButton.addEventListener("click", requestWithdraw);
 
-    // Reauthenticate user with password before proceeding
-    try{
-        const credential = EmailAuthProvider.credential(currentUser.email, password);
-        await reauthenticateWithCredential(currentUser, credential);
-    } catch(err){
-        console.error('Reauth failed', err);
-        showToast("Incorrect password", "error");
-        processing = false;
-        btn.disabled = false;
-        btn.innerHTML = originalBtnHTML;
+
+async function requestWithdraw() {
+    if (processing) return;
+
+    if (!currentUser || !currentUserData || !balanceLoaded) {
+        showToast("Please wait for your account data to load.", "error");
         return;
     }
 
-    try{
-        const withdrawKey = push(ref(db, `users/${currentUser.uid}/withdrawals`)).key;
-        const activityKey = push(ref(db, `users/${currentUser.uid}/activities`)).key;
+    const amount = amountInput.valueAsNumber;
+    const password = passwordInput.value;
+
+    if (!userPhone) {
+        showToast("Register a phone number before withdrawing.", "error");
+        return;
+    }
+
+    if (
+        !Number.isSafeInteger(amount) ||
+        amount < MIN_WITHDRAWAL
+    ) {
+        showToast("Minimum withdrawal is UGX 10,000.", "error");
+        return;
+    }
+
+    if (!password) {
+        showToast("Enter your password to continue.", "error");
+        return;
+    }
+
+    if (!currentUser.email) {
+        showToast(
+            "Password confirmation requires an email/password account.",
+            "error"
+        );
+        return;
+    }
+
+    const fee = Math.ceil(amount * FEE_RATE);
+    const totalDeduct = amount + fee;
+
+    if (!Number.isSafeInteger(totalDeduct)) {
+        showToast("Invalid withdrawal amount.", "error");
+        return;
+    }
+
+    const confirmed = window.confirm(
+        "Withdrawal amount: " + formatUGX(amount) +
+        "\nFee: " + formatUGX(fee) +
+        "\nTotal deduction: " + formatUGX(totalDeduct) +
+        "\nDestination: " + maskPhone(userPhone) +
+        "\n\nContinue?"
+    );
+
+    if (!confirmed) return;
+
+    processing = true;
+    updateButtonState();
+
+    const originalButtonHTML = withdrawButton.innerHTML;
+
+    withdrawButton.innerHTML =
+        '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+
+    let balanceDeducted = false;
+    let withdrawalKey = null;
+
+    try {
+        const credential = EmailAuthProvider.credential(
+            currentUser.email,
+            password
+        );
+
+        await reauthenticateWithCredential(currentUser, credential);
+
+        /*
+         * IMPORTANT:
+         * This transaction prevents two simultaneous requests from both
+         * deducting against the same old balance.
+         *
+         * Production systems should instead perform the entire withdrawal
+         * operation in trusted server-side code with an idempotency key.
+         */
+
+        const balanceRef = ref(
+            db,
+            "users/" + currentUser.uid + "/balance"
+        );
+
+        const transactionResult = await runTransaction(
+            balanceRef,
+            currentBalance => {
+                if (
+                    typeof currentBalance !== "number" ||
+                    !Number.isSafeInteger(currentBalance) ||
+                    currentBalance < totalDeduct
+                ) {
+                    return;
+                }
+
+                return currentBalance - totalDeduct;
+            },
+            { applyLocally: false }
+        );
+
+        if (!transactionResult.committed) {
+            showToast(
+                "Withdrawal cancelled. Check your available balance.",
+                "error"
+            );
+            return;
+        }
+
+        balanceDeducted = true;
+
+        withdrawalKey = push(
+            ref(db, "users/" + currentUser.uid + "/withdrawals")
+        ).key;
+
+         const activityKey = push(
+            ref(db, "users/" + currentUser.uid + "/activities")
+        ).key;
+
+        if (!withdrawalKey || !activityKey) {
+            throw new Error("Could not create withdrawal reference.");
+        }
+
+        const now = Date.now();
+
+        const withdrawalRecord = {
+            uid: currentUser.uid,
+            phone: userPhone,
+            amount: amount,
+            fee: fee,
+            total: totalDeduct,
+            method: "MOBILE_MONEY",
+            account: userPhone,
+            status: "PENDING",
+            requestedAt: now
+        };
 
         const updates = {};
-        // 1. DEDUCT BALANCE IMMEDIATELY
-        updates[`users/${currentUser.uid}/balance`] = balance - totalDeduct;
-        
-        // 2. User withdrawal history
-        updates[`users/${currentUser.uid}/withdrawals/${withdrawKey}`] = {
-            amount: amount, phone: userPhone, fee: fee, total: totalDeduct,
-            method: "MOBILE_MONEY", account: userPhone, status: "PENDING", createdAt: Date.now()
+
+        updates[
+            "users/" + currentUser.uid +
+            "/withdrawals/" + withdrawalKey
+        ] = {
+            amount: amount,
+            phone: userPhone,
+            fee: fee,
+            total: totalDeduct,
+            method: "MOBILE_MONEY",
+            account: userPhone,
+            status: "PENDING",
+            createdAt: now
         };
-        // 3. Admin queue
-        updates[`withdrawals/${withdrawKey}`] = {
-            uid: currentUser.uid, phone: userPhone, amount: amount, fee: fee, total: totalDeduct,
-            method: "MOBILE_MONEY", account: userPhone, status: "PENDING", requestedAt: Date.now()
-        };
-        // 4. Activity log
-        updates[`users/${currentUser.uid}/activities/${activityKey}`] = {
+
+        updates["withdrawals/" + withdrawalKey] = withdrawalRecord;
+
+        updates[
+            "users/" + currentUser.uid +
+            "/activities/" + activityKey
+        ] = {
             type: "withdraw",
             status: "PENDING",
             icon: "fa-solid fa-arrow-up",
             title: "Withdrawal Request",
-            amount: "-UGX " + totalDeduct.toLocaleString(),
+            amount: "-" + formatUGX(totalDeduct),
             fee: fee,
             phone: userPhone,
-            time: new Date().toLocaleString(),
-            createdAt: Date.now()
+            time: new Date(now).toLocaleString(),
+            timestamp: now,
+            createdAt: now
         };
 
         await update(ref(db), updates);
-        document.getElementById("withdrawAmount").value = "";
-        document.getElementById("withdrawPassword").value = "";
 
-        showToast("Withdrawal request submitted", "success");
-        setTimeout(() => { window.location.href = "wallet.html"; }, 1200); // REDIRECT
-    } catch(error){
-        console.error(error);
-        showToast("Withdrawal failed: " + (error.message || error), "error");
+        amountInput.value = "";
+        passwordInput.value = "";
+
+        showToast(
+            "Withdrawal request submitted. Awaiting approval.",
+            "success"
+        );
+
+    } catch (error) {
+        console.error("Withdrawal error:", error);
+
+        if (error.code === "auth/invalid-credential" ||
+            error.code === "auth/wrong-password") {
+            showToast("Password is incorrect.", "error");
+        } else if (error.code === "auth/too-many-requests") {
+            showToast("Too many attempts. Please try again later.", "error");
+        } else {
+            showToast(
+                balanceDeducted
+                    ? "Request processing needs verification. Contact support before retrying."
+                    : "Withdrawal failed. Your balance was not deducted by this attempt.",
+                "error"
+            );
+        }
+
+        /*
+         * Do not automatically refund here.
+         * If the database update partly succeeded, an automatic refund could
+         * create inconsistent financial records. Reconcile the request using
+         * trusted backend logic before making any compensating transaction.
+         */
+
+    } finally {
         processing = false;
-        btn.disabled = false;
-        btn.innerHTML = originalBtnHTML;
+        withdrawButton.innerHTML = originalButtonHTML;
+        updateButtonState();
     }
-};
+}
 
 
-document.getElementById("withdrawAmount").addEventListener("input", (e) => {
-    const val = Number(e.target.value);
-    // don't enable unless user has phone and enters valid amount
-    const hasPhone = Boolean(userPhone);
-    document.getElementById("withdrawBtn").disabled = !(hasPhone && val >= 10000);
-});
-    // Block long press and right click
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.addEventListener('touchstart', e => {
-      if(e.touches.length > 1) e.preventDefault(); // block pinch
-    });
-    document.addEventListener('touchend', e => {
-      if(e.touches.length > 1) e.preventDefault();
-    });
-
-    // Block 500ms long press
-    let touchTimer;
-    document.addEventListener('touchstart', e => {
-      touchTimer = setTimeout(() => e.preventDefault(), 500);
-    });
-    document.addEventListener('touchend', () => clearTimeout(touchTimer));
-    document.addEventListener('touchmove', () => clearTimeout(touchTimer));
+window.addEventListener("pagehide", stopUserListener);
 </script>
+
 </body>
-  </html>
+</html>
