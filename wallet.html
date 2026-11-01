@@ -100,6 +100,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+let unsubscribeWallet = null;
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
   authDomain: "sentebot-7428b.firebaseapp.com",
@@ -116,9 +117,13 @@ let currentUser=null, allTransactions=[], currentFilter="All", lastHash="", last
 
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",2500)}
-function silentUpdate(id,value){
-  const el=document.getElementById(id); if(!el) return;
-  if(el.textContent!==value){ el.textContent=value; el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse"); }
+function silentUpdate(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    if (el.textContent !== value) {
+        el.textContent = value;
+    }
 }
 onAuthStateChanged(auth,(user)=>{
     if(!user){location.href="index.html";return;}
@@ -131,20 +136,32 @@ function attachListener(){
         if(!snap.exists()) return;
         const data=snap.val();
         // silent balance updates like crypto apps
-        const bal=Number(data.balance||0);
-        if(bal!==lastBalance){
-          silentUpdate("walletBalance","UGX "+bal.toLocaleString());
-          lastBalance=bal;
-        }
+        if (
+    data.balance !== null &&
+    data.balance !== undefined &&
+    data.balance !== "" &&
+    Number.isFinite(Number(data.balance)) &&
+    Number(data.balance) >= 0
+) {
+    const bal = Number(data.balance);
+
+    silentUpdate(
+        "walletBalance",
+        "UGX " + bal.toLocaleString()
+    );
+
+    lastBalance = bal;
+}
         silentUpdate("todayProfit","UGX "+Number(data.todayProfit||0).toLocaleString());
         silentUpdate("referralEarnings","UGX "+Number(data.referralEarnings||0).toLocaleString());
         const activities=data.activities?Object.values(data.activities).sort((a,b)=>(b.timestamp||0)-(a.timestamp||0)):[];
-        const hash=JSON.stringify(activities).length+"_"+activities.length;
-        if(hash!==lastHash){
-          allTransactions=activities;
-          renderTransactions();
-          lastHash=hash;
-        }
+        const hash = JSON.stringify(activities);
+
+if (hash !== lastHash) {
+    allTransactions = activities;
+    lastHash = hash;
+    renderTransactions();
+}
     });
 }
 function renderTransactions(){
@@ -186,4 +203,4 @@ document.querySelectorAll(".filter-tab").forEach(tab=>{
 document.addEventListener('contextmenu',e=>e.preventDefault());
 </script>
 </body>
-  </html>
+    </html>
