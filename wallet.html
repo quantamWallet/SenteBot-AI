@@ -90,12 +90,51 @@ input,textarea{-webkit-user-select:text;user-select:text}
     </div>
 </div>
 <div class="bottom-nav" id="bottomNav">
-<div class="nav-item" onclick="window.location='dashboard.html'"><div class="nav-icon"><i class="fa-solid fa-house"></i></div><span>Home</span></div>
-<div class="nav-item" onclick="window.location='team.html'"><div class="nav-icon"><i class="fa-solid fa-users"></i></div><span>Team</span></div>
-<div class="nav-item" onclick="window.location='machines.html'"><div class="nav-icon"><i class="fa-solid fa-microchip"></i></div><span>Machines</span></div>
-<div class="nav-item active"><div class="nav-icon"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></div>
-<div class="nav-item" onclick="window.location='profile.html'"><div class="nav-icon"><i class="fa-solid fa-user"></i></div><span>Profile</span></div>
-</div>
+  <div class="nav-item" role="button" tabindex="0"
+       onclick="navigateToPage('dashboard.html', this)"
+       onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToPage('dashboard.html',this)}">
+    <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
+    <span>Home</span>
+  </div>  <div class="nav-item" role="button" tabindex="0"
+       onclick="navigateToPage('team.html', this)"
+       onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToPage('team.html',this)}">
+    <div class="nav-icon"><i class="fa-solid fa-users"></i></div>
+    <span>Team</span>
+  </div>  <div class="nav-item" role="button" tabindex="0"
+       onclick="navigateToPage('machines.html', this)"
+       onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToPage('machines.html',this)}">
+    <div class="nav-icon"><i class="fa-solid fa-microchip"></i></div>
+    <span>Machines</span>
+  </div>  <div class="nav-item active" aria-current="page">
+    <div class="nav-icon"><i class="fa-solid fa-wallet"></i></div>
+    <span>Wallet</span>
+  </div>  <div class="nav-item" role="button" tabindex="0"
+       onclick="navigateToPage('profile.html', this)"
+       onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();navigateToPage('profile.html',this)}">
+    <div class="nav-icon"><i class="fa-solid fa-user"></i></div>
+    <span>Profile</span>
+  </div>
+</div><script>
+  let isNavigating = false;
+
+  function navigateToPage(page, button) {
+    if (isNavigating) return;
+
+    const currentPage = window.location.pathname.split('/').pop();
+
+    // Don't reload the current page.
+    if (currentPage === page) return;
+
+    isNavigating = true;
+
+    // Prevent accidental repeated taps.
+    document.querySelectorAll('#bottomNav .nav-item').forEach(item => {
+      item.style.pointerEvents = 'none';
+    });
+
+    window.location.assign(page);
+  }
+</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
