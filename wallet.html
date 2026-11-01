@@ -130,9 +130,16 @@ onAuthStateChanged(auth,(user)=>{
     currentUser=user;
     attachListener();
 });
-function attachListener(){
-    const userRef=ref(db,"users/"+currentUser.uid);
-    onValue(userRef,(snap)=>{
+function attachListener() {
+    if (!currentUser) return;
+
+    if (unsubscribeWallet) {
+        unsubscribeWallet();
+    }
+
+    const userRef = ref(db, "users/" + currentUser.uid);
+
+    unsubscribeWallet = onValue(userRef, (snap) => {
         if(!snap.exists()) return;
         const data=snap.val();
         // silent balance updates like crypto apps
