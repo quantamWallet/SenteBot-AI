@@ -1,371 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google" content="notranslate">
-    <meta name="theme-color" content="#050A18">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="google" content="notranslate">
+<meta name="theme-color" content="#050A18">
 
-    <link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="/manifest.json">
 
-    <title>SenteBot Withdraw</title>
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(error => {
+            console.error('Service worker registration failed:', error);
+        });
+    });
+}
+</script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<title>SenteBot Withdraw</title>
 
-    <script>
-        if ("serviceWorker" in navigator) {
-            window.addEventListener("load", () => {
-                navigator.serviceWorker.register("/sw.js").catch(error => {
-                    console.error("Service worker registration failed:", error);
-                });
-            });
-        }
-    </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <style>
-        :root {
-            --bg: #050A18;
-            --card: #0E1629;
-            --card2: #14243E;
-            --green: #00E676;
-            --cyan: #00D1FF;
-            --red: #EF4444;
-            --text: #F8FAFC;
-            --muted: #94A3B8;
-            --border: rgba(0,209,255,.15);
-            --glow-cyan: 0 0 25px rgba(0,209,255,.25);
-        }
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+:root {
+    --bg: #050A18;
+    --card: #0E1629;
+    --card2: #14243E;
+    --green: #00E676;
+    --cyan: #00D1FF;
+    --red: #EF4444;
+    --text: #F8FAFC;
+    --muted: #94A3B8;
+    --border: rgba(0,209,255,.15);
+    --glow-cyan: 0 0 25px rgba(0,209,255,.25);
+}
 
-        body {
-            background:
-                radial-gradient(1200px 600px at 50% -20%,
-                    rgba(239,68,68,.10), transparent 60%),
-                linear-gradient(180deg,#050A18,#070B14);
-            color: var(--text);
-            min-height: 100vh;
-            padding-bottom: calc(120px + env(safe-area-inset-bottom));
-        }
+body {
+    background: radial-gradient(1200px 600px at 50% -20%, rgba(239,68,68,.10), transparent 60%),
+                linear-gradient(180deg, #050A18, #070B14);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: calc(120px + env(safe-area-inset-bottom));
+}
 
-        input {
-            -webkit-user-select: text;
-            user-select: text;
-        }
+input, textarea {
+    -webkit-user-select: text;
+    user-select: text;
+}
 
-        .container {
-            max-width: 540px;
-            margin: auto;
-            padding: 18px;
-        }
+.container {
+    max-width: 540px;
+    margin: auto;
+    padding: 18px;
+}
 
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-        }
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
 
-        .back-btn {
-            width: 46px;
-            height: 46px;
-            border-radius: 15px;
-            background: rgba(239,68,68,.06);
-            border: 1px solid rgba(239,68,68,.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            cursor: pointer;
-            color: white;
-        }
+.back-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
+    background: rgba(239,68,68,.06);
+    border: 1px solid rgba(239,68,68,.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+}
 
-        .page-title {
-            text-align: center;
-            flex: 1;
-        }
+.page-title {
+    text-align: center;
+    flex: 1;
+}
 
-        .page-title h2 {
-            font-size: 22px;
-            font-weight: 800;
-            background: linear-gradient(90deg,#fff,var(--red));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+.page-title h2 {
+    font-size: 22px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #fff, var(--red));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 
-        .balance-card {
-            background: linear-gradient(
-                180deg,
-                rgba(20,36,62,.9),
-                rgba(14,22,41,.9)
-            );
-            border-radius: 28px;
-            padding: 24px;
-            border: 1px solid var(--border);
-            box-shadow: var(--glow-cyan);
-            margin-bottom: 20px;
-        }
+.balance-card {
+    background: linear-gradient(180deg, rgba(20,36,62,.9), rgba(14,22,41,.9));
+    border-radius: 28px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    box-shadow: var(--glow-cyan);
+    margin-bottom: 20px;
+}
 
-        .balance-label {
-            font-size: 12px;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: .5px;
-        }
+.balance-label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
 
-        .balance-value {
-            font-size: 32px;
-            font-weight: 800;
-            margin: 10px 0;
-            overflow-wrap: anywhere;
-            background: linear-gradient(90deg,var(--green),var(--cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+.balance-value {
+    font-size: 32px;
+    font-weight: 800;
+    margin: 10px 0;
+    background: linear-gradient(90deg, var(--green), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    overflow-wrap: anywhere;
+}
 
-        .form-card {
-            background: linear-gradient(180deg,var(--card),var(--card2));
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 18px;
-            backdrop-filter: blur(16px);
-        }
+.form-card {
+    background: linear-gradient(180deg, var(--card), var(--card2));
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 24px;
+    margin-bottom: 18px;
+    backdrop-filter: blur(16px);
+}
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+.form-group {
+    margin-bottom: 20px;
+}
 
-        .form-label {
-            font-size: 13px;
-            color: var(--muted);
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
+.form-label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-weight: 600;
+}
 
-        .form-input {
-            width: 100%;
-            height: 56px;
-            background: #0B1324;
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 0 18px;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 700;
-            outline: none;
-            transition: border-color .2s, box-shadow .2s;
-        }
+.form-input {
+    width: 100%;
+    height: 56px;
+    background: #0B1324;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 0 18px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+}
 
-        .form-input:focus {
-            border-color: var(--cyan);
-            box-shadow: var(--glow-cyan);
-        }
+.form-input:focus {
+    border-color: var(--cyan);
+    box-shadow: var(--glow-cyan);
+}
 
-        .phone-display {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #0B1324;
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 0 18px;
-            min-height: 56px;
-            overflow-wrap: anywhere;
-        }
+.phone-display {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #0B1324;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 0 18px;
+    min-height: 56px;
+    overflow-wrap: anywhere;
+}
 
-        .phone-display i {
-            color: var(--green);
-            font-size: 20px;
-        }
+.phone-display i {
+    color: var(--green);
+    font-size: 20px;
+    flex-shrink: 0;
+}
 
-        .phone-display span {
-            font-size: 16px;
-            font-weight: 800;
-        }
+.phone-display span {
+    font-size: 16px;
+    font-weight: 800;
+}
 
-        .phone-note {
-            font-size: 12px;
-            color: var(--muted);
-            margin-top: 8px;
-            line-height: 1.5;
-        }
+.phone-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.5;
+}
 
-        .info-box {
-            background: rgba(0,209,255,.08);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
+.info-box {
+    background: rgba(0,209,255,.08);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
 
-        .info-box p {
-            font-size: 13px;
-            color: var(--muted);
-            line-height: 1.6;
-        }
+.info-box p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+}
 
-        .info-box strong {
-            color: var(--cyan);
-        }
+.info-box strong {
+    color: var(--cyan);
+}
 
-        .withdraw-btn {
-            width: 100%;
-            min-height: 56px;
-            border: none;
-            border-radius: 18px;
-            background: linear-gradient(90deg,var(--red),#DC2626);
-            color: #fff;
-            font-size: 16px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: opacity .2s;
-            box-shadow: 0 6px 18px rgba(220,38,38,.12);
-        }
+.withdraw-btn {
+    width: 100%;
+    min-height: 56px;
+    border: none;
+    border-radius: 18px;
+    background: linear-gradient(90deg, var(--red), #DC2626);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: opacity .2s, transform .2s;
+    box-shadow: 0 6px 18px rgba(220,38,38,.12);
+}
 
-        .withdraw-btn:disabled {
-            opacity: .45;
-            cursor: not-allowed;
-        }
+.withdraw-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
 
-        .bottom-nav {
-            position: fixed;
-            left: 50%;
-            bottom: calc(18px + env(safe-area-inset-bottom));
-            transform: translateX(-50%);
-            width: calc(100% - 26px);
-            max-width: 540px;
-            min-height: 74px;
-            background: rgba(8,16,32,.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,.03);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            gap: 8px;
-            z-index: 100;
-        }
+.withdraw-btn:active:not(:disabled) {
+    transform: scale(.98);
+}
 
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            flex: 1;
-            font-size: 11px;
-            color: var(--muted);
-            cursor: pointer;
-            text-decoration: none;
-        }
+/* Bottom navigation preserved */
+.bottom-nav {
+    position: fixed;
+    left: 50%;
+    bottom: calc(18px + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    width: calc(100% - 26px);
+    max-width: 540px;
+    height: 74px;
+    background: rgba(8,16,32,.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.03);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    gap: 8px;
+    z-index: 1000;
+}
 
-        .nav-icon {
-            width: 42px;
-            height: 42px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 14px;
-            font-size: 22px;
-        }
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    flex: 1;
+    font-size: 11px;
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: none;
+}
 
-        .nav-item.active {
-            color: var(--cyan);
-            font-weight: 700;
-        }
+.nav-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    font-size: 22px;
+}
 
-        .nav-item.active .nav-icon {
-            background: rgba(0,209,255,.15);
-            color: var(--cyan);
-            box-shadow: 0 0 18px rgba(0,209,255,.2);
-        }
+.nav-item.active {
+    color: var(--cyan);
+    font-weight: 700;
+}
 
-        .toast {
-            position: fixed;
-            left: 50%;
-            bottom: calc(105px + env(safe-area-inset-bottom));
-            transform: translateX(-50%);
-            width: max-content;
-            max-width: calc(100% - 32px);
-            padding: 14px 20px;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 13px;
-            display: none;
-            z-index: 10000;
-            overflow-wrap: anywhere;
-            box-shadow: 0 10px 30px rgba(0,0,0,.6);
-        }
+.nav-item.active .nav-icon {
+    background: rgba(0,209,255,.15);
+    color: var(--cyan);
+    box-shadow: 0 0 18px rgba(0,209,255,.35);
+}
 
-        .toast.success {
-            background: linear-gradient(90deg,var(--cyan),var(--green));
-            color: #05121A;
-        }
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: calc(105px + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100% - 32px);
+    padding: 14px 20px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 14px;
+    display: none;
+    z-index: 10000;
+    box-shadow: 0 10px 30px rgba(0,0,0,.6);
+}
 
-        .toast.error {
-            background: var(--red);
-            color: #fff;
-        }
+.toast.success {
+    background: linear-gradient(90deg, var(--cyan), var(--green));
+    color: #05121A;
+}
 
-        .loading-text {
-            color: var(--muted);
-            font-size: 13px;
-        }
-    </style>
+.toast.error {
+    background: var(--red);
+    color: #fff;
+}
+
+.loading-box {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.loader {
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(239,68,68,.2);
+    border-top: 3px solid var(--red);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 360px) {
+    .container { padding: 14px; }
+    .form-card { padding: 18px; }
+    .page-title h2 { font-size: 19px; }
+    .balance-value { font-size: 27px; }
+}
+</style>
 </head>
 
 <body>
 
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-<main class="container">
-
-    <header class="header">
-        <button class="back-btn" type="button"
-                onclick="window.location.href='wallet.html'"
-                aria-label="Back to wallet">
+<div class="container">
+    <div class="header">
+        <div class="back-btn" onclick="window.location='wallet.html'">
             <i class="fa-solid fa-arrow-left"></i>
-        </button>
+        </div>
 
         <div class="page-title">
             <h2>Withdraw Funds</h2>
         </div>
 
-        <div style="width:46px" aria-hidden="true"></div>
-    </header>
+        <div style="width:46px;"></div>
+    </div>
 
-    <section class="balance-card">
+    <div class="balance-card">
         <div class="balance-label">Available Balance</div>
-        <div class="balance-value" id="walletBalance" aria-live="polite">
-            Loading balance...
-        </div>
-    </section>
+        <div class="balance-value" id="walletBalance">Loading...</div>
+    </div>
 
-    <section class="form-card">
-
+    <div class="form-card">
         <div class="form-group">
             <div class="form-label">Withdrawal Number</div>
 
             <div class="phone-display" id="phoneDisplay">
-                <span class="loading-text">Loading registered number...</span>
+                <div class="loading-box">
+                    <div class="loader"></div>
+                </div>
             </div>
 
             <div class="phone-note">
-                Withdrawals are only allowed to your registered number.
+                * Withdrawals are only allowed to your registered number.
             </div>
         </div>
 
         <div class="form-group">
-            <label class="form-label" for="withdrawAmount">
-                Amount to Withdraw
-            </label>
+            <div class="form-label">Amount to Withdraw</div>
 
             <input
                 type="number"
@@ -380,20 +394,18 @@
         </div>
 
         <div class="form-group">
-            <label class="form-label" for="withdrawPassword">
-                Confirm Password
-            </label>
+            <div class="form-label">Confirm Password</div>
 
             <input
                 type="password"
                 id="withdrawPassword"
                 class="form-input"
-                placeholder="Enter your password"
+                placeholder="Enter your password to confirm"
                 autocomplete="current-password"
             >
 
             <div class="phone-note">
-                Confirm your account password before requesting a withdrawal.
+                Enter your account password to confirm this withdrawal.
             </div>
         </div>
 
@@ -401,8 +413,8 @@
             <p>
                 <strong>Note:</strong>
                 Minimum withdrawal is UGX 10,000.
-                The displayed fee is 1%.
-                Processing time may vary.
+                Processing takes 5–30 minutes.
+                Fees: 1%.
             </p>
         </div>
 
@@ -410,44 +422,39 @@
             <i class="fa-solid fa-arrow-up"></i>
             Request Withdrawal
         </button>
+    </div>
+</div>
 
-    </section>
-</main>
-
-<nav class="bottom-nav" aria-label="Main navigation">
-
-    <a class="nav-item" href="dashboard.html">
+<!-- Bottom navigation buttons are unchanged -->
+<div class="bottom-nav">
+    <div class="nav-item" onclick="window.location='dashboard.html'">
         <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
         <span>Home</span>
-    </a>
+    </div>
 
-    <a class="nav-item" href="team.html">
+    <div class="nav-item" onclick="window.location='team.html'">
         <div class="nav-icon"><i class="fa-solid fa-users"></i></div>
         <span>Team</span>
-    </a>
+    </div>
 
-    <a class="nav-item" href="machines.html">
+    <div class="nav-item" onclick="window.location='machines.html'">
         <div class="nav-icon"><i class="fa-solid fa-microchip"></i></div>
         <span>Machines</span>
-    </a>
+    </div>
 
-    <a class="nav-item active" href="wallet.html" aria-current="page">
+    <div class="nav-item active">
         <div class="nav-icon"><i class="fa-solid fa-wallet"></i></div>
         <span>Wallet</span>
-    </a>
+    </div>
 
-    <a class="nav-item" href="profile.html">
+    <div class="nav-item" onclick="window.location='profile.html'">
         <div class="nav-icon"><i class="fa-solid fa-user"></i></div>
         <span>Profile</span>
-    </a>
-
-</nav>
+    </div>
+</div>
 
 <script type="module">
-import {
-    initializeApp,
-    getApps
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
     getAuth,
@@ -460,11 +467,10 @@ import {
     getDatabase,
     ref,
     onValue,
-    runTransaction,
     push,
-    update
+    update,
+    runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
 
 const firebaseConfig = {
     apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
@@ -476,36 +482,31 @@ const firebaseConfig = {
     appId: "1:24568208668:web:e01e4001149dfa93eeaed9"
 };
 
-const app = getApps().length
-    ? getApps()[0]
-    : initializeApp(firebaseConfig);
-
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
 const MIN_WITHDRAWAL = 10000;
-const FEE_RATE = 0.01;
+const WITHDRAWAL_FEE_RATE = 0.01;
 
 let currentUser = null;
 let currentUserData = null;
 let userPhone = "";
 let processing = false;
-let balanceLoaded = false;
 let unsubscribeUser = null;
+let balanceAvailable = false;
 let toastTimer = null;
 
 const balanceElement = document.getElementById("walletBalance");
 const phoneElement = document.getElementById("phoneDisplay");
 const amountInput = document.getElementById("withdrawAmount");
 const passwordInput = document.getElementById("withdrawPassword");
-const withdrawButton = document.getElementById("withdrawBtn");
-
+const withdrawBtn = document.getElementById("withdrawBtn");
 
 function showToast(message, type = "success") {
     const toast = document.getElementById("toast");
 
     clearTimeout(toastTimer);
-
     toast.textContent = message;
     toast.className = "toast " + type;
     toast.style.display = "block";
@@ -515,204 +516,201 @@ function showToast(message, type = "success") {
     }, 3500);
 }
 
-
 function formatUGX(amount) {
-    return "UGX " + Number(amount).toLocaleString("en-UG");
+    return "UGX " + amount.toLocaleString("en-UG");
 }
-
 
 function maskPhone(phone) {
-    const value = String(phone || "");
+    const str = String(phone || "");
 
-    if (!value) return "";
+    if (str.length < 7) return str;
 
-    if (value.length < 7) return value;
-
-    return value.slice(0, 5) +
-        "***" +
-        value.slice(-3);
+    return str.slice(0, 5) + "***" + str.slice(-3);
 }
 
-
-function updateButtonState() {
-    const amount = amountInput.valueAsNumber;
+function setButtonState() {
+    const amount = Number(amountInput.value);
+    const passwordEntered = passwordInput.value.length > 0;
 
     const validAmount =
+        amountInput.value.trim() !== "" &&
         Number.isSafeInteger(amount) &&
         amount >= MIN_WITHDRAWAL;
 
-    withdrawButton.disabled =
+    withdrawBtn.disabled =
         processing ||
         !currentUser ||
-        !balanceLoaded ||
-        !currentUserData ||
+        !balanceAvailable ||
         !userPhone ||
-        !validAmount;
+        !validAmount ||
+        !passwordEntered;
 }
 
-
-function showPhone() {
+function displayPhone(phone) {
     phoneElement.replaceChildren();
 
     const icon = document.createElement("i");
     icon.className = "fa-solid fa-phone";
+    icon.setAttribute("aria-hidden", "true");
 
-    const text = document.createElement("span");
-    text.textContent = maskPhone(userPhone);
+    const label = document.createElement("span");
+    label.textContent = phone ? maskPhone(phone) : "No phone number registered";
 
-    phoneElement.append(icon, text);
+    phoneElement.append(icon, label);
 }
 
-
-function renderUserData(data) {
-    currentUserData = data;
-
-    // Preserve the previous display if balance data is missing or invalid.
-    if (
-        data.balance !== null &&
-        data.balance !== undefined &&
-        data.balance !== "" &&
-        Number.isSafeInteger(Number(data.balance)) &&
-        Number(data.balance) >= 0
-    ) {
-        balanceElement.textContent = formatUGX(Number(data.balance));
-        balanceLoaded = true;
-    }
-
-    userPhone = String(data.phone || "").trim();
-
-    if (userPhone) {
-        showPhone();
-    } else {
-        phoneElement.textContent = "No registered number";
-    }
-
-    updateButtonState();
-}
-
-
-function stopUserListener() {
-    if (unsubscribeUser) {
-        unsubscribeUser();
-        unsubscribeUser = null;
-    }
-}
-
-
-function loadUser() {
-    stopUserListener();
-
-    if (!currentUser) return;
-
-    const userRef = ref(db, "users/" + currentUser.uid);
-
-    unsubscribeUser = onValue(
-        userRef,
-        snapshot => {
-            if (!snapshot.exists()) {
-                showToast("Account data could not be found.", "error");
-                return;
-            }
-
-            renderUserData(snapshot.val());
-        },
-        error => {
-            console.error("Wallet listener error:", error);
-
-            // Keep the last valid displayed balance.
-            showToast("Unable to refresh account data.", "error");
-        }
-    );
-}
-
-
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, (user) => {
     if (!user) {
-        stopUserListener();
+        if (unsubscribeUser) {
+            unsubscribeUser();
+            unsubscribeUser = null;
+        }
+
         window.location.replace("index.html");
         return;
     }
 
     currentUser = user;
-    loadUser();
+    listenToUser();
 });
 
+function listenToUser() {
+    if (!currentUser) return;
 
-amountInput.addEventListener("input", updateButtonState);
+    if (unsubscribeUser) {
+        unsubscribeUser();
+        unsubscribeUser = null;
+    }
 
-passwordInput.addEventListener("input", updateButtonState);
+    const userRef = ref(db, "users/" + currentUser.uid);
 
+    unsubscribeUser = onValue(
+        userRef,
+        (snapshot) => {
+            if (!snapshot.exists()) {
+                currentUserData = null;
+                balanceAvailable = false;
+                balanceElement.textContent = "Unavailable";
+                displayPhone("");
+                setButtonState();
+                return;
+            }
 
-withdrawButton.addEventListener("click", requestWithdraw);
+            const data = snapshot.val();
+            currentUserData = data;
 
+            if (
+                data.balance !== null &&
+                data.balance !== undefined &&
+                data.balance !== "" &&
+                Number.isFinite(Number(data.balance)) &&
+                Number(data.balance) >= 0
+            ) {
+                const balance = Number(data.balance);
+
+                balanceElement.textContent = formatUGX(balance);
+                balanceAvailable = true;
+            } else {
+                // Keep the last displayed balance, but block withdrawals
+                // until valid balance data is available.
+                balanceAvailable = false;
+            }
+
+            userPhone = String(data.phone || "").trim();
+            displayPhone(userPhone);
+            setButtonState();
+        },
+        (error) => {
+            console.error("Unable to load user data:", error);
+
+            balanceAvailable = false;
+            setButtonState();
+            showToast("Unable to load account data. Please retry.", "error");
+        }
+    );
+}
+
+amountInput.addEventListener("input", setButtonState);
+passwordInput.addEventListener("input", setButtonState);
+
+withdrawBtn.addEventListener("click", requestWithdraw);
+
+window.addEventListener("pagehide", () => {
+    if (unsubscribeUser) {
+        unsubscribeUser();
+        unsubscribeUser = null;
+    }
+});
 
 async function requestWithdraw() {
     if (processing) return;
 
-    if (!currentUser || !currentUserData || !balanceLoaded) {
-        showToast("Please wait for your account data to load.", "error");
+    if (!currentUser || !currentUserData) {
+        showToast("Your account is still loading.", "error");
         return;
     }
 
-    const amount = amountInput.valueAsNumber;
+    const amountText = amountInput.value.trim();
+    const amount = Number(amountText);
     const password = passwordInput.value;
 
     if (!userPhone) {
-        showToast("Register a phone number before withdrawing.", "error");
+        showToast("No registered phone number found.", "error");
+        return;
+    }
+
+    if (!balanceAvailable) {
+        showToast("Your balance is unavailable. Please wait and retry.", "error");
         return;
     }
 
     if (
+        amountText === "" ||
         !Number.isSafeInteger(amount) ||
         amount < MIN_WITHDRAWAL
     ) {
-        showToast("Minimum withdrawal is UGX 10,000.", "error");
+        showToast("Enter a whole-number amount of at least UGX 10,000.", "error");
         return;
     }
 
     if (!password) {
-        showToast("Enter your password to continue.", "error");
+        showToast("Enter your password to confirm.", "error");
         return;
     }
 
     if (!currentUser.email) {
-        showToast(
-            "Password confirmation requires an email/password account.",
-            "error"
-        );
+        showToast("Password verification requires an email-based account.", "error");
         return;
     }
 
-    const fee = Math.ceil(amount * FEE_RATE);
+    const fee = Math.ceil(amount * WITHDRAWAL_FEE_RATE);
     const totalDeduct = amount + fee;
 
     if (!Number.isSafeInteger(totalDeduct)) {
-        showToast("Invalid withdrawal amount.", "error");
+        showToast("The withdrawal amount is too large.", "error");
         return;
     }
 
-    const confirmed = window.confirm(
-        "Withdrawal amount: " + formatUGX(amount) +
-        "\nFee: " + formatUGX(fee) +
-        "\nTotal deduction: " + formatUGX(totalDeduct) +
-        "\nDestination: " + maskPhone(userPhone) +
-        "\n\nContinue?"
-    );
+    const balance = Number(currentUserData.balance);
 
-    if (!confirmed) return;
+    if (!Number.isFinite(balance) || balance < totalDeduct) {
+        showToast("Insufficient balance, including the 1% fee.", "error");
+        return;
+    }
 
     processing = true;
-    updateButtonState();
+    setButtonState();
 
-    const originalButtonHTML = withdrawButton.innerHTML;
-
-    withdrawButton.innerHTML =
+    const originalButtonHTML = withdrawBtn.innerHTML;
+    withdrawBtn.innerHTML =
         '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
 
-    let balanceDeducted = false;
+    let balanceReserved = false;
     let withdrawalKey = null;
+    let activityKey = null;
 
     try {
+        // Verify the account password before changing any account data.
         const credential = EmailAuthProvider.credential(
             currentUser.email,
             password
@@ -720,15 +718,27 @@ async function requestWithdraw() {
 
         await reauthenticateWithCredential(currentUser, credential);
 
+                const timestamp = Date.now();
+
+        // Generate unique IDs before saving the request.
+        withdrawalKey = push(
+            ref(db, "users/" + currentUser.uid + "/withdrawals")
+        ).key;
+
+        activityKey = push(
+            ref(db, "users/" + currentUser.uid + "/activities")
+        ).key;
+
+        if (!withdrawalKey || !activityKey) {
+            throw new Error("Could not create withdrawal request IDs.");
+        }
+
         /*
          * IMPORTANT:
-         * This transaction prevents two simultaneous requests from both
-         * deducting against the same old balance.
-         *
-         * Production systems should instead perform the entire withdrawal
-         * operation in trusted server-side code with an idempotency key.
+         * A trusted backend should ultimately perform this operation.
+         * This client-side transaction protects the balance from concurrent
+         * balance changes better than a normal read-then-update sequence.
          */
-
         const balanceRef = ref(
             db,
             "users/" + currentUser.uid + "/balance"
@@ -736,43 +746,37 @@ async function requestWithdraw() {
 
         const transactionResult = await runTransaction(
             balanceRef,
-            currentBalance => {
+            (currentBalance) => {
                 if (
-                    typeof currentBalance !== "number" ||
-                    !Number.isSafeInteger(currentBalance) ||
-                    currentBalance < totalDeduct
+                    currentBalance === null ||
+                    currentBalance === undefined ||
+                    currentBalance === "" ||
+                    !Number.isFinite(Number(currentBalance))
                 ) {
                     return;
                 }
 
-                return currentBalance - totalDeduct;
+                const actualBalance = Number(currentBalance);
+
+                if (
+                    actualBalance < 0 ||
+                    actualBalance < totalDeduct
+                ) {
+                    return;
+                }
+
+                return actualBalance - totalDeduct;
             },
             { applyLocally: false }
         );
 
         if (!transactionResult.committed) {
-            showToast(
-                "Withdrawal cancelled. Check your available balance.",
-                "error"
+            throw new Error(
+                "Withdrawal could not be completed. Check your balance and try again."
             );
-            return;
         }
 
-        balanceDeducted = true;
-
-        withdrawalKey = push(
-            ref(db, "users/" + currentUser.uid + "/withdrawals")
-        ).key;
-
-         const activityKey = push(
-            ref(db, "users/" + currentUser.uid + "/activities")
-        ).key;
-
-        if (!withdrawalKey || !activityKey) {
-            throw new Error("Could not create withdrawal reference.");
-        }
-
-        const now = Date.now();
+        balanceReserved = true;
 
         const withdrawalRecord = {
             uid: currentUser.uid,
@@ -783,87 +787,120 @@ async function requestWithdraw() {
             method: "MOBILE_MONEY",
             account: userPhone,
             status: "PENDING",
-            requestedAt: now
+            requestedAt: timestamp
         };
 
+        const activityRecord = {
+            type: "withdraw",
+            status: "PENDING",
+            icon: "fa-solid fa-arrow-up",
+            title: "Withdrawal Request",
+            amount: "-UGX " + totalDeduct.toLocaleString("en-UG"),
+            fee: fee,
+            phone: userPhone,
+            time: new Date(timestamp).toLocaleString(),
+            timestamp: timestamp,
+            createdAt: timestamp
+        };
+
+        /*
+         * Save the user's withdrawal record, activity and admin queue.
+         * The balance transaction above has already reserved the funds.
+         */
         const updates = {};
 
         updates[
             "users/" + currentUser.uid +
             "/withdrawals/" + withdrawalKey
-        ] = {
-            amount: amount,
-            phone: userPhone,
-            fee: fee,
-            total: totalDeduct,
-            method: "MOBILE_MONEY",
-            account: userPhone,
-            status: "PENDING",
-            createdAt: now
-        };
-
-        updates["withdrawals/" + withdrawalKey] = withdrawalRecord;
+        ] = withdrawalRecord;
 
         updates[
             "users/" + currentUser.uid +
             "/activities/" + activityKey
-        ] = {
-            type: "withdraw",
-            status: "PENDING",
-            icon: "fa-solid fa-arrow-up",
-            title: "Withdrawal Request",
-            amount: "-" + formatUGX(totalDeduct),
-            fee: fee,
-            phone: userPhone,
-            time: new Date(now).toLocaleString(),
-            timestamp: now,
-            createdAt: now
-        };
+        ] = activityRecord;
+
+        updates["withdrawals/" + withdrawalKey] = withdrawalRecord;
 
         await update(ref(db), updates);
 
+        // Clear sensitive form fields after successful submission.
         amountInput.value = "";
         passwordInput.value = "";
 
         showToast(
-            "Withdrawal request submitted. Awaiting approval.",
+            "Withdrawal submitted successfully. Status: Pending.",
             "success"
         );
 
-    } catch (error) {
-        console.error("Withdrawal error:", error);
+        /*
+         * Stay on this page.
+         * The Firebase listener updates the displayed balance.
+         * No forced redirect or page reload.
+         */
 
-        if (error.code === "auth/invalid-credential" ||
-            error.code === "auth/wrong-password") {
-            showToast("Password is incorrect.", "error");
-        } else if (error.code === "auth/too-many-requests") {
-            showToast("Too many attempts. Please try again later.", "error");
-        } else {
-            showToast(
-                balanceDeducted
-                    ? "Request processing needs verification. Contact support before retrying."
-                    : "Withdrawal failed. Your balance was not deducted by this attempt.",
-                "error"
-            );
-        }
+    } catch (error) {
+        console.error("Withdrawal submission error:", error);
 
         /*
-         * Do not automatically refund here.
-         * If the database update partly succeeded, an automatic refund could
-         * create inconsistent financial records. Reconcile the request using
-         * trusted backend logic before making any compensating transaction.
+         * If the balance was reserved but saving the withdrawal records
+         * failed, do not silently add the money back: another process may
+         * already have changed the balance. Flag this for reconciliation.
          */
+        if (balanceReserved) {
+            console.error(
+                "URGENT: Balance was deducted, but the withdrawal records " +
+                "may not have been saved. Check Firebase before retrying.",
+                {
+                    uid: currentUser?.uid,
+                    withdrawalKey: withdrawalKey,
+                    activityKey: activityKey
+                }
+            );
+
+            showToast(
+                "We could not confirm the request record. Do not retry yet; contact support.",
+                "error"
+            );
+        } else {
+            let message = "Withdrawal failed. Please try again.";
+
+            if (
+                error.code === "auth/invalid-credential" ||
+                error.code === "auth/wrong-password" ||
+                error.code === "auth/invalid-login-credentials"
+            ) {
+                message = "Incorrect password. Please try again.";
+            } else if (error.code === "auth/too-many-requests") {
+                message = "Too many attempts. Please try again later.";
+            } else if (
+                error.code === "PERMISSION_DENIED" ||
+                error.code === "permission-denied"
+            ) {
+                message = "Permission denied. Please contact support.";
+            } else if (error.message) {
+                message = error.message;
+            }
+
+            showToast(message, "error");
+        }
 
     } finally {
         processing = false;
-        withdrawButton.innerHTML = originalButtonHTML;
-        updateButtonState();
+        withdrawBtn.innerHTML =
+            '<i class="fa-solid fa-arrow-up"></i> Request Withdrawal';
+
+        setButtonState();
     }
 }
 
+// Block right-click and long-press context menus, as in your original page.
+document.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+});
 
-window.addEventListener("pagehide", stopUserListener);
+// Allow normal scrolling and pinch zoom.
+// Avoid blocking touch events globally because that can interfere
+// with accessibility and normal mobile interaction.
 </script>
-
 </body>
 </html>
