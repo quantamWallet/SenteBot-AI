@@ -159,8 +159,11 @@ input,textarea{-webkit-user-select:text;user-select:text}
   function navigateToPage(page) {
     const currentPage = window.location.pathname.split('/').pop();
 
-    // Don't reload the page you're already on.
+    // Don't navigate again when the current page is selected.
     if (currentPage === page) return;
+    window.location.href = page;
+  }
+
 const firebaseConfig = {
   apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8",
   authDomain: "sentebot-7428b.firebaseapp.com",
