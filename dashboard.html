@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#050a14">
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="google" content="notranslate">
+<title>SenteBot Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent}
+:root{
+--bg:#050a14;--bg2:#0a1426;
+--card:#0e1a30;--card2:#111f38;
+--green:#34d399;--cyan:#22d3ee;
+--blue:#60a5fa;--orange:#fb923c;--purple:#a78bfa;
+--text:#f1f5f9;--muted:#8b9bb0;--border:rgba(255,255,255,.06);
+--radius-xl:24px;--shadow:0 20px 50px rgba(0,0,0,.4);
+}
+html{background:var(--bg)}
+body{min-height:100vh;padding-bottom:calc(125px + env(safe-area-inset-bottom));color:var(--text);
+background:radial-gradient(700px 400px at 50% -10%,rgba(34,211,238,.10),transparent 70%),linear-gradient(180deg,#050a14,#080f20 50%,#050a14);
+overflow-x:hidden;-webkit-user-select:none;user-select:none}
+input,textarea{-webkit-user-select:text;user-select:text}
+.container{width:100%;max-width:540px;margin:0 auto;padding:18px 15px 30px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.profile{display:flex;align-items:center;gap:12px;min-width:0}
+.avatar{width:48px;height:48px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:16px;background:linear-gradient(135deg,#22d3ee,#34d399);color:#022018;font-size:17px;font-weight:800}
+.profile h2{max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;font-weight:800;letter-spacing:-.2px}
+.profile span{display:block;margin-top:3px;color:var(--muted);font-size:10px;font-weight:600}
+.header-icons{display:flex;gap:8px}
+.header-icons div{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:13px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:#a8b9cc;font-size:15px}
+.header-icons div:active{transform:scale(.96)}
+.wallet{position:relative;overflow:hidden;padding:22px;border-radius:var(--radius-xl);background:linear-gradient(135deg,#101e36,#0c172c);border:1px solid rgba(34,211,238,.12);box-shadow:var(--shadow)}
+.wallet small{color:#7a8ea6;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.wallet h1{margin:8px 0 6px;font-size:30px;font-weight:900;letter-spacing:-.7px}
+.wallet-profit{display:flex;gap:6px;color:var(--green);font-size:11px;font-weight:700}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:24px 2px 12px}
+.section-title h3{display:flex;gap:7px;color:#e8f0f8;font-size:14px;font-weight:700}
+.section-title span{padding:4px 8px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid var(--border);color:var(--muted);font-size:8px;font-weight:700;text-transform:uppercase}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat-card{padding:15px;border-radius:18px;background:linear-gradient(145deg,var(--card),var(--card2));border:1px solid var(--border);transition:.2s}
+.stat-icon{width:38px;height:38px;display:flex;align-items:center;justify-content:center;margin-bottom:11px;border-radius:11px;font-size:16px}
+.green{background:rgba(52,211,153,.10);color:var(--green)}.blue{background:rgba(34,211,238,.10);color:var(--cyan)}.orange{background:rgba(251,146,60,.10);color:var(--orange)}.purple{background:rgba(167,139,250,.10);color:var(--purple)}
+.stat-title{margin-bottom:4px;color:var(--muted);font-size:8px;font-weight:800;letter-spacing:.6px;text-transform:uppercase}
+.stat-value{color:#f1f5f9;font-size:15px;font-weight:800}
+.scroll-card{margin:18px 0 16px;padding:16px;border-radius:20px;background:linear-gradient(145deg,#0e1a30,#0b162b);border:1px solid var(--border);box-shadow:var(--shadow)}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}
+.card-header h3{display:flex;gap:7px;color:#e8f0f8;font-size:13px;font-weight:700}.card-header h3 i{color:var(--cyan)}
+.card-header span{color:var(--muted);font-size:9px;font-weight:700;text-transform:uppercase}
+.scroll-list{max-height:280px;overflow-y:auto}
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.quick-card{min-height:102px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 5px;text-align:center;border-radius:16px;background:var(--card);border:1px solid rgba(255,255,255,.05)}
+.quick-card:active{transform:scale(.96)}
+.quick-icon{width:42px;height:42px;display:flex;align-items:center;justify-content:center;margin-bottom:7px;border-radius:12px;background:rgba(34,211,238,.08);color:var(--cyan);font-size:17px}
+.quick-card h4{color:#e8f0f8;font-size:11px;font-weight:700}.quick-card p{color:var(--muted);font-size:9px;margin-top:2px}
+.machine-card{padding:14px;margin-bottom:9px;border-radius:16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05)}
+.machine-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.machine-name{color:#e8f0f8;font-size:12px;font-weight:700}
+.machine-status{display:flex;gap:5px;padding:4px 8px;border-radius:20px;background:rgba(52,211,153,.08);color:var(--green);font-size:8px;font-weight:800;text-transform:uppercase}
+.machine-info{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.machine-label{color:var(--muted);font-size:7px;font-weight:800;letter-spacing:.6px;margin-bottom:3px}
+.machine-value{color:#e8f0f8;font-size:12px;font-weight:800}
+.machine-btn{width:100%;height:40px;margin-top:6px;border:0;border-radius:11px;background:linear-gradient(90deg,#22d3ee,#34d399);color:#02120e;font-size:11px;font-weight:800;cursor:pointer}
+.checkin-card{margin-bottom:16px;padding:18px;border-radius:20px;background:linear-gradient(135deg,rgba(34,211,238,.07),rgba(52,211,153,.05));border:1px solid rgba(34,211,238,.12)}
+.checkin-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.checkin-title{display:flex;gap:7px;color:#eef7fc;font-size:13px;font-weight:700}.checkin-title i{color:var(--cyan)}
+.checkin-days{padding:4px 9px;border-radius:20px;background:rgba(52,211,153,.10);color:var(--green);font-size:8px;font-weight:800}
+.checkin-text{margin-bottom:14px;color:#8b9bb0;font-size:11px;line-height:1.5}
+.claim-btn{width:100%;height:44px;border:0;border-radius:12px;background:linear-gradient(90deg,#22d3ee,#34d399);color:#02120e;font-size:12px;font-weight:800;cursor:pointer}
+.claim-btn:disabled{opacity:.5;filter:grayscale(.3)}
+.promo-card{margin-bottom:16px;padding:18px;border-radius:20px;background:var(--card);border:1px solid var(--border)}
+.promo-card h3{display:flex;gap:7px;margin-bottom:6px;color:#e8f0f8;font-size:13px;font-weight:700}.promo-card h3 i{color:var(--purple)}
+.promo-card p{margin-bottom:12px;color:var(--muted);font-size:10px;line-height:1.5}
+.promo-box{display:flex;gap:7px}
+.promo-box input{flex:1;height:44px;padding:0 12px;border-radius:11px;background:#060e1e;border:1px solid rgba(255,255,255,.06);color:#fff;font-size:11px;outline:none}
+.promo-box button{height:44px;padding:0 16px;border:0;border-radius:11px;background:linear-gradient(90deg,#22d3ee,#34d399);color:#02120e;font-size:11px;font-weight:800;cursor:pointer}
+.activity-item{display:flex;gap:10px;padding:11px;margin-bottom:8px;border-radius:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04)}
+.activity-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:10px;background:rgba(34,211,238,.08);color:var(--cyan);font-size:14px}
+.activity-details{flex:1;min-width:0}.activity-title{color:#e8f0f8;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.activity-time{margin-top:2px;color:#6b7f96;font-size:9px}.activity-amount{color:var(--green);font-size:11px;font-weight:800}
+.bottom-nav{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);width:calc(100% - 24px);max-width:500px;height:70px;background:rgba(10,20,38,.85);backdrop-filter:blur(18px);border:1px solid var(--border);border-radius:22px;display:flex;justify-content:space-around;align-items:center;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:999}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;font-size:10px;color:var(--muted);cursor:pointer}
+.nav-icon{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:20px}
+.nav-item.active{color:var(--cyan);font-weight:700}.nav-item.active .nav-icon{background:rgba(34,211,238,.12)}
+.toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.92);min-width:190px;max-width:calc(100% - 40px);padding:12px 18px;border-radius:14px;background:linear-gradient(90deg,#22d3ee,#34d399);color:#02120e;font-size:12px;font-weight:800;letter-spacing:.1px;opacity:0;visibility:hidden;transition:.2s ease;box-shadow:0 18px 35px rgba(34,211,238,.22);z-index:999}
+.toast.show{opacity:1;visibility:visible;transform:translate(-50%,-50%) scale(1)}
+.toast.error{background:linear-gradient(90deg,#fb7185,#fb923c);color:#1a0505}
+.pulse{animation:pulse .6s ease}
+@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<div class="container">
+<div class="header">
+    <div class="profile"><div class="avatar" id="avatarLetter">S</div><div><h2 id="welcomeName">Good Evening</h2><span id="greetingTime">Investor</span></div></div>
+    <div class="header-icons"><div onclick="showToast('No new notifications')"><i class="fa-solid fa-bell"></i></div><div onclick="window.location='profile.html'"><i class="fa-solid fa-user"></i></div></div>
+</div>
+<div class="wallet"><small>Available Balance</small><h1 id="walletBalance">UGX 0</h1><div class="wallet-profit">▲ <span id="todayProfit">Today's Profit: UGX 0</span></div></div>
+<div class="section-title"><h3>Portfolio Overview</h3><span>Live Data</span></div>
+<div class="stats-grid">
+    <div class="stat-card"><div class="stat-icon green"><i class="fa-solid fa-wallet"></i></div><div class="stat-title">Portfolio</div><div class="stat-value" id="portfolioValue">UGX 0</div></div>
+    <div class="stat-card"><div class="stat-icon blue"><i class="fa-solid fa-chart-line"></i></div><div class="stat-title">Today's Earnings</div><div class="stat-value" id="earningsToday">UGX 0</div></div>
+    <div class="stat-card"><div class="stat-icon orange"><i class="fa-solid fa-users"></i></div><div class="stat-title">Referral Earnings</div><div class="stat-value" id="referralEarnings">UGX 0</div></div>
+    <div class="stat-card"><div class="stat-icon purple"><i class="fa-solid fa-microchip"></i></div><div class="stat-title">Active Machines</div><div class="stat-value" id="machineCount">0</div></div>
+</div>
+<div class="section-title"><h3>Quick Actions</h3><span>One Tap Access</span></div>
+<div class="quick-grid">
+    <div class="quick-card" onclick="window.location='deposit.html'"><div class="quick-icon"><i class="fa-solid fa-arrow-down"></i></div><h4>Deposit</h4><p>Add Funds</p></div>
+    <div class="quick-card" onclick="window.location='withdraw.html'"><div class="quick-icon"><i class="fa-solid fa-arrow-up"></i></div><h4>Withdraw</h4><p>Cash Out</p></div>
+    <div class="quick-card" onclick="window.location='machines.html'"><div class="quick-icon"><i class="fa-solid fa-microchip"></i></div><h4>Machines</h4><p>Invest</p></div>
+    <div class="quick-card" onclick="window.location='team.html'"><div class="quick-icon"><i class="fa-solid fa-users"></i></div><h4>Team</h4><p>Referrals</p></div>
+    <div class="quick-card" onclick="claimDaily()"><div class="quick-icon"><i class="fa-solid fa-gift"></i></div><h4>Bonus</h4><p>Claim</p></div>
+    <div class="quick-card" onclick="window.location='wallet.html'"><div class="quick-icon"><i class="fa-solid fa-credit-card"></i></div><h4>Wallet</h4><p>History</p></div>
+</div>
+<div class="scroll-card"><div class="card-header"><h3><i class="fa-solid fa-microchip"></i> Active Machines</h3><span id="machineStatus">0 Running</span></div><div class="scroll-list" id="activeMachines"></div></div>
+<div class="checkin-card"><div class="checkin-top"><div class="checkin-title"><i class="fa-solid fa-gift"></i> Daily Check-in</div><div class="checkin-days" id="checkinDays">Day 0</div></div><div class="checkin-text">Boost your account by claiming your daily reward and keep your earnings moving steadily.</div><button class="claim-btn" id="claimBtn" onclick="claimDaily()">Claim Today's Bonus</button></div>
+<div class="promo-card"><h3><i class="fa-solid fa-ticket"></i> Redeem Promo Code</h3><p>Enter your gift code below to receive instant rewards directly into your wallet.</p><div class="promo-box"><input id="promoInput" type="text" placeholder="Enter promo code" maxlength="20"><button onclick="applyPromo()">Redeem</button></div></div>
+<div class="scroll-card"><div class="card-header"><h3><i class="fa-solid fa-list"></i> Recent Activities</h3><span id="activityCount">Latest</span></div><div class="scroll-list" id="recentActivities"></div></div>
+</div>
+<div class="bottom-nav" id="bottomNav">
+  <div class="nav-item" data-page="dashboard.html" onclick="navigateToPage('dashboard.html')">
+    <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
+    <span>Home</span>
+  </div>  <div class="nav-item" data-page="team.html" onclick="navigateToPage('team.html')">
+    <div class="nav-icon"><i class="fa-solid fa-users"></i></div>
+    <span>Team</span>
+  </div>  <div class="nav-item" data-page="machines.html" onclick="navigateToPage('machines.html')">
+    <div class="nav-icon"><i class="fa-solid fa-microchip"></i></div>
+    <span>Machines</span>
+  </div>  <div class="nav-item" data-page="wallet.html" onclick="navigateToPage('wallet.html')">
+    <div class="nav-icon"><i class="fa-solid fa-wallet"></i></div>
+    <span>Wallet</span>
+  </div>  <div class="nav-item" data-page="profile.html" onclick="navigateToPage('profile.html')">
+    <div class="nav-icon"><i class="fa-solid fa-user"></i></div>
+    <span>Profile</span>
+  </div>
+</div><script>
+  function updateActiveNav() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+
+    document.querySelectorAll('#bottomNav .nav-item').forEach(item => {
+      const isActive = item.dataset.page === currentPage;
+
+      item.classList.toggle('active', isActive);
+
+      if (isActive) {
+        item.setAttribute('aria-current', 'page');
+      } else {
+        item.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function navigateToPage(page) {
+    const currentPage = window.location.pathname.split('/').pop();
+
+    // Don't reload the page you're already on.
+    if (currentPage === page) return;
+
+    window.location.href = page;
+  }
+
+  updateActiveNav();
+</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getDatabase, ref, onValue, get, update, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const firebaseConfig = { apiKey: "AIzaSyBYyhhCCjiOQAJHZrnXDyLx9l39XiL-9K8", authDomain: "sentebot-7428b.firebaseapp.com", databaseURL: "https://sentebot-7428b-default-rtdb.europe-west1.firebasedatabase.app", projectId: "sentebot-7428b", storageBucket: "sentebot-7428b.appspot.com", messagingSenderId: "1058684674800", appId: "1:1058684674800:web:707cac3cc1c2149fa1a1ae" };
+const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getDatabase(app);
+let currentUser=null; let lastData=null;
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function getFirstName(full){
+ if(!full) return "Investor";
+ const clean=full.trim().split(/\s+/)[0];
+ return clean.charAt(0).toUpperCase()+clean.slice(1).toLowerCase();
+}
+function setGreeting(fullName){
+ const hour=new Date().getHours();
+ let g="Good Evening"; if(hour<12) g="Good Morning"; else if(hour<18) g="Good Afternoon";
+ const first=getFirstName(fullName);
+ document.getElementById("welcomeName").textContent=`${g}, ${first}`;
+ document.getElementById("greetingTime").textContent="Welcome back";
+ document.getElementById("avatarLetter").textContent=first.charAt(0).toUpperCase();
+}
+function silentUpdate(id,value){
+ const el=document.getElementById(id);
+ if(!el) return;
+ if(el.textContent!==value){ el.textContent=value; el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse"); }
+}
+onAuthStateChanged(auth,(u)=>{if(!u){window.location.href="index.html";return;}currentUser=u;attachListener()});
+function attachListener(){
+ if(!currentUser) return;
+ const userRef=ref(db,"users/"+currentUser.uid);
+ onValue(userRef,(snap)=>{
+  if(!snap.exists()) return;
+  const data=snap.val();
+  // Only first load sets greeting (no flicker on group visits)
+  if(!lastData){ setGreeting(data.username||"Investor"); }
+  else if(data.username!==lastData.username){ setGreeting(data.username); }
+  const bal=Number(data.balance||0);
+  silentUpdate("walletBalance","UGX "+bal.toLocaleString());
+  silentUpdate("portfolioValue","UGX "+bal.toLocaleString());
+  let today=Number(data.todayProfit||0); if(!Number.isFinite(today)) today=0;
+  silentUpdate("todayProfit","Today's Profit: UGX "+today.toLocaleString());
+  silentUpdate("earningsToday","UGX "+today.toLocaleString());
+  let refEarn=Number(data.referralEarnings||0); if(!Number.isFinite(refEarn)) refEarn=0;
+  silentUpdate("referralEarnings","UGX "+refEarn.toLocaleString());
+  const machines=data.machines?Object.values(data.machines).filter(m=>(m.status||"").toUpperCase()==="RUNNING").length:0;
+  silentUpdate("machineCount",String(machines));
+  silentUpdate("machineStatus",machines+" Running");
+  silentUpdate("checkinDays","Day "+Number(data.checkinDays||0));
+  const lastClaim=Number(data.lastCheckin||0);
+  const canClaim=!lastClaim||(Date.now()-lastClaim)>=86400000;
+  const btn=document.getElementById("claimBtn");
+  if(btn){ btn.disabled=!canClaim; btn.textContent=canClaim?"Claim Today's Bonus":"Claimed Today"; }
+  // Only re-render lists if actually changed (silent)
+  const machinesHash=JSON.stringify(data.machines||{});
+  const activitiesHash=JSON.stringify(data.activities||{});
+  const lastMachinesHash=JSON.stringify(lastData?.machines||{});
+  const lastActivitiesHash=JSON.stringify(lastData?.activities||{});
+  if(machinesHash!==lastMachinesHash) renderMachines(data);
+  if(activitiesHash!==lastActivitiesHash) renderActivities(data);
+  lastData=data;
+ });
+}
+function renderMachines(data){
+ const c=document.getElementById("activeMachines");
+ const machines=data?.machines?Object.values(data.machines).filter(m=>String(m?.status||"").trim().toUpperCase()==="RUNNING"):[];
+ if(machines.length===0){c.innerHTML=`<div style="text-align:center;color:var(--muted);padding:20px;">No Active Machines</div>`;return;}
+ c.innerHTML=machines.map(m=>`<div class="machine-card"><div class="machine-top"><div class="machine-name">${esc(m.name||"Investment Machine")}</div><div class="machine-status">${esc(m.status||"RUNNING")}</div></div><div class="machine-info"><div><div class="machine-label">Daily Return</div><div class="machine-value">UGX ${Number(m.daily||0).toLocaleString()}</div></div><div><div class="machine-label">Uptime</div><div class="machine-value">${esc(m.uptime||"24h")}</div></div></div><button class="machine-btn" onclick="showToast('Machine details coming soon')">View Details</button></div>`).join("");
+}
+function renderActivities(data){
+ const list=document.getElementById("recentActivities");
+ const activities=data.activities?Object.values(data.activities).reverse():[];
+ if(activities.length===0){list.innerHTML=`<div style="text-align:center;color:var(--muted);padding:20px;">No recent activities</div>`;return;}
+ list.innerHTML=activities.slice(0,20).map(item=>{
+  let icon=item.icon||"💰"; if(typeof icon==='string'&&icon.includes('fa-')) icon=`<i class="${esc(icon)}"></i>`;
+  return `<div class="activity-item"><div class="activity-icon">${icon}</div><div class="activity-details"><div class="activity-title">${esc(item.title||"Transaction")}</div><div class="activity-time">${esc(item.time||"Just now")}</div></div><div class="activity-amount">${esc(item.amount||"")}</div></div>`;
+ }).join("");
+ document.getElementById("activityCount").textContent=activities.length+" Records";
+}
+window.showToast=(message,type="success")=>{const t=document.getElementById("toast");t.textContent=message;t.className="toast "+type+" show";clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>{t.className="toast "+type;},1800)};
+window.claimDaily=async()=>{
+ if(!currentUser){window.showToast("Please login first","error");return;}
+ const userRef=ref(db,"users/"+currentUser.uid); const snap=await get(userRef); if(!snap.exists()) return; const data=snap.val();
+ if((Date.now()-(data.lastCheckin||0))<86400000){window.showToast("You already claimed today","error");return;}
+ const updates={}; updates[`balance`]=Number(data.balance||0)+300; updates[`todayProfit`]=Number(data.todayProfit||0)+300; updates[`checkinDays`]=Number(data.checkinDays||0)+1; updates[`lastCheckin`]=Date.now();
+ const actKey=push(ref(db,`users/${currentUser.uid}/activities`)).key; updates[`activities/${actKey}`]={icon:"fa-solid fa-gift",title:"Daily Check-in Bonus",amount:"+UGX 300",time:new Date().toLocaleString()};
+ await update(userRef,updates); window.showToast("UGX 300 claimed!","success");
+};
+window.applyPromo=async()=>{
+ const input=document.getElementById("promoInput"); const code=input.value.trim().toUpperCase();
+ if(!code){window.showToast("Enter a promo code","error");return;}
+ if(code==="WELCOME500"){
+  const userRef=ref(db,"users/"+currentUser.uid); const snap=await get(userRef); if(!snap.exists()) return; const data=snap.val();
+  const updates={}; updates[`balance`]=Number(data.balance||0)+500; updates[`todayProfit`]=Number(data.todayProfit||0)+500;
+  const actKey=push(ref(db,`users/${currentUser.uid}/activities`)).key; updates[`activities/${actKey}`]={icon:"fa-solid fa-ticket",title:"Promo Code: WELCOME500",amount:"+UGX 500",time:new Date().toLocaleString()};
+  await update(userRef,updates); input.value=""; window.showToast("Promo redeemed!","success"); return;
+ }
+ window.showToast("Invalid promo code","error");
+};
+document.addEventListener('contextmenu',e=>e.preventDefault());
+</script>
+</body>
+</html>
